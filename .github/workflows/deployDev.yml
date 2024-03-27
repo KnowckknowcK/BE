@@ -74,7 +74,9 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
-          docker stop $(sudo docker ps -q) 2>/dev/null || true
+          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
+          sudo docker stop knowckknowck-backend 2>/dev/null || true
+          sudo docker rm knowckknowck-backend
           sudo docker run --name knowckknowck-backend -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
           sudo docker system prune -f
