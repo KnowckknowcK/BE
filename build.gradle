@@ -43,7 +43,10 @@ dependencies {
 
 	//Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
-}
+  
+  //websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
