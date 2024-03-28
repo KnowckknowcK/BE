@@ -3,8 +3,6 @@ package com.knu.KnowcKKnowcK.dto.requestdto;
 
 import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.domain.Message;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;

@@ -1,8 +1,6 @@
 package com.knu.KnowcKKnowcK.utils.db;
 
 import com.knu.KnowcKKnowcK.domain.*;
-import com.knu.KnowcKKnowcK.exception.CustomException;
-import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,7 +19,6 @@ public class FindUtils {
 
     public DebateRoom findDebateRoom(Long id){
         DebateRoom debateRoom = debateRoomRepository.findById(id).orElse(null);
-        if(debateRoom == null) throw new CustomException(ErrorCode.INVALID_INPUT);
         return debateRoom;
     }
     public MemberDebate findMemberDebate(Member member, DebateRoom debateRoom){
