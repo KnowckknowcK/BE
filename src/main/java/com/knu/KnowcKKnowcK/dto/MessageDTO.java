@@ -22,7 +22,6 @@ public class MessageDTO {
         return Message.builder()
                 .debateRoomId(debateRoom)
                 .content(content)
-                .writer(writer)
                 .createdTime(LocalDateTime.now())
                 .build();
     }
