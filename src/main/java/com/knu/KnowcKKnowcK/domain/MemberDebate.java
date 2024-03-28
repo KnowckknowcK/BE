@@ -1,15 +1,19 @@
 package com.knu.KnowcKKnowcK.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class MemberDebate {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberDebateId;
     @ManyToOne
     @JoinColumn(name="member_id")
@@ -18,5 +22,5 @@ public class MemberDebate {
     @JoinColumn(name="debate_room_id")
     private DebateRoom debateRoomId;
 
-    private String side;
+    private String position;
 }
