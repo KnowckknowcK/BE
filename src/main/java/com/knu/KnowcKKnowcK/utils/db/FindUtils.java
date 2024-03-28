@@ -1,11 +1,13 @@
 package com.knu.KnowcKKnowcK.utils.db;
 
-import com.knu.KnowcKKnowcK.domain.DebateRoom;
-import com.knu.KnowcKKnowcK.domain.Member;
-import com.knu.KnowcKKnowcK.domain.MemberDebate;
+import com.knu.KnowcKKnowcK.domain.*;
+import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -18,13 +20,27 @@ public class FindUtils {
     private final MessageThreadRepository messageThreadRepository;
 
     public DebateRoom findDebateRoom(Long id){
-        return debateRoomRepository.findById(id).orElse(null);
+        DebateRoom debateRoom = debateRoomRepository.findById(id).orElse(null);
+        if(debateRoom == null) throw new CustomException(ErrorCode.INVALID_INPUT);
+        return debateRoom;
     }
     public MemberDebate findMemberDebate(Member member, DebateRoom debateRoom){
         return memberDebateRepository.findByMemberIdAndDebateRoomId(member, debateRoom);
     }
 
+    public List<Message> findMessageList(DebateRoom debateRoom){
+        return messageRepository.findByDebateRoomId(debateRoom);
+    }
     public Member findMember(Long id){
         return memberRepository.findById(id).orElse(null);
+    }
+
+    public Preference findPreference(Member member, Message message){
+        return preferenceRepository.findByMemberIdAndMessageId(member, message);
+
+    }
+
+    public Message findMessage(Long messageId) {
+        return messageRepository.findById(messageId).orElseThrow();
     }
 }

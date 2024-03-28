@@ -1,6 +1,7 @@
 package com.knu.KnowcKKnowcK.utils.db;
 
 import com.knu.KnowcKKnowcK.domain.MemberDebate;
+import com.knu.KnowcKKnowcK.domain.Preference;
 import com.knu.KnowcKKnowcK.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,5 +20,9 @@ public class DeleteUtils {
     @Transactional
     public void deleteMemberDebate(MemberDebate memberDebate){
         memberDebateRepository.delete(memberDebate);
+    }
+
+    public void deletePreference(Preference preference) {
+        preferenceRepository.delete(preference);
     }
 }

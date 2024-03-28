@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("debate-room")
+@RequestMapping("api/debate-room")
 @RequiredArgsConstructor
 public class DebateRoomController {
     final private DebateRoomService debateRoomService;

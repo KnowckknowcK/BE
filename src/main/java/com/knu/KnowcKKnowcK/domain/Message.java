@@ -1,6 +1,7 @@
 package com.knu.KnowcKKnowcK.domain;
 
-import com.knu.KnowcKKnowcK.dto.MessageDTO;
+import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDTO;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,11 +29,12 @@ public class Message {
     private String content;
     private LocalDateTime createdTime;
 
-    public MessageDTO toMessageDTO(){
-        return MessageDTO.builder()
+    public MessageResponseDTO toMessageDTO(){
+        return MessageResponseDTO.builder()
                 .content(content)
                 .createdTime(createdTime)
                 .roomId(debateRoomId.getDebateRoomId())
+                .messageId(messageId)
                 .build();
     }
 }

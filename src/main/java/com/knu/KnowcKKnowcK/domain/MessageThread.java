@@ -1,12 +1,18 @@
 package com.knu.KnowcKKnowcK.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class MessageThread {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

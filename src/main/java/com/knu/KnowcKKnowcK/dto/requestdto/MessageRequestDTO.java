@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.dto;
+package com.knu.KnowcKKnowcK.dto.requestdto;
 
 
 import com.knu.KnowcKKnowcK.domain.DebateRoom;
@@ -10,13 +10,9 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
-@AllArgsConstructor
-public class MessageDTO {
+public class MessageRequestDTO {
     Long roomId;
-    String writer;
     String content;
-    LocalDateTime createdTime;
 
     public Message toMessage(DebateRoom debateRoom){
         return Message.builder()

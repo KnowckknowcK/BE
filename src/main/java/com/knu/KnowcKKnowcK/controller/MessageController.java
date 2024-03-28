@@ -1,10 +1,15 @@
 package com.knu.KnowcKKnowcK.controller;
 
-import com.knu.KnowcKKnowcK.dto.MessageDTO;
-import com.knu.KnowcKKnowcK.dto.PreferenceDTO;
+import com.knu.KnowcKKnowcK.domain.Member;
+import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDTO;
+import com.knu.KnowcKKnowcK.dto.requestdto.MessageThreadRequestDTO;
+import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceDTO;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDTO;
+import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -16,19 +21,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("message")
+@RequestMapping("api/message")
 @RequiredArgsConstructor
 public class MessageController {
     private final SimpMessagingTemplate template;
     private final MessageService messageService;
+    private final MemberRepository memberRepository;
+    private Member member;
+
     @MessageMapping("")
-    public void sendMessage(MessageDTO messageDTO) {
-        messageService.saveMessage(messageDTO);
-        template.convertAndSend("/sub/room/" + messageDTO.getRoomId(), messageDTO);
+    public void sendMessage(MessageRequestDTO messageRequestDTO) {
+        messageService.saveMessage(messageRequestDTO);
+        template.convertAndSend("/sub/room/" + messageRequestDTO.getRoomId(), messageRequestDTO);
+    }
+
+    @MessageMapping("/{messageId}")
+    public void sendMessageThread(@DestinationVariable Long messageId, MessageThreadRequestDTO messageThreadRequestDTO) {
+        member = memberRepository.findById(1L).orElse(null);
+        messageService.saveMessageThread(member, messageId,messageThreadRequestDTO);
+        template.convertAndSend("/sub/room/" +
+                messageThreadRequestDTO.getRoomId() +
+                messageId,
+                messageThreadRequestDTO);
     }
 
     @GetMapping("/{debateRoomId}")
-    public ResponseEntity<List<MessageDTO>> getMessages(@PathVariable Long debateRoomId){
+    public ResponseEntity<List<MessageResponseDTO>> getMessages(@PathVariable Long debateRoomId){
         return ResponseEntity.ok(messageService.getMessages(debateRoomId));
     }
 
@@ -39,8 +57,8 @@ public class MessageController {
     }
 
     @PutMapping("/preference/{messageId}")
-    public void putPreference(@PathVariable Long messageId, PreferenceDTO preferenceDTO) {
-        // TODO: 특정 메세지에 대한 좋아요/싫어요 표시해주기
-
+    public ResponseEntity<String> putPreference(@PathVariable Long messageId, PreferenceDTO preferenceDTO) {
+        member = memberRepository.findById(1L).orElse(null);
+        return ResponseEntity.ok(messageService.putPreference(member, messageId, preferenceDTO));
     }
 }
