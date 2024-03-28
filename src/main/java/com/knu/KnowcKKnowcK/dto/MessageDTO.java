@@ -16,14 +16,14 @@ public class MessageDTO {
     Long roomId;
     String writer;
     String content;
-    LocalDateTime createTime;
+    LocalDateTime createdTime;
 
     public Message toMessage(DebateRoom debateRoom){
         return Message.builder()
                 .debateRoomId(debateRoom)
                 .content(content)
                 .writer(writer)
-                .createTime(LocalDateTime.now())
+                .createdTime(LocalDateTime.now())
                 .build();
     }
 }

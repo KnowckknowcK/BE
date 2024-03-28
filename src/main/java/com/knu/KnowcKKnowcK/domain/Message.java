@@ -18,20 +18,21 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
-
     @ManyToOne
     @JoinColumn(name="debate_room_id")
     private DebateRoom debateRoomId;
-    private String writer;
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member memberId;
+
     private String content;
-    private LocalDateTime createTime;
+    private LocalDateTime createdTime;
 
     public MessageDTO toMessageDTO(){
         return MessageDTO.builder()
                 .content(content)
-                .createTime(createTime)
+                .createdTime(createdTime)
                 .roomId(debateRoomId.getDebateRoomId())
-                .writer(writer)
                 .build();
     }
 }

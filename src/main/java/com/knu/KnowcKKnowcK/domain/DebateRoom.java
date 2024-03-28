@@ -1,9 +1,6 @@
 package com.knu.KnowcKKnowcK.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -12,5 +9,11 @@ public class DebateRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long debateRoomId;
-    private Long ratio;
+    @OneToOne
+    @JoinColumn(name="article_id")
+    private Article articleId;
+
+    private String title;
+    private Double ratio;
+    private Double score;
 }
