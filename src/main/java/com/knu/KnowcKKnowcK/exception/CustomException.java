@@ -3,7 +3,7 @@ package com.knu.KnowcKKnowcK.exception;
 import lombok.Getter;
 
 @Getter
-public class CustomException {
+public class CustomException extends RuntimeException {
     private int result;
     private ErrorCode errorCode;
     private String message;
