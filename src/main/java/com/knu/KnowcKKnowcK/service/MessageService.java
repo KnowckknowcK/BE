@@ -23,9 +23,9 @@ public class MessageService {
     private final SaveUtils saveUtils;
     private final DeleteUtils deleteUtils;
 
-    public void saveMessage(MessageRequestDTO messageRequestDTO){
+    public void saveMessage(Member member, MessageRequestDTO messageRequestDTO){
         DebateRoom debateRoom = findUtils.findDebateRoom(messageRequestDTO.getRoomId());
-        saveUtils.saveMessage(messageRequestDTO.toMessage(debateRoom));
+        saveUtils.saveMessage(messageRequestDTO.toMessage(member, debateRoom));
     }
     public void saveMessageThread(Member member, Long messageId, MessageThreadRequestDTO messageThreadRequestDTO) {
         Message message = findUtils.findMessage(messageId);
