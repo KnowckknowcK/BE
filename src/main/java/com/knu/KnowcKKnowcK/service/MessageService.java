@@ -32,4 +32,10 @@ public class MessageService {
 
         return messageDTOList;
     }
+
+    // TODO: 특정 메세지에 대한 메세지 스레드 반환
+
+    // TODO: 특정 메세지에 대한 메세지 좋아요/싫어요 변경 -> 토론방 내부 ratio 변경 필요
+
+
 }
