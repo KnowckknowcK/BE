@@ -1,11 +1,15 @@
 package com.knu.KnowcKKnowcK.dto.responsedto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class MessageThreadDTO {
+@Builder
+@AllArgsConstructor
+public class MessageThreadResponseDTO {
     Long parentMessageId;
     String writer;
     String content;

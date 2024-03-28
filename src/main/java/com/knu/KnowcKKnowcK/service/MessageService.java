@@ -1,14 +1,12 @@
 package com.knu.KnowcKKnowcK.service;
 
 
-import com.knu.KnowcKKnowcK.domain.DebateRoom;
-import com.knu.KnowcKKnowcK.domain.Member;
-import com.knu.KnowcKKnowcK.domain.Message;
-import com.knu.KnowcKKnowcK.domain.Preference;
+import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDTO;
 import com.knu.KnowcKKnowcK.dto.requestdto.MessageThreadRequestDTO;
 import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceDTO;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDTO;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDTO;
 import com.knu.KnowcKKnowcK.utils.db.DeleteUtils;
 import com.knu.KnowcKKnowcK.utils.db.FindUtils;
 import com.knu.KnowcKKnowcK.utils.db.SaveUtils;
@@ -34,7 +32,6 @@ public class MessageService {
         saveUtils.saveMessageThread(messageThreadRequestDTO.toMessageThread(member, message));
     }
 
-
     public List<MessageResponseDTO> getMessages(Long roomId){
         DebateRoom debateRoom = findUtils.findDebateRoom(roomId);
         List<Message> messageList = findUtils.findMessageList(debateRoom);
@@ -47,10 +44,16 @@ public class MessageService {
         return messageResponseDTOList;
     }
 
-    // TODO: 특정 메세지에 대한 메세지 스레드 반환
-//    public List<MessageThreadDTO> getMessageThreadDTOList(){
-//
-//    }
+    public List<MessageThreadResponseDTO> getMessageThreadDTOList(Long messageId){
+        Message message = findUtils.findMessage(messageId);
+        List<MessageThread> messageThraedList = findUtils.findMessageThread(message);
+
+        List<MessageThreadResponseDTO> messageThreadResponseDTOList = new ArrayList<>();
+        for (MessageThread messageThread: messageThraedList) {
+            messageThreadResponseDTOList.add(messageThread.toMessageThreadDTO(messageId));
+        }
+        return messageThreadResponseDTOList;
+    }
 
     public String putPreference(Member member, Long messageId, PreferenceDTO preferenceDTO){
         updatePreference(member, messageId, preferenceDTO);

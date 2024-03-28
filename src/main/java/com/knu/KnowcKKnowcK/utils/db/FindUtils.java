@@ -43,4 +43,8 @@ public class FindUtils {
     public Message findMessage(Long messageId) {
         return messageRepository.findById(messageId).orElseThrow();
     }
+
+    public List<MessageThread> findMessageThread(Message message){
+        return messageThreadRepository.findByMessageId(message);
+    }
 }

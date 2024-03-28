@@ -5,6 +5,7 @@ import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDTO;
 import com.knu.KnowcKKnowcK.dto.requestdto.MessageThreadRequestDTO;
 import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceDTO;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDTO;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDTO;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -50,14 +51,14 @@ public class MessageController {
         return ResponseEntity.ok(messageService.getMessages(debateRoomId));
     }
 
-    @GetMapping("/{messageId}")
-    public void getMessageThread(@PathVariable Long messageId) {
-        // TODO: 특정 메세지에 대한 메세지 스레드 반환해주기
-
+    @GetMapping("/thread/{messageId}")
+    public ResponseEntity<List<MessageThreadResponseDTO>> getMessageThread(@PathVariable Long messageId) {
+        return ResponseEntity.ok(messageService.getMessageThreadDTOList(messageId));
     }
 
     @PutMapping("/preference/{messageId}")
     public ResponseEntity<String> putPreference(@PathVariable Long messageId, PreferenceDTO preferenceDTO) {
+        // DTO 빈 경우 예외처리 필요
         member = memberRepository.findById(1L).orElse(null);
         return ResponseEntity.ok(messageService.putPreference(member, messageId, preferenceDTO));
     }

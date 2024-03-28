@@ -31,6 +31,7 @@ public class Message {
 
     public MessageResponseDTO toMessageDTO(){
         return MessageResponseDTO.builder()
+                .writer(memberId.getName())
                 .content(content)
                 .createdTime(createdTime)
                 .roomId(debateRoomId.getDebateRoomId())
