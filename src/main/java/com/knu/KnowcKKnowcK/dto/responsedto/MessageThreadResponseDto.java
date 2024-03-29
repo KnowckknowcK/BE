@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @AllArgsConstructor
-public class MessageThreadResponseDTO {
+public class MessageThreadResponseDto {
     Long parentMessageId;
     String writer;
     String content;

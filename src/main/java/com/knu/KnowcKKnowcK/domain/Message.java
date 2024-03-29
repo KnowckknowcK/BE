@@ -1,6 +1,6 @@
 package com.knu.KnowcKKnowcK.domain;
 
-import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDTO;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,8 +34,8 @@ public class Message {
     private String content;
     private LocalDateTime createdTime;
 
-    public MessageResponseDTO toMessageDTO(){
-        return MessageResponseDTO.builder()
+    public MessageResponseDto toMessageDto(){
+        return MessageResponseDto.builder()
                 .writer(member.getName())
                 .content(content)
                 .createdTime(createdTime)

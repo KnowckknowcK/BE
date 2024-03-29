@@ -7,7 +7,7 @@ import com.knu.KnowcKKnowcK.domain.PreferenceId;
 import lombok.Data;
 
 @Data
-public class PreferenceDTO {
+public class PreferenceDto {
     private boolean isLike;
 
     public Preference toPreference(Member member, Message message){

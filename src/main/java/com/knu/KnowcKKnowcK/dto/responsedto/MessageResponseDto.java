@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @AllArgsConstructor
-public class MessageResponseDTO {
+public class MessageResponseDto {
     Long roomId;
     Long messageId;
     String writer;

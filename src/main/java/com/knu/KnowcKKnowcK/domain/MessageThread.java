@@ -1,6 +1,6 @@
 package com.knu.KnowcKKnowcK.domain;
 
-import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDTO;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,8 +32,8 @@ public class MessageThread {
     private String content;
     private LocalDateTime createdTime;
 
-    public MessageThreadResponseDTO toMessageThreadDTO(Long parentMessageId){
-        return MessageThreadResponseDTO.builder()
+    public MessageThreadResponseDto toMessageThreadDto(Long parentMessageId){
+        return MessageThreadResponseDto.builder()
                 .content(content)
                 .createdTime(createdTime)
                 .parentMessageId(parentMessageId)

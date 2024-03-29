@@ -1,23 +1,24 @@
 package com.knu.KnowcKKnowcK.dto.requestdto;
 
+
+import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.Message;
-import com.knu.KnowcKKnowcK.domain.MessageThread;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class MessageThreadRequestDTO {
+public class MessageRequestDto {
     Long roomId;
     String content;
 
-    public MessageThread toMessageThread(Member member, Message message){
-        return MessageThread.builder()
+    public Message toMessage( Member member, DebateRoom debateRoom){
+        return Message.builder()
                 .member(member)
-                .message(message)
-                .createdTime(LocalDateTime.now())
+                .debateRoom(debateRoom)
                 .content(content)
+                .createdTime(LocalDateTime.now())
                 .build();
     }
 }

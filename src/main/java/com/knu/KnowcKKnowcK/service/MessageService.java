@@ -2,11 +2,11 @@ package com.knu.KnowcKKnowcK.service;
 
 
 import com.knu.KnowcKKnowcK.domain.*;
-import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDTO;
-import com.knu.KnowcKKnowcK.dto.requestdto.MessageThreadRequestDTO;
-import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceDTO;
-import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDTO;
-import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDTO;
+import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDto;
+import com.knu.KnowcKKnowcK.dto.requestdto.MessageThreadRequestDto;
+import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
 import com.knu.KnowcKKnowcK.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,44 +23,44 @@ public class MessageService {
     private final MessageThreadRepository messageThreadRepository;
     private final PreferenceRepository preferenceRepository;
 
-    public void saveMessage(Member member, MessageRequestDTO messageRequestDTO){
+    public void saveMessage(Member member, MessageRequestDto messageRequestDTO){
         DebateRoom debateRoom = debateRoomRepository.findById(messageRequestDTO.getRoomId()).orElseThrow();
         messageRepository.save(messageRequestDTO.toMessage(member, debateRoom));
     }
-    public void saveMessageThread(Member member, Long messageId, MessageThreadRequestDTO messageThreadRequestDTO) {
+    public void saveMessageThread(Member member, Long messageId, MessageThreadRequestDto messageThreadRequestDTO) {
         Message message = messageRepository.findById(messageId).orElseThrow();
         messageThreadRepository.save(messageThreadRequestDTO.toMessageThread(member, message));
     }
 
-    public List<MessageResponseDTO> getMessages(Long roomId){
+    public List<MessageResponseDto> getMessages(Long roomId){
         DebateRoom debateRoom = debateRoomRepository.findById(roomId).orElseThrow();
         List<Message> messageList = messageRepository.findByDebateRoom(debateRoom);
 
-        List<MessageResponseDTO> messageResponseDTOList = new ArrayList<>();
+        List<MessageResponseDto> messageResponseDtoList = new ArrayList<>();
         for (Message message: messageList) {
-            messageResponseDTOList.add(message.toMessageDTO());
+            messageResponseDtoList.add(message.toMessageDto());
         }
-        return messageResponseDTOList;
+        return messageResponseDtoList;
     }
 
-    public List<MessageThreadResponseDTO> getMessageThreadDTOList(Long messageId){
+    public List<MessageThreadResponseDto> getMessageThreadDTOList(Long messageId){
         Message message = messageRepository.findById(messageId).orElseThrow();
         List<MessageThread> messageThraedList = messageThreadRepository.findByMessage(message);
 
-        List<MessageThreadResponseDTO> messageThreadResponseDTOList = new ArrayList<>();
+        List<MessageThreadResponseDto> messageThreadResponseDtoList = new ArrayList<>();
         for (MessageThread messageThread: messageThraedList) {
-            messageThreadResponseDTOList.add(messageThread.toMessageThreadDTO(messageId));
+            messageThreadResponseDtoList.add(messageThread.toMessageThreadDto(messageId));
         }
-        return messageThreadResponseDTOList;
+        return messageThreadResponseDtoList;
     }
 
-    public String putPreference(Member member, Long messageId, PreferenceDTO preferenceDTO){
+    public String putPreference(Member member, Long messageId, PreferenceDto preferenceDTO){
         updatePreference(member, messageId, preferenceDTO);
         // 토론방 내부 ratio 변경 필요
         return "success!!";
     }
 
-    private void updatePreference(Member member, Long messageId, PreferenceDTO preferenceDTO){
+    private void updatePreference(Member member, Long messageId, PreferenceDto preferenceDTO){
         // 로직 개선 가능성 있음, 아이디어 생기면 수정할 예정
         Message message = messageRepository.findById(messageId).orElseThrow();
         Optional<Preference> curPreference = preferenceRepository.findByMemberAndMessage(member, message);
