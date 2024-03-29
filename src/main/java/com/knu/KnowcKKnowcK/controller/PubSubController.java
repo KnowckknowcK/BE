@@ -25,7 +25,7 @@ public class PubSubController {
     @Operation(summary = "메세지 보내기", description = "클라이언트가 토론방에 메세지를 보낼 때 요청하는 API")
     @Parameters({
             @Parameter(name = "MessageRequestDto", description = "보낼 메세지 요청 바디",
-                    example = "['roomId': 3, 'content': '보내길 원하는 메세지 내용']")
+                    example = "{'roomId': 3, 'content': '보내길 원하는 메세지 내용'}")
     })
     public void sendMessage(MessageRequestDto messageRequestDTO) {
         member = memberRepository.findById(1L).orElse(null);
@@ -38,7 +38,7 @@ public class PubSubController {
     @Parameters({
             @Parameter(name = "messageId", description = "메세지 스레드를 추가하길 바라는 메세지 ID", example = "3"),
             @Parameter(name = "MessageThreadRequestDto", description = "보낼 메세지 스레드 요청 바디",
-                    example = "['roomId': 3, 'content': '보내길 원하는 메세지 스레드 내용']")
+                    example = "{'roomId': 3, 'content': '보내길 원하는 메세지 스레드 내용'}")
     })
     public void sendMessageThread(@DestinationVariable Long messageId, MessageThreadRequestDto messageThreadRequestDTO) {
         member = memberRepository.findById(1L).orElse(null);
