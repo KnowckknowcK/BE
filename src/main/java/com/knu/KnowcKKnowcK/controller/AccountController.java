@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequiredArgsConstructor
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
     @GetMapping( "/google")
-    public String redirectToGoogle() {
-        return "redirect:/oauth2/authorization/google";
+    public RedirectView redirectToGoogle() {
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("/oauth2/authorization/google");
+        return redirectView;
     }
 
 }
