@@ -1,9 +1,7 @@
 package com.knu.KnowcKKnowcK.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.knu.KnowcKKnowcK.enums.Category;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,9 +12,16 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String category;
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
     private String title;
+
+    @Lob
     private String content;
+
     private LocalDateTime createdTime;
+
     private String articleUrl;
 }
