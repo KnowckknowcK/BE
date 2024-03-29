@@ -1,6 +1,5 @@
 package com.knu.KnowcKKnowcK.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.dto.oauth.OAuthAttributes;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
