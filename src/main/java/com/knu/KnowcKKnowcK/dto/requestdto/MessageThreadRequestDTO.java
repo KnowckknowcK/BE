@@ -14,8 +14,8 @@ public class MessageThreadRequestDTO {
 
     public MessageThread toMessageThread(Member member, Message message){
         return MessageThread.builder()
-                .memberId(member)
-                .messageId(message)
+                .member(member)
+                .message(message)
                 .createdTime(LocalDateTime.now())
                 .content(content)
                 .build();

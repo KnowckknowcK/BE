@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -17,13 +19,15 @@ import java.time.LocalDateTime;
 public class MessageThread {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long messageThreadId;
+    private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="message_id")
-    private Message messageId;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Message message;
     @ManyToOne
     @JoinColumn(name="member_id")
-    private Member memberId;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Member member;
 
     private String content;
     private LocalDateTime createdTime;
@@ -33,7 +37,7 @@ public class MessageThread {
                 .content(content)
                 .createdTime(createdTime)
                 .parentMessageId(parentMessageId)
-                .writer(memberId.getName())
+                .writer(member.getName())
                 .build();
     }
 }

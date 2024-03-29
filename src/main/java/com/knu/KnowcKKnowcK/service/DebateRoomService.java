@@ -3,6 +3,7 @@ package com.knu.KnowcKKnowcK.service;
 import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.MemberDebate;
+import com.knu.KnowcKKnowcK.domain.MemberDebateId;
 import com.knu.KnowcKKnowcK.utils.db.DeleteUtils;
 import com.knu.KnowcKKnowcK.utils.db.FindUtils;
 import com.knu.KnowcKKnowcK.utils.db.SaveUtils;
@@ -36,9 +37,11 @@ public class DebateRoomService {
         return "찬성";
     }
     private MemberDebate buildMemberDebate(Member member, DebateRoom debateRoom, String position){
+        MemberDebateId memberDebateId = new MemberDebateId(member.getId(), debateRoom.getId());
         return MemberDebate.builder()
-                .debateRoomId(debateRoom)
-                .memberId(member)
+                .id(memberDebateId)
+                .member(member)
+                .debateRoom(debateRoom)
                 .position(position)
                 .build();
     }

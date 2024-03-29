@@ -11,8 +11,8 @@ public class PreferenceDTO {
 
     public Preference toPreference(Member member, Message message){
         return Preference.builder()
-                .messageId(message)
-                .memberId(member)
+                .message(message)
+                .member(member)
                 .isLike(isLike)
                 .build();
 

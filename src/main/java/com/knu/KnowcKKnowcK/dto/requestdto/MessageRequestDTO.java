@@ -15,8 +15,8 @@ public class MessageRequestDTO {
 
     public Message toMessage( Member member, DebateRoom debateRoom){
         return Message.builder()
-                .memberId(member)
-                .debateRoomId(debateRoom)
+                .member(member)
+                .debateRoom(debateRoom)
                 .content(content)
                 .createdTime(LocalDateTime.now())
                 .build();

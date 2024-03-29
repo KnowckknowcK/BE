@@ -1,6 +1,5 @@
 package com.knu.KnowcKKnowcK.domain;
 
-import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDTO;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,27 +19,28 @@ import java.time.LocalDateTime;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long messageId;
+    private Long id;
 
     @JoinColumn(name="debate_room_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private DebateRoom debateRoomId;
+    private DebateRoom debateRoom;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
-    private Member memberId;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Member member;
 
     private String content;
     private LocalDateTime createdTime;
 
     public MessageResponseDTO toMessageDTO(){
         return MessageResponseDTO.builder()
-                .writer(memberId.getName())
+                .writer(member.getName())
                 .content(content)
                 .createdTime(createdTime)
-                .roomId(debateRoomId.getDebateRoomId())
-                .messageId(messageId)
+                .roomId(debateRoom.getId())
+                .messageId(id)
                 .build();
     }
 }

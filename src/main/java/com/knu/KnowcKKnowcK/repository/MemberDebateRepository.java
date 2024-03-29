@@ -6,5 +6,5 @@ import com.knu.KnowcKKnowcK.domain.MemberDebate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberDebateRepository extends JpaRepository<MemberDebate, Long> {
-    MemberDebate findByMemberIdAndDebateRoomId(Member memberId, DebateRoom debateRoomId);
+    MemberDebate findByMemberAndDebateRoom(Member member, DebateRoom debateRoom);
 }

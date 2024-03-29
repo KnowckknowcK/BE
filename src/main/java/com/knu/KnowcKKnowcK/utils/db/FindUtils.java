@@ -22,18 +22,18 @@ public class FindUtils {
         return debateRoom;
     }
     public MemberDebate findMemberDebate(Member member, DebateRoom debateRoom){
-        return memberDebateRepository.findByMemberIdAndDebateRoomId(member, debateRoom);
+        return memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom);
     }
 
     public List<Message> findMessageList(DebateRoom debateRoom){
-        return messageRepository.findByDebateRoomId(debateRoom);
+        return messageRepository.findByDebateRoom(debateRoom);
     }
     public Member findMember(Long id){
         return memberRepository.findById(id).orElse(null);
     }
 
     public Preference findPreference(Member member, Message message){
-        return preferenceRepository.findByMemberIdAndMessageId(member, message);
+        return preferenceRepository.findByMemberAndMessage(member, message);
 
     }
 
@@ -42,6 +42,6 @@ public class FindUtils {
     }
 
     public List<MessageThread> findMessageThread(Message message){
-        return messageThreadRepository.findByMessageId(message);
+        return messageThreadRepository.findByMessage(message);
     }
 }

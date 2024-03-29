@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Data
@@ -12,15 +14,19 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class MemberDebate {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberDebateId;
+    @EmbeddedId
+    private MemberDebateId id;
     @ManyToOne
+    @MapsId("memberId")
     @JoinColumn(name="member_id")
-    private Member memberId;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Member member;
+
     @ManyToOne
+    @MapsId("debateRoomId")
     @JoinColumn(name="debate_room_id")
-    private DebateRoom debateRoomId;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private DebateRoom debateRoom;
 
     private String position;
 }
