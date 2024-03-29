@@ -1,5 +1,6 @@
 package com.knu.KnowcKKnowcK.domain;
 
+import com.knu.KnowcKKnowcK.enums.Category;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,10 +13,15 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
     private String title;
+
     @Lob
     private String content;
+
     private LocalDateTime createdTime;
+
     private String articleUrl;
 }
