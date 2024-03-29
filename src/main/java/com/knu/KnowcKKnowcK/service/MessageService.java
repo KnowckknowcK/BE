@@ -25,15 +25,19 @@ public class MessageService {
     private final MessageThreadRepository messageThreadRepository;
     private final PreferenceRepository preferenceRepository;
 
-    public void saveMessage(Member member, MessageRequestDto messageRequestDTO){
+    public MessageResponseDto saveMessageAndReturnResponseDto(Member member, MessageRequestDto messageRequestDTO){
         DebateRoom debateRoom = debateRoomRepository.findById(messageRequestDTO.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        messageRepository.save(messageRequestDTO.toMessage(member, debateRoom));
+        Message message = messageRequestDTO.toMessage(member, debateRoom);
+        messageRepository.save(message);
+        return message.toMessageResponseDto();
     }
-    public void saveMessageThread(Member member, Long messageId, MessageThreadRequestDto messageThreadRequestDTO) {
+    public MessageThreadResponseDto saveMessageThreadAndReturnResponseDto(Member member, Long messageId, MessageThreadRequestDto messageThreadRequestDTO) {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        messageThreadRepository.save(messageThreadRequestDTO.toMessageThread(member, message));
+        MessageThread messageThread = messageThreadRequestDTO.toMessageThread(member, message);
+        messageThreadRepository.save(messageThread);
+        return messageThread.toMessageThreadResponseDto(messageId);
     }
 
     public List<MessageResponseDto> getMessages(Long roomId){
@@ -43,7 +47,7 @@ public class MessageService {
 
         List<MessageResponseDto> messageResponseDtoList = new ArrayList<>();
         for (Message message: messageList) {
-            messageResponseDtoList.add(message.toMessageDto());
+            messageResponseDtoList.add(message.toMessageResponseDto());
         }
         return messageResponseDtoList;
     }
@@ -55,7 +59,7 @@ public class MessageService {
 
         List<MessageThreadResponseDto> messageThreadResponseDtoList = new ArrayList<>();
         for (MessageThread messageThread: messageThraedList) {
-            messageThreadResponseDtoList.add(messageThread.toMessageThreadDto(messageId));
+            messageThreadResponseDtoList.add(messageThread.toMessageThreadResponseDto(messageId));
         }
         return messageThreadResponseDtoList;
     }
