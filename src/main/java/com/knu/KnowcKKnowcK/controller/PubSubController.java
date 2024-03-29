@@ -3,6 +3,8 @@ package com.knu.KnowcKKnowcK.controller;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.MessageThreadRequestDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,17 +22,21 @@ public class PubSubController {
     private final SimpMessagingTemplate template;
     private final MessageService messageService;
     private final MemberRepository memberRepository;
-    private Member member;
+    private Member member; // 로그인 기능 추가시 수정 예정
     @MessageMapping(value = "/message")
     @Operation(summary = "메세지 보내기", description = "클라이언트가 토론방에 메세지를 보낼 때 요청하는 API")
     @Parameters({
             @Parameter(name = "MessageRequestDto", description = "보낼 메세지 요청 바디",
                     example = "{'roomId': 3, 'content': '보내길 원하는 메세지 내용'}")
     })
-    public void sendMessage(MessageRequestDto messageRequestDTO) {
+    public void sendMessage(MessageRequestDto messageRequestDto) {
         member = memberRepository.findById(1L).orElse(null);
-        messageService.saveMessage(member, messageRequestDTO);
-        template.convertAndSend("/sub/room/" + messageRequestDTO.getRoomId(), messageRequestDTO);
+        MessageResponseDto messageResponseDto = messageService.saveAndReturnMessage(member, messageRequestDto);
+        template.convertAndSend(
+                "/sub/room/" +
+                        messageRequestDto.getRoomId(),
+                        messageResponseDto
+        );
     }
 
     @MessageMapping(value = "/message/{messageId}")
@@ -40,13 +46,17 @@ public class PubSubController {
             @Parameter(name = "MessageThreadRequestDto", description = "보낼 메세지 스레드 요청 바디",
                     example = "{'roomId': 3, 'content': '보내길 원하는 메세지 스레드 내용'}")
     })
-    public void sendMessageThread(@DestinationVariable Long messageId, MessageThreadRequestDto messageThreadRequestDTO) {
+    public void sendMessageThread(@DestinationVariable Long messageId, MessageThreadRequestDto messageThreadRequestDto) {
         member = memberRepository.findById(1L).orElse(null);
-        messageService.saveMessageThread(member, messageId,messageThreadRequestDTO);
-        template.convertAndSend("/sub/room/" +
-                        messageThreadRequestDTO.getRoomId() +
+
+        MessageThreadResponseDto messageThread = messageService
+                .saveAndReturnMessageThread(member, messageId, messageThreadRequestDto);
+        template.convertAndSend(
+                "/sub/room/" +
+                        messageThreadRequestDto.getRoomId() +
                         messageId,
-                messageThreadRequestDTO);
+                        messageThread
+        );
     }
 
 }
