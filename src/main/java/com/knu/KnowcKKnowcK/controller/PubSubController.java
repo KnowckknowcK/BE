@@ -31,7 +31,7 @@ public class PubSubController {
     })
     public void sendMessage(MessageRequestDto messageRequestDto) {
         member = memberRepository.findById(1L).orElse(null);
-        MessageResponseDto messageResponseDto = messageService.saveMessageAndReturnResponseDto(member, messageRequestDto);
+        MessageResponseDto messageResponseDto = messageService.saveAndReturnMessage(member, messageRequestDto);
         template.convertAndSend(
                 "/sub/room/" +
                         messageRequestDto.getRoomId(),
@@ -50,7 +50,7 @@ public class PubSubController {
         member = memberRepository.findById(1L).orElse(null);
 
         MessageThreadResponseDto messageThread = messageService
-                .saveMessageThreadAndReturnResponseDto(member, messageId, messageThreadRequestDto);
+                .saveAndReturnMessageThread(member, messageId, messageThreadRequestDto);
         template.convertAndSend(
                 "/sub/room/" +
                         messageThreadRequestDto.getRoomId() +

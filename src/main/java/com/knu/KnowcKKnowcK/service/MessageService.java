@@ -25,16 +25,17 @@ public class MessageService {
     private final MessageThreadRepository messageThreadRepository;
     private final PreferenceRepository preferenceRepository;
 
-    public MessageResponseDto saveMessageAndReturnResponseDto(Member member, MessageRequestDto messageRequestDTO){
+    public MessageResponseDto saveAndReturnMessage(Member member, MessageRequestDto messageRequestDTO){
         DebateRoom debateRoom = debateRoomRepository.findById(messageRequestDTO.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         Message message = messageRequestDTO.toMessage(member, debateRoom);
         messageRepository.save(message);
         return message.toMessageResponseDto();
     }
-    public MessageThreadResponseDto saveMessageThreadAndReturnResponseDto(Member member, Long messageId, MessageThreadRequestDto messageThreadRequestDTO) {
+    public MessageThreadResponseDto saveAndReturnMessageThread(Member member, Long messageId, MessageThreadRequestDto messageThreadRequestDTO) {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+
         MessageThread messageThread = messageThreadRequestDTO.toMessageThread(member, message);
         messageThreadRepository.save(messageThread);
         return messageThread.toMessageThreadResponseDto(messageId);
