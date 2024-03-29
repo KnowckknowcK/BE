@@ -35,7 +35,7 @@ class LoadArticlesControllerTest {
     @DisplayName("id에 맞는 지문 1개를 조회한다.")
     void loadArticleById() throws Exception{
 
-        Long articleId = 1L;
+        Long articleId = 2L;
         mockMvc.perform(MockMvcRequestBuilders.get("/api/article/{articleId}", articleId)).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value(articleId))
