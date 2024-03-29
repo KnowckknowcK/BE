@@ -5,6 +5,8 @@ import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.MemberDebate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface MemberDebateRepository extends JpaRepository<MemberDebate, Long> {
-    MemberDebate findByMemberAndDebateRoom(Member member, DebateRoom debateRoom);
+    Optional<MemberDebate> findByMemberAndDebateRoom(Member member, DebateRoom debateRoom);
 }

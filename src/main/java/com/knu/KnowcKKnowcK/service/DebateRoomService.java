@@ -4,31 +4,29 @@ import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.MemberDebate;
 import com.knu.KnowcKKnowcK.domain.MemberDebateId;
-import com.knu.KnowcKKnowcK.utils.db.DeleteUtils;
-import com.knu.KnowcKKnowcK.utils.db.FindUtils;
-import com.knu.KnowcKKnowcK.utils.db.SaveUtils;
+import com.knu.KnowcKKnowcK.repository.DebateRoomRepository;
+import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class DebateRoomService {
-    private final FindUtils findUtils;
-    private final SaveUtils saveUtils;
-    private final DeleteUtils deleteUtils;
+    private final DebateRoomRepository debateRoomRepository;
+    private final MemberDebateRepository memberDebateRepository;
     public String participateInDebateRoom(Member member, Long debateRoomId){
-        DebateRoom debateRoom = findUtils.findDebateRoom(debateRoomId);
+        DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId).orElseThrow();
         MemberDebate memberDebate = buildMemberDebate(member, debateRoom, decidePosition());
-        saveUtils.saveMemberDebate(memberDebate);
+        memberDebateRepository.save(memberDebate);
         // debateRoom에 있는 score를 바꿔주기
 
         return "참여 성공";
     }
 
     public void leaveDebateRoom(Member member, Long debateRoomId){
-        DebateRoom debateRoom = findUtils.findDebateRoom(debateRoomId);
-        MemberDebate memberDebate = findUtils.findMemberDebate(member, debateRoom);
-        deleteUtils.deleteMemberDebate(memberDebate);
+        DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId).orElseThrow();
+        MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom).orElseThrow();
+        memberDebateRepository.delete(memberDebate);
         // debateRoom에 있는 score를 바꿔주기
 
     }

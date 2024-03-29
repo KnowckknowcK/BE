@@ -14,14 +14,17 @@ import org.hibernate.annotations.OnDeleteAction;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Preference {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private PreferenceId id;
+
     @ManyToOne
+    @MapsId("memberId")
     @JoinColumn(name="member_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
+
     @ManyToOne
+    @MapsId("messageId")
     @JoinColumn(name="message_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Message message;
