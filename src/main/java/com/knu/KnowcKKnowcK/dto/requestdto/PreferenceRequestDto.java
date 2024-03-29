@@ -9,7 +9,7 @@ import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import lombok.Data;
 
 @Data
-public class PreferenceDto {
+public class PreferenceRequestDto {
     private Boolean isLike;
 
     public Preference toPreference(Member member, Message message){
