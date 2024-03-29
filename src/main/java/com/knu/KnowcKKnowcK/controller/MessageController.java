@@ -43,10 +43,9 @@ public class MessageController {
     @Operation(summary = "좋아요/싫어요 추가 API", description = "특정 메세지에 대한 좋아요/싫어요를 표시할 때 요청하는 API")
     @Parameters({
             @Parameter(name = "messageId", description = "좋아효/싫어요를 추가하길 바라는 특정 메세지 ID", example = "3"),
-            @Parameter(name = "PreferenceDto", description = "좋아요/싫어요 추가 요청 바디", example = "{'like': true}")
+            @Parameter(name = "PreferenceDto", description = "좋아요/싫어요 추가 요청 바디", example = "{'isLike': true}")
     })
     public ResponseEntity<String> putPreference(@PathVariable Long messageId, @RequestBody PreferenceDto preferenceDTO) {
-        // DTO 빈 경우 예외처리 필요
         Member member = memberRepository.findById(1L).orElse(null);
         return ResponseEntity.ok(messageService.putPreference(member, messageId, preferenceDTO));
     }

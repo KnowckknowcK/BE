@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class DebateRoomController {
     final private DebateRoomService debateRoomService;
     private final MemberRepository memberRepository;
-    private Member member;
+    private Member member; // 로그인 기능 추가되면 수정 예정
 
     @PostMapping("/{debateRoomId}")
     @Operation(summary = "토론방 참여 API", description = "클라이언트가 토론방에 참여하길 바랄 때 요청하는 API")

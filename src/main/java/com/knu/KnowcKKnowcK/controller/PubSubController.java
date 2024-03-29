@@ -20,7 +20,7 @@ public class PubSubController {
     private final SimpMessagingTemplate template;
     private final MessageService messageService;
     private final MemberRepository memberRepository;
-    private Member member;
+    private Member member; // 로그인 기능 추가시 수정 예정
     @MessageMapping(value = "/message")
     @Operation(summary = "메세지 보내기", description = "클라이언트가 토론방에 메세지를 보낼 때 요청하는 API")
     @Parameters({
