@@ -4,6 +4,8 @@ import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.MemberDebate;
 import com.knu.KnowcKKnowcK.domain.MemberDebateId;
+import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.DebateRoomRepository;
 import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,8 @@ public class DebateRoomService {
     private final DebateRoomRepository debateRoomRepository;
     private final MemberDebateRepository memberDebateRepository;
     public String participateInDebateRoom(Member member, Long debateRoomId){
-        DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId).orElseThrow();
+        DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         MemberDebate memberDebate = buildMemberDebate(member, debateRoom, decidePosition());
         memberDebateRepository.save(memberDebate);
         // debateRoom에 있는 score를 바꿔주기
@@ -24,7 +27,8 @@ public class DebateRoomService {
     }
 
     public void leaveDebateRoom(Member member, Long debateRoomId){
-        DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId).orElseThrow();
+        DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom).orElseThrow();
         memberDebateRepository.delete(memberDebate);
         // debateRoom에 있는 score를 바꿔주기
