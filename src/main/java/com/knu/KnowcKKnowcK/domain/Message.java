@@ -34,7 +34,7 @@ public class Message {
     private String content;
     private LocalDateTime createdTime;
 
-    public MessageResponseDto toMessageDto(){
+    public MessageResponseDto toMessageResponseDto(){
         return MessageResponseDto.builder()
                 .writer(member.getName())
                 .content(content)
