@@ -1,7 +1,5 @@
 package com.knu.KnowcKKnowcK.service.chatGptService;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.KnowcKKnowcK.config.ChatGptConfig;
 import com.knu.KnowcKKnowcK.dto.prompt.SummaryPrompt;
 import com.knu.KnowcKKnowcK.dto.requestdto.ChatgptRequestDto;
@@ -24,12 +22,6 @@ public class SummaryFeedbackService implements ChatGptService{
         messageList.add(new ChatgptRequestDto.Message("user", SummaryPrompt.getInstance().getPrompt() + article + summary));
         ChatgptRequestDto requestDto = new ChatgptRequestDto(messageList);
 
-
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonString = mapper.writeValueAsString(requestDto);
-            System.out.println(jsonString);
-        }catch (JsonProcessingException e){}
 
         ChatgptResponseDto responseDto = chatGptConfig.gptClient()
                 .post()
