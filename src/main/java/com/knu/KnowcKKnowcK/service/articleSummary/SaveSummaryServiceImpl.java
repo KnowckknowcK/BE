@@ -14,7 +14,6 @@ import com.knu.KnowcKKnowcK.repository.SummaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
         Summary savedSummary = summaryRepository.save(summary);
 
         if (savedSummary.getStatus().equals(Status.ING)){
-            return new SummaryResponseDto("임시 저장이 완료되었습니다.",LocalDate.now());
+            return new SummaryResponseDto("임시 저장이 완료되었습니다.");
 
         }
 

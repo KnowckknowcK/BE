@@ -37,7 +37,7 @@ class SaveSummaryTest {
 
     @Test
     @Transactional
-    @DisplayName("요약에 성공한다.")
+    @DisplayName("요약 자동 제출에 성공하면 200, 실패하면 400을 반환한다.")
     void saveSummary() throws Exception {
 
         //given

@@ -12,13 +12,14 @@ import java.time.LocalDate;
 public class SummaryResponseDto {
 
     private Long id;
+
     private String content;
 
     private int score;
+
     private String returnMessage;
 
     private LocalDate localDate;
-
 
 
     public SummaryResponseDto(SummaryFeedback feedback){
@@ -27,12 +28,8 @@ public class SummaryResponseDto {
         this.score = feedback.getScore();
     }
 
-
-    public SummaryResponseDto(String msg, LocalDate localDate){
+    public SummaryResponseDto(String msg){
         this.returnMessage = msg;
-        this.localDate = localDate;
+        this.localDate = LocalDate.now();
     }
-
-
-
 }
