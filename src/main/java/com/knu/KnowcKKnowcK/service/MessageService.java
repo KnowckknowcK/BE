@@ -72,7 +72,7 @@ public class MessageService {
         return messageThreadResponseDtoList;
     }
 
-    public double putPreference(Member member, Long messageId, PreferenceRequestDto preferenceRequestDto){
+    public Double putPreference(Member member, Long messageId, PreferenceRequestDto preferenceRequestDto){
         preferenceRequestDto.validate();
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
