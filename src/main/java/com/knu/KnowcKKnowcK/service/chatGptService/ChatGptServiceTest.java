@@ -6,12 +6,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ChatGptServiceTest {
-    @Qualifier("opinionFeedbackService") // or summaryFeedbackService
-    private final ChatGptService chatGptService;
     @Autowired
-    public ChatGptServiceTest( ChatGptService chatGptService) {
-        this.chatGptService = chatGptService;
-    }
+    @Qualifier("opinionFeedbackService") // or summaryFeedbackService
+    private ChatGptService chatGptService;
 
     public String test(){
         return chatGptService.callGptApi("오늘의 날씨","오늘 날씨");

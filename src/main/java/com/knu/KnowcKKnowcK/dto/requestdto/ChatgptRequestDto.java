@@ -2,17 +2,12 @@ package com.knu.KnowcKKnowcK.dto.requestdto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ChatgptRequestDto implements Serializable {
     private List<Message> messages;
     @Data
@@ -23,7 +18,7 @@ public class ChatgptRequestDto implements Serializable {
     }
     private String model = "gpt-3.5-turbo";
     @JsonProperty("max_tokens")
-    private Integer maxTokens=100;
+    private Integer maxTokens = 100;
 
 //    private Double temperature=1.0;
 //    @JsonProperty("stop")
