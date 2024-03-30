@@ -17,7 +17,10 @@ public class DebateRoom {
     private Article article;
 
     private String title;
-    private Double ratio;
-    private Double score;
+
+    private Long agreeNum = 0L;
+    private Long agreeLikesNum = 0L;
+    private Long disagreeNum = 0L;
+    private Long disagreeLikesNum = 0L;
 
 }

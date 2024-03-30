@@ -24,13 +24,18 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final MessageThreadRepository messageThreadRepository;
     private final PreferenceRepository preferenceRepository;
+    private final MemberDebateRepository memberDebateRepository;
 
     public MessageResponseDto saveAndReturnMessage(Member member, MessageRequestDto messageRequestDto){
         DebateRoom debateRoom = debateRoomRepository.findById(messageRequestDto.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+
         Message message = messageRequestDto.toMessage(member, debateRoom);
         messageRepository.save(message);
-        return message.toMessageResponseDto();
+
+        return message.toMessageResponseDto(memberDebate.getPosition().name());
     }
     public MessageThreadResponseDto saveAndReturnMessageThread(Member member, Long messageId, MessageThreadRequestDto messageThreadRequestDto) {
         Message message = messageRepository.findById(messageId)
@@ -41,14 +46,16 @@ public class MessageService {
         return messageThread.toMessageThreadResponseDto(messageId);
     }
 
-    public List<MessageResponseDto> getMessages(Long roomId){
+    public List<MessageResponseDto> getMessages(Member member, Long roomId){
         DebateRoom debateRoom = debateRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         List<Message> messageList = messageRepository.findByDebateRoom(debateRoom);
+        MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
         List<MessageResponseDto> messageResponseDtoList = new ArrayList<>();
         for (Message message: messageList) {
-            messageResponseDtoList.add(message.toMessageResponseDto());
+            messageResponseDtoList.add(message.toMessageResponseDto(memberDebate.getPosition().name()));
         }
         return messageResponseDtoList;
     }
@@ -65,30 +72,58 @@ public class MessageService {
         return messageThreadResponseDtoList;
     }
 
-    public String putPreference(Member member, Long messageId, PreferenceRequestDto preferenceRequestDto){
+    public double putPreference(Member member, Long messageId, PreferenceRequestDto preferenceRequestDto){
         preferenceRequestDto.validate();
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-
-        updatePreference(member, message, preferenceRequestDto);
+        // 1. 메세지로부터 그 메세지의 Position을 찾아 내는 방법 -> 암격, 성늘 저하
+        // 2. 클라이언트로부터 Position을 입력 바디로 받는 방법 -> 빠름, 요청 조작 시 오류 발생 가능성 존재
+        // -> 현재는 2번 선택(추후 오류 발생이 잦다면 1번 사용할 예정)
+        boolean isIncrease = updatePreference(member, message, preferenceRequestDto);
         // 토론방 내부 ratio 변경 필요
-        return "success!!";
+        DebateRoom debateRoom = changePreferenceRatio(
+                preferenceRequestDto.getIsAgree(),
+                isIncrease,
+                message.getDebateRoom());
+
+        return calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()) * 100;
     }
 
-    private void updatePreference(Member member, Message message, PreferenceRequestDto preferenceRequestDto){
-        // 로직 개선 가능성 있음, 아이디어 생기면 수정할 예정
+    private boolean updatePreference(Member member, Message message, PreferenceRequestDto preferenceRequestDto){
         Optional<Preference> curPreference = preferenceRepository.findByMemberAndMessage(member, message);
 
         // 현재 preference 상태에 따라 적절히 처리
         if(curPreference.isEmpty()){ // null 일 경우 생성 후 저장
             Preference preference = preferenceRequestDto.toPreference(member, message);
             preferenceRepository.save(preference);
-        } // Preference 가 이미 같은 상태로 있는 경우 삭제
-        else if(curPreference.get().isLike() == preferenceRequestDto.getIsLike()){
+            return true;
+        } else { // Preference 가 이미 같은 상태로 있는 경우 삭제
             preferenceRepository.delete(curPreference.get());
-        } else { // preference 가 반대의 상태라면 바꾸고 저장
-            curPreference.get().setLike(preferenceRequestDto.getIsLike());
-            preferenceRepository.save(curPreference.get());
+            return false;
         }
+    }
+
+    private DebateRoom changePreferenceRatio(boolean isAgree,boolean isIncrease, DebateRoom debateRoom){
+        long curPreference;
+        if(isAgree){ // 찬성 입장 메세지인 경우
+            curPreference = debateRoom.getAgreeLikesNum();
+            if(isIncrease)
+                debateRoom.setAgreeLikesNum(curPreference + 1);
+            else
+                debateRoom.setAgreeLikesNum(curPreference - 1);
+        } else{ // 반대 입장 메세지인 경우
+            curPreference = debateRoom.getDisagreeLikesNum();
+            if(isIncrease)
+                debateRoom.setDisagreeLikesNum(curPreference + 1);
+            else
+                debateRoom.setDisagreeLikesNum(curPreference - 1);
+        }
+        debateRoomRepository.save(debateRoom);
+        return debateRoom;
+    }
+
+    private double calculateRatio(long agreeLikesNum, long disagreeLikesNum){
+        if(agreeLikesNum == 0 && disagreeLikesNum == 0) return 0;
+        return (double) agreeLikesNum / (agreeLikesNum + disagreeLikesNum);
     }
 }
