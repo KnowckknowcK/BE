@@ -48,6 +48,9 @@ dependencies {
     //websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+	//webflux(chatgpt 비동기 호출)
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 }
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
