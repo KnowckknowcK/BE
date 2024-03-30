@@ -1,5 +1,6 @@
 package com.knu.KnowcKKnowcK.controller.articleSummary;
 
+import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.enums.Category;
@@ -50,7 +51,7 @@ class SaveSummaryTest {
         member.setLevel(1L);
         member.setIsOAuth(false);
 
-        memberRepository.save(member);
+        Long memberId = memberRepository.save(member).getId();
 
         Article article = new Article();
         article.setCategory(Category.ECONOMICS);
@@ -59,22 +60,23 @@ class SaveSummaryTest {
         article.setCreatedTime(LocalDateTime.now());
         article.setArticleUrl("http://example.com");
 
-        articleRepository.save(article);
+        Long articleId = articleRepository.save(article).getId();
 
         String successJson = "{\n" +
-                "\"articleId\" : 1,\n"+
-                "\"writerId\" : 1,\n"+
+                "\"articleId\" : "+articleId+ ",\n"+
+                "\"writerId\" : "+memberId+",\n"+
                 "  \"content\": \"이것은 요약 내용입니다.\",\n" +
                 "  \"takenTime\" : 30,\n" +
                 "  \"status\": \"ING\"\n" +
                 "}\n";
 
         String failedJson = "{\n" +
-                "\"articleId\" : null,\n"+
+                "\"articleId\" : "+articleId+ ",\n"+
+
                 "\"writerId\" : 1,\n"+
-                "  \"content\": \"\",\n" +
+                "  \"content\": null,\n" +
                 "  \"takenTime\": -1,\n" +
-                "  \"status\": \"INVALID_STATUS\"\n" +
+                "  \"status\": \"ING\"\n" +
                 "}\n";
 
         //성공 테스트 케이스
@@ -83,14 +85,15 @@ class SaveSummaryTest {
                 .content(successJson))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.returnMessage").value("임시 저장이 완료되었습니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(SuccessCode.OK.getStatus()))
                         .andDo(print());
-
 
         //실패 테스트 케이스
         mockMvc.perform(MockMvcRequestBuilders.post("/api/summary/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(failedJson))
-                .andExpect(MockMvcResultMatchers.status().is(ErrorCode.INVALID_INPUT.getStatus()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(ErrorCode.INVALID_INPUT.getStatus()))
                 .andDo(print());
     }
 }
