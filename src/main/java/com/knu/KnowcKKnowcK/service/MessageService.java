@@ -10,12 +10,15 @@ import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
+import com.knu.KnowcKKnowcK.utils.DebateRoomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.knu.KnowcKKnowcK.utils.DebateRoomUtil.calculateRatio;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,6 @@ public class MessageService {
     private final MessageThreadRepository messageThreadRepository;
     private final PreferenceRepository preferenceRepository;
     private final MemberDebateRepository memberDebateRepository;
-
     public MessageResponseDto saveAndReturnMessage(Member member, MessageRequestDto messageRequestDto){
         DebateRoom debateRoom = debateRoomRepository.findById(messageRequestDto.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
@@ -76,6 +78,7 @@ public class MessageService {
         preferenceRequestDto.validate();
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        // 메세지가 찬성인지 반대인지 구분하는 로직
         // 1. 메세지로부터 그 메세지의 Position을 찾아 내는 방법 -> 암격, 성늘 저하
         // 2. 클라이언트로부터 Position을 입력 바디로 받는 방법 -> 빠름, 요청 조작 시 오류 발생 가능성 존재
         // -> 현재는 2번 선택(추후 오류 발생이 잦다면 1번 사용할 예정)
@@ -86,7 +89,7 @@ public class MessageService {
                 isIncrease,
                 message.getDebateRoom());
 
-        return calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()) * 100;
+        return calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum());
     }
 
     private boolean updatePreference(Member member, Message message, PreferenceRequestDto preferenceRequestDto){
@@ -120,10 +123,5 @@ public class MessageService {
         }
         debateRoomRepository.save(debateRoom);
         return debateRoom;
-    }
-
-    private double calculateRatio(long agreeLikesNum, long disagreeLikesNum){
-        if(agreeLikesNum == 0 && disagreeLikesNum == 0) return 0;
-        return (double) agreeLikesNum / (agreeLikesNum + disagreeLikesNum);
     }
 }
