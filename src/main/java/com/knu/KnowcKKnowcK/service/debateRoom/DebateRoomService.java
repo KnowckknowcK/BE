@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.service;
+package com.knu.KnowcKKnowcK.service.debateRoom;
 
 import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.domain.Member;
@@ -12,7 +12,7 @@ import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.knu.KnowcKKnowcK.utils.DebateRoomUtil.calculateRatio;
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
 
 @Service
 @RequiredArgsConstructor

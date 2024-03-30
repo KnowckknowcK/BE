@@ -4,7 +4,7 @@ import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
-import com.knu.KnowcKKnowcK.service.DebateRoomService;
+import com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;

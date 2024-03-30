@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.service;
+package com.knu.KnowcKKnowcK.service.debateRoom;
 
 
 import com.knu.KnowcKKnowcK.domain.*;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.knu.KnowcKKnowcK.utils.DebateRoomUtil.calculateRatio;
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
 
 @Service
 @RequiredArgsConstructor

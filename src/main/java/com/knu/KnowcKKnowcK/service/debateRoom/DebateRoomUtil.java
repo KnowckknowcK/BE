@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.utils;
+package com.knu.KnowcKKnowcK.service.debateRoom;
 
 import org.springframework.stereotype.Component;
 
