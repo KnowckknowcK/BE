@@ -10,7 +10,6 @@ import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
-import com.knu.KnowcKKnowcK.utils.DebateRoomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
