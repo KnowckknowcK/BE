@@ -1,6 +1,6 @@
 package com.knu.KnowcKKnowcK.controller.articleSummary;
 
-import com.knu.KnowcKKnowcK.apiResponse.ApiResponse;
+import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
@@ -27,14 +27,14 @@ public class SaveSummaryController {
     @PostMapping("/save")
     @Tag(name = "요약 저장", description = "지문을 읽고 작성한 요약을 저장하는 기능이다. 자동/수동으로 저장할 수 있다.")
     @Operation(summary = "요약 저장", description = "지문을 읽고 작성한 요약을 저장하는 기능이다. 자동/수동으로 저장할 수 있다.")
-    ApiResponse<?> saveSummary(@RequestBody @Valid SummaryRequestDto dto){
+    ApiResponseDto<?> saveSummary(@RequestBody @Valid SummaryRequestDto dto){
 
         try{
             SummaryResponseDto summaryResponseDto = saveSummaryService.saveSummary(dto);
-            return ApiResponse.success(SuccessCode.OK, summaryResponseDto);
+            return ApiResponseDto.success(SuccessCode.OK, summaryResponseDto);
 
         }catch (CustomException e) {
-            return ApiResponse.error(ErrorCode.FAILED, new ExceptionDto(ErrorCode.FAILED,"잘못된 요청입니다."));
+            return ApiResponseDto.error(ErrorCode.FAILED, new ExceptionDto(ErrorCode.FAILED,"잘못된 요청입니다."));
         }
 
     }
