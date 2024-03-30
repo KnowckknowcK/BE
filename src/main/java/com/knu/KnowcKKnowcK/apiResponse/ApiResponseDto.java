@@ -8,18 +8,18 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class ApiResponse<T> {
+public class ApiResponseDto<T> {
 
     private final int code;
     private final String message;
     private T data;
 
-    public static <T> ApiResponse<T> success(SuccessCode successCode, T data) {
-        return new ApiResponse<>(successCode.getSuccess().value(),
+    public static <T> ApiResponseDto<T> success(SuccessCode successCode, T data) {
+        return new ApiResponseDto<>(successCode.getSuccess().value(),
                 successCode.getMessage(), data);
     }
-    public static <T> ApiResponse<T> error(ErrorCode errorCode, T data) {
-        return new ApiResponse<>(errorCode.getError().value(),
+    public static <T> ApiResponseDto<T> error(ErrorCode errorCode, T data) {
+        return new ApiResponseDto<>(errorCode.getError().value(),
                 errorCode.getMessage(), data);
     }
 }
