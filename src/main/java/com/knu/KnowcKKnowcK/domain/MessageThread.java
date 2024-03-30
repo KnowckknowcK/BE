@@ -32,7 +32,7 @@ public class MessageThread {
     private String content;
     private LocalDateTime createdTime;
 
-    public MessageThreadResponseDto toMessageThreadDto(Long parentMessageId){
+    public MessageThreadResponseDto toMessageThreadResponseDto(Long parentMessageId){
         return MessageThreadResponseDto.builder()
                 .content(content)
                 .createdTime(createdTime)
