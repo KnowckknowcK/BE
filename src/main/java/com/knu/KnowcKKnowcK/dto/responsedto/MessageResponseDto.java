@@ -12,6 +12,7 @@ public class MessageResponseDto {
     Long roomId;
     Long messageId;
     String writer;
+    String position;
     String content;
     LocalDateTime createdTime;
 }

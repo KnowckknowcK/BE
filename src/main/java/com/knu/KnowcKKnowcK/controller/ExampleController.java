@@ -1,6 +1,6 @@
 package com.knu.KnowcKKnowcK.controller;
 
-import com.knu.KnowcKKnowcK.apiResponse.ApiResponse;
+import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.apiResponse.ExampleDto;
@@ -25,11 +25,11 @@ public class ExampleController {
     @GetMapping("/example")
     @Operation(summary="예시 API",description="swagger와 apiResponseDto의 사용방법에 대한 예시를 보여주기 위한 api")
     @Parameters({@Parameter(name = "op", description = "성공/실패", example = "true")})
-    public ApiResponse<ExampleDto> example(@RequestParam(name="op")String op){
+    public ApiResponseDto<ExampleDto> example(@RequestParam(name="op")String op){
         if(op.equals("true"))
-            return ApiResponse.success(SuccessCode.OK, new ExampleDto("성공한 요청입니다.", LocalDate.now()));
+            return ApiResponseDto.success(SuccessCode.OK, new ExampleDto("성공한 요청입니다.", LocalDate.now()));
         else if (op.equals("false"))
-            return ApiResponse.error(ErrorCode.FAILED, new ExampleDto("실패한 요청입니다.",LocalDate.now()));
+            return ApiResponseDto.error(ErrorCode.FAILED, new ExampleDto("실패한 요청입니다.",LocalDate.now()));
         else
             throw new CustomException(ErrorCode.FAILED);
     }

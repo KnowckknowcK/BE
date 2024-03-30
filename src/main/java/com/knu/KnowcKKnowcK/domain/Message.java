@@ -34,13 +34,14 @@ public class Message {
     private String content;
     private LocalDateTime createdTime;
 
-    public MessageResponseDto toMessageDto(){
+    public MessageResponseDto toMessageResponseDto(String position){
         return MessageResponseDto.builder()
                 .writer(member.getName())
                 .content(content)
                 .createdTime(createdTime)
                 .roomId(debateRoom.getId())
                 .messageId(id)
+                .position(position)
                 .build();
     }
 }

@@ -31,8 +31,8 @@ dependencies {
 	//database
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	runtimeOnly 'com.h2database:h2'
+	implementation 'com.mysql:mysql-connector-j'
+	implementation 'com.h2database:h2'
 
 	//thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -47,6 +47,12 @@ dependencies {
   
     //websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	//oauth
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 }
 tasks.named('bootBuildImage') {
