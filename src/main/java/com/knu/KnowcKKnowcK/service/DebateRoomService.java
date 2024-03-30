@@ -4,6 +4,7 @@ import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.MemberDebate;
 import com.knu.KnowcKKnowcK.domain.MemberDebateId;
+import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.DebateRoomRepository;
@@ -34,11 +35,11 @@ public class DebateRoomService {
         // debateRoom에 있는 score를 바꿔주기
 
     }
-    private String decidePosition(){
+    private Position decidePosition(){
         // 기존 찬/반 비율에 따라 찬/반 결정
-        return "찬성";
+        return Position.AGREE;
     }
-    private MemberDebate buildMemberDebate(Member member, DebateRoom debateRoom, String position){
+    private MemberDebate buildMemberDebate(Member member, DebateRoom debateRoom, Position position){
         MemberDebateId memberDebateId = new MemberDebateId(member.getId(), debateRoom.getId());
         return MemberDebate.builder()
                 .id(memberDebateId)
