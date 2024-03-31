@@ -14,6 +14,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class AccountController {
 
     @GetMapping( "/google")
+    @Operation(summary = "구글 로그인 및 회원가입 API", description = "구글 로그인 및 회원가입에 대한 API")
     public RedirectView redirectToGoogle() {
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl("/oauth2/authorization/google");
