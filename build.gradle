@@ -45,8 +45,11 @@ dependencies {
 	//Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
   
-    //websocket
+  //websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	//webflux(chatgpt 비동기 호출)
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 	//security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
