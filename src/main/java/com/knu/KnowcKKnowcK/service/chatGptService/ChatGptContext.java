@@ -1,6 +1,6 @@
 package com.knu.KnowcKKnowcK.service.chatGptService;
 
-import com.knu.KnowcKKnowcK.domain.Option;
+import com.knu.KnowcKKnowcK.enums.Option;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +16,5 @@ public class ChatGptContext {
             return this.summaryFeedbackService.callGptApi(article, answer);
         else
             return this.opinionFeedbackService.callGptApi(article, answer);
-
     }
 }

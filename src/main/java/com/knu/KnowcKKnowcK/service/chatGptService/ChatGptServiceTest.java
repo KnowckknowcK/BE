@@ -1,6 +1,6 @@
 package com.knu.KnowcKKnowcK.service.chatGptService;
 
-import com.knu.KnowcKKnowcK.domain.Option;
+import com.knu.KnowcKKnowcK.enums.Option;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

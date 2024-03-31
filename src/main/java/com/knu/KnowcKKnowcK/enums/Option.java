@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.domain;
+package com.knu.KnowcKKnowcK.enums;
 
 public enum Option {
     SUMMARY,OPINION
