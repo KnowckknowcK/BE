@@ -1,5 +1,6 @@
 package com.knu.KnowcKKnowcK.domain;
 
+import com.knu.KnowcKKnowcK.enums.Position;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +29,6 @@ public class MemberDebate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DebateRoom debateRoom;
 
-    private String position;
+    @Enumerated(EnumType.STRING)
+    private Position position;
 }

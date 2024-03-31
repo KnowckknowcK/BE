@@ -6,7 +6,7 @@ import com.knu.KnowcKKnowcK.dto.requestdto.MessageThreadRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
-import com.knu.KnowcKKnowcK.service.MessageService;
+import com.knu.KnowcKKnowcK.service.debateRoom.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
