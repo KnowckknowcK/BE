@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 public class PreferenceRequestDto {
-    private Boolean isLike;
+    private Boolean isAgree;
 
     public Preference toPreference(Member member, Message message){
         PreferenceId preferenceId = new PreferenceId(member.getId(), message.getId());
@@ -18,13 +18,13 @@ public class PreferenceRequestDto {
                 .id(preferenceId)
                 .message(message)
                 .member(member)
-                .isLike(isLike)
+                .isAgree(isAgree)
                 .build();
 
     }
 
     public void validate(){
-        if(isLike == null){
+        if(isAgree == null){
             throw new CustomException(ErrorCode.INVALID_INPUT);
         }
     }

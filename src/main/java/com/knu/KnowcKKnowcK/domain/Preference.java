@@ -29,5 +29,5 @@ public class Preference {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Message message;
 
-    private boolean isLike;
+    private boolean isAgree;
 }
