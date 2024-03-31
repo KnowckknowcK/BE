@@ -16,4 +16,8 @@ public class SummaryFeedback {
     private String content;
 
     private int score;
+
+    @OneToOne
+    @JoinColumn(name = "summary_id")
+    private Summary summary;
 }

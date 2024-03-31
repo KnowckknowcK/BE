@@ -3,8 +3,6 @@ package com.knu.KnowcKKnowcK.domain;
 import com.knu.KnowcKKnowcK.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -22,12 +20,10 @@ public class Summary {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Article article;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="writer_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Member writer;
 
     @Lob
