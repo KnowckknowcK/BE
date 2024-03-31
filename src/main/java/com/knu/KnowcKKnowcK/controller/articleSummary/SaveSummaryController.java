@@ -34,7 +34,7 @@ public class SaveSummaryController {
             return ApiResponseDto.success(SuccessCode.OK, summaryResponseDto);
 
         }catch (CustomException e) {
-            return ApiResponseDto.error(ErrorCode.FAILED, new ExceptionDto(ErrorCode.FAILED,"잘못된 요청입니다."));
+            return ApiResponseDto.error(ErrorCode.FAILED, new ExceptionDto(ErrorCode.INVALID_INPUT));
         }
 
     }

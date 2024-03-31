@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -37,8 +36,7 @@ class SaveSummaryTest {
 
 
     @Test
-    @Transactional
-    @DisplayName("요약 자동 제출에 성공하면 200, 실패하면 400을 반환한다.")
+    @DisplayName("요약 자동 제출에 성공하면 200, null 값을 요청하면 400을 반환한다.")
     void saveSummary() throws Exception {
 
         //given
@@ -72,7 +70,6 @@ class SaveSummaryTest {
 
         String failedJson = "{\n" +
                 "\"articleId\" : "+articleId+ ",\n"+
-
                 "\"writerId\" : 1,\n"+
                 "  \"content\": null,\n" +
                 "  \"takenTime\": -1,\n" +
