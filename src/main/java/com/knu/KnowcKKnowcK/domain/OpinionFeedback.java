@@ -1,7 +1,10 @@
 package com.knu.KnowcKKnowcK.domain;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Entity
+@Data
 public class OpinionFeedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

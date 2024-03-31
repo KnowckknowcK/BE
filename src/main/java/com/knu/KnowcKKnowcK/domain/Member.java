@@ -45,5 +45,13 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private ArrayList<Opinion> opinions = new ArrayList<>();
 
+    //프로필 수정
+    public void updateProfile(String name, String email, String profileImage) {
+        //닉네임, 계정, 이메일, 프로필 이미지 변경
+        this.name = name;
+        this.email = email;
+        this.profileImage = profileImage;
+    }
+
 
 }
