@@ -1,96 +1,130 @@
 package com.knu.KnowcKKnowcK.controller.articleSummary;
 
-import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.domain.Member;
-import com.knu.KnowcKKnowcK.enums.Category;
-import com.knu.KnowcKKnowcK.exception.ErrorCode;
+import com.knu.KnowcKKnowcK.domain.Summary;
+import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
+import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
+import com.knu.KnowcKKnowcK.enums.Status;
+import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
+import com.knu.KnowcKKnowcK.repository.SummaryFeedbackRepository;
+import com.knu.KnowcKKnowcK.repository.SummaryRepository;
+import com.knu.KnowcKKnowcK.service.articleSummary.SaveSummaryServiceImpl;
+import com.knu.KnowcKKnowcK.service.chatGptService.SummaryFeedbackService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.mockito.ArgumentMatchers.any;
 
-@AutoConfigureMockMvc
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class SaveSummaryTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
+    @Mock
     private MemberRepository memberRepository;
 
-    @Autowired
+    @Mock
     private ArticleRepository articleRepository;
+
+    @Mock
+    private SummaryRepository summaryRepository;
+
+    @InjectMocks
+    private SaveSummaryServiceImpl sut;
+
+
+    @Mock
+    private SummaryFeedbackService summaryFeedbackService;
+
+    @Mock
+    private SummaryFeedbackRepository summaryFeedbackRepository;
+
 
 
     @Test
-    @DisplayName("요약 자동 제출에 성공하면 200, null 값을 요청하면 400을 반환한다.")
-    void saveSummary() throws Exception {
+    @DisplayName("요약 수동 제출에 성공하면 AI 피드백이 반환된다.")
+    void saveSummary_when_not_auto() {
+        Article article = createArticle();
+        Member member = createMember();
+        Summary summary = createSummary(member, article, Status.DONE);
+        Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
+        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
+        Mockito.when(summaryRepository.save(any())).thenReturn(summary);
+        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenReturn("70#content");
+        Mockito.when(summaryFeedbackRepository.save(any())).thenReturn(new SummaryFeedback(1L, "content",70, summary));
+        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
+                summary.getContent(), LocalDateTime.now(), Status.DONE, 100L);
 
-        //given
-        Member member = new Member();
-        member.setEmail("example@example.com");
-        member.setPassword("password123");
-        member.setProfileImage("profile.jpg");
-        member.setName("John Doe");
-        member.setPoint(100L);
-        member.setLevel(1L);
-        member.setIsOAuth(false);
+        SummaryResponseDto summaryResponseDto = sut.saveSummary(summaryRequestDto);
 
-        Long memberId = memberRepository.save(member).getId();
+        Assertions.assertThat(summaryResponseDto.getScore()).isEqualTo(70);
+    }
 
+    @Test
+    @DisplayName("요약 자동 제출에 성공하면 임시저장을 한다.")
+    void saveSummary_when_auto() {
+        Article article = createArticle();
+        Member member = createMember();
+        Summary summary = createSummary(member, article, Status.ING);
+        Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
+        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
+        Mockito.when(summaryRepository.save(any())).thenReturn(summary);
+        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
+                summary.getContent(), LocalDateTime.now(), Status.ING, 100L);
+
+        SummaryResponseDto summaryResponseDto = sut.saveSummary(summaryRequestDto);
+
+        Assertions.assertThat(summaryResponseDto.getReturnMessage()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("저장된 소요 시간이 저장할 소요 시간보다 크면 실패한다.")
+    void saved_takenTime_bigger_than_now_takenTime(){
+        Article article = createArticle();
+        Member member = createMember();
+        Summary summary = createSummary(member, article, Status.ING);
+        Mockito.when(summaryRepository.findByArticleAndWriter(article,member)).thenReturn(Optional.ofNullable(summary));
+        Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
+        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
+        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
+                summary.getContent(), LocalDateTime.now(), Status.ING, 50L);
+
+        Assertions.assertThatThrownBy(()->sut.saveSummary(summaryRequestDto)).isInstanceOf(CustomException.class);
+    }
+
+    Member createMember(){
+        return Member.builder()
+                .email("email@email.com")
+                .name("member")
+                .profileImage("image.com")
+                .isOAuth(false)
+                .build();
+    }
+
+    Article createArticle(){
         Article article = new Article();
-        article.setCategory(Category.ECONOMICS);
-        article.setTitle("제목");
-        article.setContent("내용");
-        article.setCreatedTime(LocalDateTime.now());
-        article.setArticleUrl("http://example.com");
+        article.setContent("기사내용");
+      return article;
+    }
 
-        Long articleId = articleRepository.save(article).getId();
-
-        String successJson = "{\n" +
-                "\"articleId\" : "+articleId+ ",\n"+
-                "\"writerId\" : "+memberId+",\n"+
-                "  \"content\": \"이것은 요약 내용입니다.\",\n" +
-                "  \"takenTime\" : 30,\n" +
-                "  \"status\": \"ING\"\n" +
-                "}\n";
-
-        String failedJson = "{\n" +
-                "\"articleId\" : "+articleId+ ",\n"+
-                "\"writerId\" : 1,\n"+
-                "  \"content\": null,\n" +
-                "  \"takenTime\": -1,\n" +
-                "  \"status\": \"ING\"\n" +
-                "}\n";
-
-        //성공 테스트 케이스
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/summary/save")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(successJson))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.returnMessage").value("임시 저장이 완료되었습니다."))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(SuccessCode.OK.getStatus()))
-                        .andDo(print());
-
-        //실패 테스트 케이스
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/summary/save")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(failedJson))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(ErrorCode.INVALID_INPUT.getStatus()))
-                .andDo(print());
+    Summary createSummary(Member member, Article article, Status status){
+        return Summary.builder()
+                .takenTime(100L)
+                .status(status)
+                .writer(member)
+                .article(article)
+                .content("이것은 요약 내용이다.")
+                .id(1L)
+                .createdTime(LocalDateTime.now())
+                .build();
     }
 }
