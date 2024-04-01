@@ -13,6 +13,7 @@ import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.repository.SummaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -25,16 +26,17 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
     private final MemberRepository memberRepository;
 
     @Override
+    @Transactional
     public SummaryResponseDto saveSummary(SummaryRequestDto dto) {
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
         Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
         Summary summary = dto.toEntity(article, member);
-        Summary savedSummary = summaryRepository.save(summary);
+//        Summary savedSummary = summaryRepository.save(summary);
 
-        member.saveSummary(savedSummary);
+        member.saveSummary(summary);
 
-        if (savedSummary.getStatus().equals(Status.ING)){
+        if (summary.getStatus().equals(Status.ING)){
             return new SummaryResponseDto("임시 저장이 완료되었습니다.");
 
         }
