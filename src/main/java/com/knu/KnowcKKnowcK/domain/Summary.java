@@ -9,21 +9,28 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Summary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id",nullable = false)
     private Member writer;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id")
     private Article article;
     @Lob
     private String content;
     private LocalDateTime createdTime;
     @Enumerated(EnumType.STRING)
     private Status status;
-    private Integer takenTime; //데이터타입 초를 단위로 카운팅
+
+    private Long takenTime;  //Long으로 선언이 더 안전할 것 같음
 }
