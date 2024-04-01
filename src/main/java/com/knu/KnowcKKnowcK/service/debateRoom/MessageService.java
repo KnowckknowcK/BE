@@ -27,6 +27,7 @@ public class MessageService {
     private final MessageThreadRepository messageThreadRepository;
     private final PreferenceRepository preferenceRepository;
     private final MemberDebateRepository memberDebateRepository;
+
     public MessageResponseDto saveAndReturnMessage(Member member, MessageRequestDto messageRequestDto){
         DebateRoom debateRoom = debateRoomRepository.findById(messageRequestDto.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
@@ -36,7 +37,9 @@ public class MessageService {
         Message message = messageRequestDto.toMessage(member, debateRoom);
         messageRepository.save(message);
 
-        return message.toMessageResponseDto(memberDebate.getPosition().name());
+        return message.toMessageResponseDto(memberDebate.getPosition().name(),
+                0, 0,
+                member.getProfileImage());
     }
     public MessageThreadResponseDto saveAndReturnMessageThread(Member member, Long messageId, MessageThreadRequestDto messageThreadRequestDto) {
         Message message = messageRepository.findById(messageId)
@@ -56,7 +59,12 @@ public class MessageService {
 
         List<MessageResponseDto> messageResponseDtoList = new ArrayList<>();
         for (Message message: messageList) {
-            messageResponseDtoList.add(message.toMessageResponseDto(memberDebate.getPosition().name()));
+            messageResponseDtoList.add(message
+                    .toMessageResponseDto(memberDebate.getPosition().name(),
+                            getPreferenceNum(message),
+                            getMessageThreadNum(message) ,
+                            message.getMember().getProfileImage()
+                            ));
         }
         return messageResponseDtoList;
     }
@@ -123,4 +131,13 @@ public class MessageService {
         debateRoomRepository.save(debateRoom);
         return debateRoom;
     }
+
+    private long getPreferenceNum(Message message){
+        return preferenceRepository.findByMessage(message).size();
+    }
+
+    private long getMessageThreadNum(Message message){
+        return messageThreadRepository.findByMessage(message).size();
+    }
+
 }
