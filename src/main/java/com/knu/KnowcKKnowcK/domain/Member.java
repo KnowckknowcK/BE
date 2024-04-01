@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,6 +22,15 @@ public class Member {
     private Long level;
     private Boolean isOAuth;
 
+    //생명주기는 부모쪽에서 관리함
+    //사용자가 작성한 요약문
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Summary> summaries = new ArrayList<>();
+
+    //사용자가 작성한 견해
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Opinion> opinions = new ArrayList<>();
+
     @Builder
     public Member(String name, String email, String profileImage, Boolean isOAuth) {
         this.name = name;
@@ -36,15 +45,6 @@ public class Member {
         return this;
     }
 
-    //생명주기는 부모쪽에서 관리함
-    //사용자가 작성한 요약문
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private ArrayList<Summary> summaries = new ArrayList<>();
-
-    //사용자가 작성한 견해
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private ArrayList<Opinion> opinions = new ArrayList<>();
-
     //프로필 수정
     public void updateProfile(String name, String email, String profileImage) {
         //닉네임, 계정, 이메일, 프로필 이미지 변경
@@ -53,5 +53,10 @@ public class Member {
         this.profileImage = profileImage;
     }
 
+    //요약저장
+
+    public void saveSummary(Summary summary){
+        this.summaries.add(summary);
+    }
 
 }

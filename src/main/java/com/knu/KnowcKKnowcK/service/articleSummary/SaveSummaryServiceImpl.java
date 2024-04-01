@@ -32,6 +32,8 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
         Summary summary = dto.toEntity(article, member);
         Summary savedSummary = summaryRepository.save(summary);
 
+        member.saveSummary(savedSummary);
+
         if (savedSummary.getStatus().equals(Status.ING)){
             return new SummaryResponseDto("임시 저장이 완료되었습니다.");
 
