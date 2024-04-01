@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.Getter;
 
 @Data
-@Getter
 @AllArgsConstructor
 public class ProfileResponseDto {
     //닉네임, 계정, 이메일, 프로필 이미지 반환

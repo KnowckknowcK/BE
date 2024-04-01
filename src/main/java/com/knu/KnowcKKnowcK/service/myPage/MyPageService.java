@@ -10,23 +10,19 @@ import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.DebateRoomRepository;
 import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MyPageService {
     private final MemberRepository memberRepository;
     private final MemberDebateRepository memberDebateRepository;
     private  final DebateRoomRepository debateRoomRepository;
 
-
-    public MyPageService(MemberRepository memberRepository, MemberDebateRepository memberDebateRepository, DebateRoomRepository debateRoomRepository) {
-        this.memberRepository = memberRepository;
-        this.memberDebateRepository = memberDebateRepository;
-        this.debateRoomRepository = debateRoomRepository;
-    }
 
     //멤버의 프로필 정보 응답
     @Transactional

@@ -7,6 +7,9 @@ import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.dto.requestdto.ProfileRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.ProfileResponseDto;
 import com.knu.KnowcKKnowcK.service.myPage.MyPageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +32,8 @@ public class MyPageController {
 
     //헤더는 로그인 기능 이후 수정 예정
 
-    //프로필 정보 응답
+    @Operation(summary="프로필 정보 API",description="사용자가 프로필 정보를 요청했을 때 보여준다")
+    @Parameters({@Parameter(name = "email", description = "임시 테스트용 추후 수정 예정", example = "example@gmail.com")})
     @GetMapping("/profile/info")
     public ApiResponseDto<ProfileResponseDto> getMyProfile(@RequestHeader("Authorization") String email){
         ProfileResponseDto response = myPageService.getProfile(email);
@@ -37,6 +41,11 @@ public class MyPageController {
     }
 
     @PatchMapping("/profile/info")
+    @Operation(summary="프로필 수정 API",description="프로필 정보 수정 요청을 처리한다.")
+    @Parameters({
+            @Parameter(name = "email", description = "임시 테스트용 추후 수정 예정", example = "example@gmail.com"),
+            @Parameter(name = "request", description = "수정정보 요청 Dto", example = "name : Test, email: test@gmail.com, profileImage: test.jpg")}
+    )
     public ApiResponseDto<String> updateMyProfile(@RequestHeader("Authorization") String email,
                                                               @RequestBody ProfileRequestDto request){
         myPageService.updateProfile(email,request);

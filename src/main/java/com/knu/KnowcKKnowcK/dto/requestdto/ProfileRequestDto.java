@@ -1,6 +1,5 @@
 package com.knu.KnowcKKnowcK.dto.requestdto;
 
-import lombok.Data;
 import lombok.Getter;
 
 @Getter

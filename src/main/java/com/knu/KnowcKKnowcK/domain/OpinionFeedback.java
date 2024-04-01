@@ -2,6 +2,7 @@ package com.knu.KnowcKKnowcK.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data

@@ -10,7 +10,7 @@ public class SummaryFeedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne
-    @JoinColumn(referencedColumnName = "summary_id")
+    @JoinColumn(name = "summary_id")
     private Summary summary;
     @Lob
     private String content;
