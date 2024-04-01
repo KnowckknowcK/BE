@@ -34,6 +34,7 @@ public class MessageThread {
 
     public MessageThreadResponseDto toMessageThreadResponseDto(Long parentMessageId){
         return MessageThreadResponseDto.builder()
+                .threadId(id)
                 .content(content)
                 .createdTime(createdTime)
                 .parentMessageId(parentMessageId)

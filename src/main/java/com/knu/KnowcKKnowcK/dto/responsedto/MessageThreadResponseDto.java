@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class MessageThreadResponseDto {
+    Long threadId;
     Long parentMessageId;
     String writer;
     String content;
