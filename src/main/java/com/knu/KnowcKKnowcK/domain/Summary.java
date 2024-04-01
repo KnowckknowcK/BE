@@ -2,8 +2,7 @@ package com.knu.KnowcKKnowcK.domain;
 
 import com.knu.KnowcKKnowcK.enums.Status;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
