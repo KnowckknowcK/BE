@@ -3,8 +3,9 @@ package com.knu.KnowcKKnowcK.dto.oauth;
 import com.knu.KnowcKKnowcK.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
-
 import java.util.Map;
+
+import static com.knu.KnowcKKnowcK.service.account.AccountService.MemberPasswordGenerator.generateRandomPassword;
 
 @Getter
 public class OAuthAttributes {
@@ -43,6 +44,7 @@ public class OAuthAttributes {
                 .name(name)
                 .email(email)
                 .profileImage(profileImg)
+                .password(generateRandomPassword(10))
                 .isOAuth(true)
                 .build();
     }

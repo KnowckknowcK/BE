@@ -1,7 +1,9 @@
-package com.knu.KnowcKKnowcK.service;
+package com.knu.KnowcKKnowcK.service.account;
 
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.dto.oauth.OAuthAttributes;
+import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -29,16 +31,20 @@ public class OAuth2UerService extends DefaultOAuth2UserService {
                 .getUserInfoEndpoint()
                 .getUserNameAttributeName();
 
-        saveOrUpdateMember(OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes()));
+        checkMemberAndSave(OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes()));
 
         return oAuth2User;
     }
 
-    private Member saveOrUpdateMember(OAuthAttributes attributes) {
+    private Member checkMemberAndSave(OAuthAttributes attributes) {
 
         Member member = memberRepository.findByEmail(attributes.getEmail())
-                // 이미 존재하는 member의 경우, 이름과 프로필 이미지를 로그인 시 update
-                .map(entity -> entity.update(attributes.getName(), attributes.getProfileImg()))
+                .map(entity -> {
+                    if (!entity.getIsOAuth()) {
+                        throw new CustomException(ErrorCode.ALREADY_REGISTERED);
+                    }
+                    return entity;
+                })
                 .orElse(attributes.toEntity());
 
         return memberRepository.save(member);
