@@ -1,9 +1,14 @@
 package com.knu.KnowcKKnowcK.service.account;
 
+import com.knu.KnowcKKnowcK.domain.Member;
+import com.knu.KnowcKKnowcK.dto.responsedto.LoginResponseDto;
+import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -11,6 +16,26 @@ public class AccountService {
 
     private final MemberRepository memberRepository;
 
+    public LoginResponseDto loginWithEmail(String email, String password) {
+
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        if(member.isEmpty())
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        if(member.get().getPassword().equals(password)){
+            LoginResponseDto responseDto = LoginResponseDto.builder()
+                    .email(member.get().getEmail())
+                    .name(member.get().getName())
+                    .profileImg(member.get().getProfileImage())
+                    .build();
+
+            return responseDto;
+        }
+        else{
+            throw new CustomException(ErrorCode.INVALID_INPUT);
+        }
+    }
 
     public class MemberPasswordGenerator {
 
