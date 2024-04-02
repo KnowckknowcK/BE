@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class LoginResponseDto {
+public class SigninResponseDto {
     private String email;
     private String name;
     private String profileImg;

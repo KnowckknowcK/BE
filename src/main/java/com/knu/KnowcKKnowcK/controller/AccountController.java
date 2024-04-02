@@ -2,8 +2,8 @@ package com.knu.KnowcKKnowcK.controller;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
-import com.knu.KnowcKKnowcK.dto.requestdto.LoginRequestDto;
-import com.knu.KnowcKKnowcK.dto.responsedto.LoginResponseDto;
+import com.knu.KnowcKKnowcK.dto.requestdto.SigninRequestDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
 import com.knu.KnowcKKnowcK.service.account.AccountService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -36,8 +36,8 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "로그인 실패: id/pw 불일치"),
             @ApiResponse(responseCode = "404", description = "로그인 실패: 사용자를 찾을 수 없음")
     })
-    public ApiResponseDto<LoginResponseDto> loginWithEmail(@RequestBody LoginRequestDto requestDto) {
-        LoginResponseDto responseDto = accountService.loginWithEmail(requestDto.getEmail(), requestDto.getPassword());
+    public ApiResponseDto<SigninResponseDto> signinWithEmail(@RequestBody SigninRequestDto requestDto) {
+        SigninResponseDto responseDto = accountService.signinWithEmail(requestDto.getEmail(), requestDto.getPassword());
         return ApiResponseDto.success(SuccessCode.OK, responseDto);
     }
 }

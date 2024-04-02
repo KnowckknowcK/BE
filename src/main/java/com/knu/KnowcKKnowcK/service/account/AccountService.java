@@ -1,7 +1,7 @@
 package com.knu.KnowcKKnowcK.service.account;
 
 import com.knu.KnowcKKnowcK.domain.Member;
-import com.knu.KnowcKKnowcK.dto.responsedto.LoginResponseDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
@@ -16,7 +16,7 @@ public class AccountService {
 
     private final MemberRepository memberRepository;
 
-    public LoginResponseDto loginWithEmail(String email, String password) {
+    public SigninResponseDto signinWithEmail(String email, String password) {
 
         Optional<Member> member = memberRepository.findByEmail(email);
 
@@ -24,7 +24,7 @@ public class AccountService {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         if(member.get().getPassword().equals(password)){
-            LoginResponseDto responseDto = LoginResponseDto.builder()
+            SigninResponseDto responseDto = SigninResponseDto.builder()
                     .email(member.get().getEmail())
                     .name(member.get().getName())
                     .profileImg(member.get().getProfileImage())
