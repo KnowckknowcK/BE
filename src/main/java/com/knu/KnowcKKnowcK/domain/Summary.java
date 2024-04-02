@@ -3,6 +3,7 @@ package com.knu.KnowcKKnowcK.domain;
 import com.knu.KnowcKKnowcK.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Summary {
+public class Summary implements Persistable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,5 +36,12 @@ public class Summary {
     private Status status;
 
     private Long takenTime;
+
+
+    @Override
+    public boolean isNew() {
+        return writer == null && article == null;
+
+    }
 
 }

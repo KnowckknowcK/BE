@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.util.Pair;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -59,7 +60,7 @@ class SaveSummaryTest {
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
         Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
         Mockito.when(summaryRepository.save(any())).thenReturn(summary);
-        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenReturn("70#content");
+        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenReturn(Pair.of(70,"content"));
         Mockito.when(summaryFeedbackRepository.save(any())).thenReturn(new SummaryFeedback(1L, "content",70, summary));
         SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
                 summary.getContent(), LocalDateTime.now(), Status.DONE, 100L);
@@ -100,6 +101,24 @@ class SaveSummaryTest {
 
         Assertions.assertThatThrownBy(()->sut.saveSummary(summaryRequestDto)).isInstanceOf(CustomException.class);
     }
+
+    @Test
+    @DisplayName("피드백의 양식이 옳지 않으면 Exception 을 반환한다.")
+    void return_exception_when_invalid_feedback() {
+        Article article = createArticle();
+        Member member = createMember();
+        Summary summary = createSummary(member, article, Status.ING);
+        Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
+        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
+        Mockito.when(summaryRepository.save(any())).thenReturn(summary);
+        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
+                summary.getContent(), LocalDateTime.now(), Status.ING, 100L);
+
+        SummaryResponseDto summaryResponseDto = sut.saveSummary(summaryRequestDto);
+
+        Assertions.assertThat(summaryResponseDto.getReturnMessage()).isNotNull();
+    }
+
 
     Member createMember(){
         return Member.builder()
