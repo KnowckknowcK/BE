@@ -1,8 +1,9 @@
-package com.knu.KnowcKKnowcK.controller;
+package com.knu.KnowcKKnowcK.controller.DebateRoom;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Member;
+import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,7 @@ public class DebateRoomController {
             @ApiResponse(responseCode = "200", description = "토론방 참여 성공"),
             @ApiResponse(responseCode = "400", description = "토론방 참여 실패")
             })
-    public ApiResponseDto<Double> participateInDebateRoom(@PathVariable Long debateRoomId){
+    public ApiResponseDto<DebateRoomResponseDto> participateInDebateRoom(@PathVariable Long debateRoomId){
         member = memberRepository.findById(1L).orElse(null);
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.participateInDebateRoom(member, debateRoomId));
     }
