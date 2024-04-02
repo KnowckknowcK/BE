@@ -4,8 +4,6 @@ import com.knu.KnowcKKnowcK.config.ChatGptConfig;
 import com.knu.KnowcKKnowcK.dto.prompt.SummaryPrompt;
 import com.knu.KnowcKKnowcK.dto.requestdto.ChatgptRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.ChatgptResponseDto;
-import com.knu.KnowcKKnowcK.exception.CustomException;
-import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -36,17 +34,12 @@ public class SummaryFeedbackService implements ChatGptService{
     }
 
     private Pair<Integer, String> parsingFeedback(String content){
+            System.out.println("score = " + content);
 
-        try {
             String[] split = content.split("#");
             int score = Integer.parseInt(split[0]);
             String feedback = split[1];
 
             return Pair.of(score, feedback);
-
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.INVALID_INPUT);
-        }
-
     }
 }

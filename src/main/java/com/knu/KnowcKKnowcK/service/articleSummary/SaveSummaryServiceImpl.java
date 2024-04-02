@@ -43,12 +43,16 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
         Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         Optional<Summary> existedSummary = summaryRepository.findByArticleAndWriter(article, member);
+        Summary savedSummary;
 
-        if (existedSummary.isPresent() && existedSummary.get().getStatus().equals(Status.ING) && existedSummary.get().getTakenTime() > dto.getTakenTime()) {
+        if (existedSummary.isPresent()){
+            if(existedSummary.get().getStatus().equals(Status.ING) && existedSummary.get().getTakenTime() > dto.getTakenTime()){
                 throw new CustomException(ErrorCode.INVALID_INPUT);
+            }
+            savedSummary = existedSummary.get().update(dto.getContent(), dto.getStatus(), dto.getTakenTime());
+        } else {
+            savedSummary = summaryRepository.save(dto.toEntity(article, member));
         }
-
-        Summary savedSummary = summaryRepository.save(dto.toEntity(article, member));
 
         if (savedSummary.getStatus().equals(Status.ING)){
             return new SummaryResponseDto("임시 저장이 완료되었습니다.");
