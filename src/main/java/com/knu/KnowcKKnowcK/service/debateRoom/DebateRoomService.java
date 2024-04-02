@@ -12,6 +12,8 @@ import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
 
 @Service
@@ -20,15 +22,22 @@ public class DebateRoomService {
     private final DebateRoomRepository debateRoomRepository;
     private final MemberDebateRepository memberDebateRepository;
     public double participateInDebateRoom(Member member, Long debateRoomId){
+        Position position;
         DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
-        // memberDebate 생성 후 저장(토론방 참여)
-        MemberDebate memberDebate = buildMemberDebate(member, debateRoom, decidePosition());
-        memberDebateRepository.save(memberDebate);
+        
+        Optional<MemberDebate> memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom);
+        if(memberDebate.isEmpty()){ // 참여 상태가 아니라면 MemberDebate 생성하여 참여
+            position = decidePosition();
+            memberDebateRepository.save(buildMemberDebate(member, debateRoom, position));
+        }
+        else{   // 아닌 경우에는 변경 없음
+            position = memberDebate.get().getPosition();
+        }
 
         // debateRoom에 있는 num 업데이트 및 비율 반환
-        return updatePositionScore(debateRoom, memberDebate.getPosition(), true);
+        return updatePositionScore(debateRoom, position, true);
     }
 
     public double leaveDebateRoom(Member member, Long debateRoomId){

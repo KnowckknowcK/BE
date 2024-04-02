@@ -23,7 +23,7 @@ public class DebateRoomController {
     private final MemberRepository memberRepository;
     private Member member; // 로그인 기능 추가되면 수정 예정
 
-    @PostMapping("/{debateRoomId}")
+    @PutMapping("/{debateRoomId}")
     @Operation(summary = "토론방 참여 API", description = "클라이언트가 토론방에 참여하길 바랄 때 요청하는 API")
     @Parameters({@Parameter(name = "debateRoomId", description = "참여하길 바라는 토론방 ID", example = "3")})
     @ApiResponses({
