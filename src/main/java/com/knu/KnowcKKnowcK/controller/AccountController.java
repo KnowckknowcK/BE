@@ -3,7 +3,9 @@ package com.knu.KnowcKKnowcK.controller;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.dto.requestdto.SigninRequestDto;
+import com.knu.KnowcKKnowcK.dto.requestdto.SignupRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.SignupResponseDto;
 import com.knu.KnowcKKnowcK.service.account.AccountService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -38,6 +40,19 @@ public class AccountController {
     })
     public ApiResponseDto<SigninResponseDto> signinWithEmail(@RequestBody SigninRequestDto requestDto) {
         SigninResponseDto responseDto = accountService.signinWithEmail(requestDto.getEmail(), requestDto.getPassword());
+        return ApiResponseDto.success(SuccessCode.OK, responseDto);
+    }
+
+    @PostMapping("/sign-up")
+    @Operation(summary = "자체 회원가입 API", description = "이메일 회원가입 요청 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "400", description = "회원가입 실패"),
+            @ApiResponse(responseCode = "409", description = "회원가입 실패: 이미 가입 된 email")
+    })
+    public ApiResponseDto<SignupResponseDto> signupWithEmail(@RequestBody SignupRequestDto requestDto) {
+        SignupResponseDto responseDto = accountService.signupWithEmail(
+                requestDto.getEmail(), requestDto.getName(), requestDto.getPassword(), requestDto.getProfileImg());
         return ApiResponseDto.success(SuccessCode.OK, responseDto);
     }
 }
