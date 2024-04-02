@@ -30,10 +30,4 @@ public class Member {
         this.password = password;
     }
 
-    public Member update(String name, String profileImage) {
-        this.name = name;
-        this.profileImage = profileImage;
-        return this;
-    }
-
 }
