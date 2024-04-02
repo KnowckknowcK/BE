@@ -7,6 +7,7 @@ import com.knu.KnowcKKnowcK.dto.requestdto.MessageThreadRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.PreferenceResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
@@ -81,7 +82,7 @@ public class MessageService {
         return messageThreadResponseDtoList;
     }
 
-    public Double putPreference(Member member, Long messageId, PreferenceRequestDto preferenceRequestDto){
+    public PreferenceResponseDto putPreference(Member member, Long messageId, PreferenceRequestDto preferenceRequestDto){
         preferenceRequestDto.validate();
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
@@ -96,7 +97,10 @@ public class MessageService {
                 isIncrease,
                 message.getDebateRoom());
 
-        return calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum());
+        return makeDto(
+                calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
+                isIncrease
+        );
     }
 
     private boolean updatePreference(Member member, Message message, PreferenceRequestDto preferenceRequestDto){
@@ -140,4 +144,10 @@ public class MessageService {
         return messageThreadRepository.findByMessage(message).size();
     }
 
+    private PreferenceResponseDto makeDto(double ratio, boolean isIncrease){
+        return PreferenceResponseDto.builder()
+                .ratio(ratio)
+                .isIncrease(isIncrease)
+                .build();
+    }
 }
