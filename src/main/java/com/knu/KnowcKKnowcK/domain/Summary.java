@@ -36,4 +36,11 @@ public class Summary {
 
     private Long takenTime;
 
+    public Summary update(String content, Status status, Long takenTime) {
+        this.content = content;
+        this.status = status;
+        this.takenTime = takenTime;
+
+        return this;
+    }
 }
