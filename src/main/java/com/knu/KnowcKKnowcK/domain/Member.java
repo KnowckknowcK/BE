@@ -53,10 +53,9 @@ public class Member {
         this.profileImage = profileImage;
     }
 
-    //요약저장
-
-    public void saveSummary(Summary summary){
-        this.summaries.add(summary);
-    }
+    //요약저장 -> 추후 논의 필요
+//    public void saveSummary(Summary summary){
+//        this.summaries.add(summary);
+//    }
 
 }
