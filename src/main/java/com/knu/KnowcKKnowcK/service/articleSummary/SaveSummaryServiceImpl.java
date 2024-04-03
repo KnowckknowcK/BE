@@ -18,8 +18,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
 
@@ -57,7 +55,7 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
 //        member.saveSummary(summary);
 
-        if (summary.getStatus().equals(Status.ING)){
+        if (savedSummary.getStatus().equals(Status.ING)){
             return new SummaryResponseDto("임시 저장이 완료되었습니다.");
 
         } else if (savedSummary.getStatus().equals(Status.DONE)) {
