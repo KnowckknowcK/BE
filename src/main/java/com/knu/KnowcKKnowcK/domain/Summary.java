@@ -33,6 +33,13 @@ public class Summary {
     private LocalDateTime createdTime;
     @Enumerated(EnumType.STRING)
     private Status status;
+    private Long takenTime;
 
-    private Long takenTime;  //Long으로 선언이 더 안전할 것 같음
+    public Summary update(String content, Status status, Long takenTime) {
+        this.content = content;
+        this.status = status;
+        this.takenTime = takenTime;
+
+        return this;
+    }
 }

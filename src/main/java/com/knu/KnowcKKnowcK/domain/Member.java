@@ -32,11 +32,12 @@ public class Member {
     private List<Opinion> opinions = new ArrayList<>();
 
     @Builder
-    public Member(String name, String email, String profileImage, Boolean isOAuth) {
+    public Member(String name, String email, String profileImage, Boolean isOAuth, String password) {
         this.name = name;
         this.email = email;
         this.profileImage = profileImage;
         this.isOAuth = isOAuth;
+        this.password = password;
     }
 
     public Member update(String name, String profileImage) {
