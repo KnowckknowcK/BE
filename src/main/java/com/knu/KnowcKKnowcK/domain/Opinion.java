@@ -16,6 +16,7 @@ public class Opinion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Member writer;
     @ManyToOne
     private Article article;
