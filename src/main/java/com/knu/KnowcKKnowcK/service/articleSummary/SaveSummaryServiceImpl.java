@@ -18,7 +18,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 
@@ -53,6 +52,8 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
         } else {
             savedSummary = summaryRepository.save(dto.toEntity(article, member));
         }
+
+//        member.saveSummary(summary);
 
         if (savedSummary.getStatus().equals(Status.ING)){
             return new SummaryResponseDto("임시 저장이 완료되었습니다.");

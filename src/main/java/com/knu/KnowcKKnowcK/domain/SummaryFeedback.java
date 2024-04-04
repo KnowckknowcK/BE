@@ -2,6 +2,8 @@ package com.knu.KnowcKKnowcK.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -21,5 +23,6 @@ public class SummaryFeedback {
 
     @OneToOne
     @JoinColumn(name = "summary_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Summary summary;
 }

@@ -2,6 +2,8 @@ package com.knu.KnowcKKnowcK.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -9,15 +11,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OpinionFeedback {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+  
+    @JoinColumn(name = "opinion_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne
+    private Opinion opinion;
+  
     @Lob
     private String content;
-
-    @OneToOne
-    @JoinColumn(name = "opinion_id")
-    private Opinion opinion;
 }
