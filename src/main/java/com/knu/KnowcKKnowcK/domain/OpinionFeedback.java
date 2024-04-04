@@ -15,11 +15,11 @@ public class OpinionFeedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
   
+    @Lob
+    private String content;
+
     @JoinColumn(name = "opinion_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToOne
     private Opinion opinion;
-  
-    @Lob
-    private String content;
 }
