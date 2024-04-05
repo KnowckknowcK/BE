@@ -24,6 +24,10 @@ public class AccountService {
         if(member.isEmpty())
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
+        if(member.get().getIsOAuth()){
+            throw new CustomException(ErrorCode.ALREADY_REGISTERED);
+        }
+
         if(member.get().getPassword().equals(password)){
             SigninResponseDto responseDto = SigninResponseDto.builder()
                     .email(member.get().getEmail())

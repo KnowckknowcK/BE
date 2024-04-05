@@ -36,7 +36,8 @@ public class AccountController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "로그인 실패: id/pw 불일치"),
-            @ApiResponse(responseCode = "404", description = "로그인 실패: 사용자를 찾을 수 없음")
+            @ApiResponse(responseCode = "404", description = "로그인 실패: 사용자를 찾을 수 없음"),
+            @ApiResponse(responseCode = "409", description = "로그인 실패: OAuth 사용 회원")
     })
     public ApiResponseDto<SigninResponseDto> signinWithEmail(@RequestBody SigninRequestDto requestDto) {
         SigninResponseDto responseDto = accountService.signinWithEmail(requestDto.getEmail(), requestDto.getPassword());
