@@ -30,15 +30,6 @@ public class OpinionFeedbackService  implements ChatGptService{
                 .bodyToMono(ChatgptResponseDto.class)
                 .block();
 
-        return parsingFeedback(responseDto.getChoices().get(0).getMessage().getContent());
-    }
-
-    private Pair<Integer, String> parsingFeedback(String content){
-
-        String[] split = content.split("#");
-        int score = Integer.parseInt(split[0]);
-        String feedback = split[1];
-
-        return Pair.of(score, feedback);
+        return Pair.of(1, responseDto.getChoices().get(0).getMessage().getContent());
     }
 }
