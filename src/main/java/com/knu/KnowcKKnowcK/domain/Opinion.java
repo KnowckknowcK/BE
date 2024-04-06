@@ -1,8 +1,10 @@
 package com.knu.KnowcKKnowcK.domain;
 
+import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -13,32 +15,34 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Summary {
+public class Opinion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id",nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member writer;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
+  
+    @ManyToOne
     private Article article;
+  
     @Lob
     private String content;
-    private LocalDateTime createdTime;
+  
+    @Enumerated(EnumType.STRING)
+    private Position position;
+  
     @Enumerated(EnumType.STRING)
     private Status status;
-    private Long takenTime;
+  
+    private LocalDateTime createdTime;
+  
+      public Opinion update(String content, Status status) {
+      this.content = content;
+      this.status = status;
 
-    public Summary update(String content, Status status, Long takenTime) {
-        this.content = content;
-        this.status = status;
-        this.takenTime = takenTime;
-
-        return this;
-    }
+      return this;
+  }
 }

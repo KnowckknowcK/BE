@@ -5,6 +5,7 @@ import com.knu.KnowcKKnowcK.dto.prompt.OpinionPrompt;
 import com.knu.KnowcKKnowcK.dto.requestdto.ChatgptRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.ChatgptResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 
@@ -17,11 +18,10 @@ public class OpinionFeedbackService  implements ChatGptService{
 
     private final ChatGptConfig chatGptConfig;
     @Override
-    public String callGptApi(String article, String summary) {
+    public Pair<Integer, String> callGptApi(String article, String summary) {
         List<ChatgptRequestDto.Message> messageList = new ArrayList<>();
         messageList.add(new ChatgptRequestDto.Message("user", OpinionPrompt.getInstance().getPrompt() + article + summary));
         ChatgptRequestDto requestDto = new ChatgptRequestDto(messageList);
-
 
         ChatgptResponseDto responseDto = chatGptConfig.gptClient()
                 .post()
@@ -29,9 +29,7 @@ public class OpinionFeedbackService  implements ChatGptService{
                 .retrieve()
                 .bodyToMono(ChatgptResponseDto.class)
                 .block();
-        String result = responseDto.getChoices().get(0).getMessage().getContent();
 
-
-        return result;
+        return Pair.of(1, responseDto.getChoices().get(0).getMessage().getContent());
     }
 }

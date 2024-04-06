@@ -10,19 +10,16 @@ import org.hibernate.annotations.OnDeleteAction;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SummaryFeedback {
-
+public class OpinionFeedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+  
     @Lob
     private String content;
 
-    private int score;
-
-    @OneToOne
-    @JoinColumn(name = "summary_id")
+    @JoinColumn(name = "opinion_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Summary summary;
+    @OneToOne
+    private Opinion opinion;
 }

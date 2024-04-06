@@ -16,7 +16,9 @@ import com.knu.KnowcKKnowcK.repository.SummaryRepository;
 import com.knu.KnowcKKnowcK.service.chatGptService.SummaryFeedbackService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 import java.util.Optional;
 
@@ -43,18 +45,33 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
         Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         Optional<Summary> existedSummary = summaryRepository.findByArticleAndWriter(article, member);
 
-        if (existedSummary.isPresent() && existedSummary.get().getStatus().equals(Status.ING) && existedSummary.get().getTakenTime() > dto.getTakenTime()) {
+        Summary savedSummary;
+
+        if (existedSummary.isPresent()){
+            if(existedSummary.get().getStatus().equals(Status.ING) && existedSummary.get().getTakenTime() > dto.getTakenTime()){
                 throw new CustomException(ErrorCode.INVALID_INPUT);
+            }
+            savedSummary = existedSummary.get().update(dto.getContent(), dto.getStatus(), dto.getTakenTime());
+        } else {
+            savedSummary = summaryRepository.save(dto.toEntity(article, member));
         }
 
-        Summary savedSummary = summaryRepository.save(dto.toEntity(article, member));
+//        member.saveSummary(summary);
+
 
         if (savedSummary.getStatus().equals(Status.ING)){
             return new SummaryResponseDto("임시 저장이 완료되었습니다.");
 
         } else if (savedSummary.getStatus().equals(Status.DONE)) {
-            String content = summaryFeedbackService.callGptApi(article.getContent(), savedSummary.getContent());
-            SummaryFeedback savedFeedback = summaryFeedbackRepository.save(parsingFeedbackToEntity(content, savedSummary));
+            Pair<Integer, String> parsedFeedback = summaryFeedbackService.callGptApi(article.getContent(), savedSummary.getContent());
+
+            SummaryFeedback summaryFeedback = SummaryFeedback.builder()
+                    .score(parsedFeedback.getFirst())
+                    .content(parsedFeedback.getSecond())
+                    .summary(savedSummary)
+                    .build();
+
+            SummaryFeedback savedFeedback = summaryFeedbackRepository.save(summaryFeedback);
             return new SummaryResponseDto(savedFeedback);
 
         } else {
@@ -63,15 +80,4 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
         }
     }
 
-    private SummaryFeedback parsingFeedbackToEntity(String content, Summary savedSummary){
-        String[] split = content.split("#");
-        int score = Integer.parseInt(split[0]);
-        String feedback = split[1];
-
-        return SummaryFeedback.builder()
-                .summary(savedSummary)
-                .content(feedback)
-                .score(score)
-                .build();
-    }
 }
