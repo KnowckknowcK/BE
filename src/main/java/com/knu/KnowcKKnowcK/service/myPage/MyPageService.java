@@ -21,21 +21,31 @@ import java.util.List;
 public class MyPageService {
     private final MemberRepository memberRepository;
     private final MemberDebateRepository memberDebateRepository;
-    private  final DebateRoomRepository debateRoomRepository;
-
+    private final DebateRoomRepository debateRoomRepository;
 
     //멤버의 프로필 정보 응답
     @Transactional
-    public ProfileResponseDto getProfile(String email){
-        Member member = memberRepository.findByEmail(email).orElseThrow(() ->  new CustomException(ErrorCode.INVALID_INPUT));
+    public ProfileResponseDto getProfile(Long id){
+        Member member = memberRepository.findById(id).orElseThrow(() ->  new CustomException(ErrorCode.INVALID_INPUT));
         return new ProfileResponseDto(member);
     }
 
     //멈버의 프로필 정보 업데이트
     @Transactional
-    public void updateProfile(String email, ProfileRequestDto request){
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+    public void updateProfile(Long id, ProfileRequestDto request){
+        Member member = memberRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         member.updateProfile(request.getName(), request.getEmail(), request.getProfileImage());
     }
 
+    //참여 중인 토론방 응답
+    @Transactional
+    public List<DebateRoom> getDebateRoom(Long id){
+        Member member = memberRepository.findById(id).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
+        //debate room 정보 가져오기
+        List<MemberDebate> memberDebates = memberDebateRepository.findAllByMember(member);
+        if (memberDebates.isEmpty()) {
+            return null;
+        }
+        return memberDebates.stream().map(MemberDebate::getDebateRoom).toList();
+    }
 }
