@@ -7,13 +7,18 @@ import com.knu.KnowcKKnowcK.dto.requestdto.SignupRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SignupResponseDto;
 import com.knu.KnowcKKnowcK.service.account.AccountService;
+import com.knu.KnowcKKnowcK.utils.MailUtil;
+import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.context.Context;
 import org.springframework.web.servlet.view.RedirectView;
+import org.thymeleaf.TemplateEngine;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +27,9 @@ import org.springframework.web.servlet.view.RedirectView;
 public class AccountController {
 
     private final AccountService accountService;
+    private final RedisUtil redisUtil;
+    private final MailUtil mailUtil;
+
 
     @GetMapping("/google")
     @Operation(summary = "구글 로그인 및 회원가입 API", description = "구글 로그인 및 회원가입에 대한 API")
@@ -55,5 +63,17 @@ public class AccountController {
         SignupResponseDto responseDto = accountService.signupWithEmail(
                 requestDto.getEmail(), requestDto.getName(), requestDto.getPassword(), requestDto.getProfileImg());
         return ApiResponseDto.success(SuccessCode.OK, responseDto);
+    }
+
+    @GetMapping("/redis")
+    public String redis(@RequestParam(name="key")String key){
+        redisUtil.setData(key,"성공했당",10000000000L);
+        return redisUtil.getData(key);
+    }
+
+    @GetMapping("/mail")
+    public String mailTest(){
+        String html = mailUtil.mailTemplate("나는야 인증코드");
+        return html;
     }
 }
