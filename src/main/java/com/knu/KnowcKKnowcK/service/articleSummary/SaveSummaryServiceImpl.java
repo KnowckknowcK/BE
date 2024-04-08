@@ -20,6 +20,8 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +44,7 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
         Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         Optional<Summary> existedSummary = summaryRepository.findByArticleAndWriter(article, member);
+
         Summary savedSummary;
 
         if (existedSummary.isPresent()){
@@ -54,6 +57,7 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
         }
 
 //        member.saveSummary(summary);
+
 
         if (savedSummary.getStatus().equals(Status.ING)){
             return new SummaryResponseDto("임시 저장이 완료되었습니다.");

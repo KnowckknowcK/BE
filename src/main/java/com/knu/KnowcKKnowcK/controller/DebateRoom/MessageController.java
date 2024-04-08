@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.controller;
+package com.knu.KnowcKKnowcK.controller.DebateRoom;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
@@ -6,6 +6,7 @@ import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.PreferenceResponseDto;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.debateRoom.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +64,7 @@ public class MessageController {
             @ApiResponse(responseCode = "200", description = "동의 추가 성공"),
             @ApiResponse(responseCode = "400", description = "동의 추가 실패")
     })
-    public ApiResponseDto<Double> putPreference(@PathVariable Long messageId, @RequestBody PreferenceRequestDto preferenceRequestDTO) {
+    public ApiResponseDto<PreferenceResponseDto> putPreference(@PathVariable Long messageId, @RequestBody PreferenceRequestDto preferenceRequestDTO) {
         member = memberRepository.findById(1L).orElse(null);
         return ApiResponseDto.success(SuccessCode.OK, messageService.putPreference(member, messageId, preferenceRequestDTO));
     }

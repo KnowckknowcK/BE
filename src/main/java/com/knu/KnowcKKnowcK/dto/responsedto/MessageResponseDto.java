@@ -11,8 +11,12 @@ import java.time.LocalDateTime;
 public class MessageResponseDto {
     Long roomId;
     Long messageId;
+    String profileImage;
     String writer;
     String position;
     String content;
+
+    Long likesNum;
+    Long threadNum;
     LocalDateTime createdTime;
 }
