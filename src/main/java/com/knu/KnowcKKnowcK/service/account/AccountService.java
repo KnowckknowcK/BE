@@ -1,9 +1,15 @@
 package com.knu.KnowcKKnowcK.service.account;
 
+import com.knu.KnowcKKnowcK.domain.Member;
+import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.SignupResponseDto;
+import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -11,6 +17,56 @@ public class AccountService {
 
     private final MemberRepository memberRepository;
 
+    public SigninResponseDto signinWithEmail(String email, String password) {
+
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        if(member.isEmpty())
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        if(member.get().getIsOAuth()){
+            throw new CustomException(ErrorCode.ALREADY_REGISTERED);
+        }
+
+        if(member.get().getPassword().equals(password)){
+            SigninResponseDto responseDto = SigninResponseDto.builder()
+                    .email(member.get().getEmail())
+                    .name(member.get().getName())
+                    .profileImg(member.get().getProfileImage())
+                    .build();
+
+            return responseDto;
+        }
+        else{
+            throw new CustomException(ErrorCode.INVALID_INPUT);
+        }
+    }
+
+    public SignupResponseDto signupWithEmail(String email, String name, String password, String profileImg) {
+
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        if(member.isPresent())
+            throw new CustomException(ErrorCode.ALREADY_REGISTERED);
+
+        Member newMember = Member.builder()
+                .email(email)
+                .name(name)
+                .password(password)
+                .profileImage(profileImg)
+                .isOAuth(false)
+                .build();
+
+        Member savedMember = memberRepository.save(newMember);
+
+        SignupResponseDto responseDto = SignupResponseDto.builder()
+                .email(savedMember.getEmail())
+                .name(savedMember.getName())
+                .profileImg(savedMember.getProfileImage())
+                .build();
+
+        return responseDto;
+    }
 
     public class MemberPasswordGenerator {
 
