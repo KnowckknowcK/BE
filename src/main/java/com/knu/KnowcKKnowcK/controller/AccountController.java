@@ -2,16 +2,21 @@ package com.knu.KnowcKKnowcK.controller;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
+import com.knu.KnowcKKnowcK.dto.requestdto.MailCheckRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.SigninRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.SignupRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SignupResponseDto;
+import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.service.account.AccountService;
+import com.knu.KnowcKKnowcK.service.account.MailService;
 import com.knu.KnowcKKnowcK.utils.MailUtil;
 import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +32,8 @@ import org.thymeleaf.TemplateEngine;
 public class AccountController {
 
     private final AccountService accountService;
-    private final RedisUtil redisUtil;
-    private final MailUtil mailUtil;
+    private final MailService mailService;
+
 
 
     @GetMapping("/google")
@@ -65,15 +70,18 @@ public class AccountController {
         return ApiResponseDto.success(SuccessCode.OK, responseDto);
     }
 
-    @GetMapping("/redis")
-    public String redis(@RequestParam(name="key")String key){
-        redisUtil.setData(key,"성공했당",10000000000L);
-        return redisUtil.getData(key);
-    }
-
-    @GetMapping("/mail")
-    public String mailTest(){
-        String html = mailUtil.mailTemplate("나는야 인증코드");
-        return html;
+    @PostMapping("/email-check")
+    @Operation(summary = "이메일 인증 API", description = "이메일 인증 코드 발송 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "인증코드 발송 성공"),
+            @ApiResponse(responseCode = "400", description = "인증코드 발송 실패")
+    })
+    public  ApiResponseDto<String> mailCheck(@RequestBody MailCheckRequestDto requestDto){
+        try{
+            String response = mailService.sendMail(requestDto.getEmail());
+            return ApiResponseDto.success(SuccessCode.OK, response);
+        } catch (MessagingException e) {
+            throw new CustomException(ErrorCode.FAILED);
+        }
     }
 }
