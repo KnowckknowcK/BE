@@ -11,8 +11,6 @@ import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.service.account.AccountService;
 import com.knu.KnowcKKnowcK.service.account.MailService;
-import com.knu.KnowcKKnowcK.utils.MailUtil;
-import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,9 +18,7 @@ import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.context.Context;
 import org.springframework.web.servlet.view.RedirectView;
-import org.thymeleaf.TemplateEngine;
 
 
 @RestController
