@@ -13,7 +13,7 @@ public class ChatGptContext {
     private final OpinionFeedbackService opinionFeedbackService;
 
 
-    public Pair<Integer, String> callGptApi(Option op, String article, String answer){
+    public Pair<String, String> callGptApi(Option op, String article, String answer){
         if(op==Option.SUMMARY)
             return this.summaryFeedbackService.callGptApi(article, answer);
         else

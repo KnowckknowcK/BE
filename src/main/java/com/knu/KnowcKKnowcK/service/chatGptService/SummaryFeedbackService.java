@@ -17,7 +17,7 @@ import java.util.List;
 public class SummaryFeedbackService implements ChatGptService{
     private final ChatGptConfig chatGptConfig;
     @Override
-    public Pair<Integer, String> callGptApi(String article, String summary) {
+    public Pair<String, String> callGptApi(String article, String summary) {
 
         List<ChatgptRequestDto.Message> messageList = new ArrayList<>();
         messageList.add(new ChatgptRequestDto.Message("user", SummaryPrompt.getInstance().getPrompt() + article + summary));
@@ -33,11 +33,10 @@ public class SummaryFeedbackService implements ChatGptService{
         return parsingFeedback(responseDto.getChoices().get(0).getMessage().getContent());
     }
 
-    private Pair<Integer, String> parsingFeedback(String content){
-            System.out.println("score = " + content);
+    private Pair<String, String> parsingFeedback(String content){
 
             String[] split = content.split("#");
-            int score = Integer.parseInt(split[0]);
+            String score = split[0];
             String feedback = split[1];
 
             return Pair.of(score, feedback);

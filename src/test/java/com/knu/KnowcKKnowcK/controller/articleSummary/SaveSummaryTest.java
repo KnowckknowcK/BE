@@ -6,6 +6,7 @@ import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
 import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
+import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
@@ -49,8 +50,6 @@ class SaveSummaryTest {
     @Mock
     private SummaryFeedbackRepository summaryFeedbackRepository;
 
-
-
     @Test
     @DisplayName("요약 수동 제출에 성공하면 AI 피드백이 반환된다.")
     void saveSummary_when_not_auto() {
@@ -60,14 +59,33 @@ class SaveSummaryTest {
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
         Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
         Mockito.when(summaryRepository.save(any())).thenReturn(summary);
-        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenReturn(Pair.of(70,"content"));
-        Mockito.when(summaryFeedbackRepository.save(any())).thenReturn(new SummaryFeedback(1L, "content",70, summary));
+        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenReturn(Pair.of("EXCELLENT","content"));
+        Mockito.when(summaryFeedbackRepository.save(any())).thenReturn(new SummaryFeedback(1L, "content", Score.EXCELLENT, summary));
         SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
                 summary.getContent(), LocalDateTime.now(), Status.DONE, 100L);
 
         SummaryResponseDto summaryResponseDto = sut.saveSummary(summaryRequestDto);
 
-        Assertions.assertThat(summaryResponseDto.getScore()).isEqualTo(70);
+        Assertions.assertThat(summaryResponseDto.getScore()).isEqualTo(Score.EXCELLENT);
+    }
+
+    @Test
+    @DisplayName("AI 피드백이 옳지 않은 점수를 반환하면 예외처리한다.")
+    void saveSummary_failed_when_invalid_score() {
+        Article article = createArticle();
+        Member member = createMember();
+        Summary summary = createSummary(member, article, Status.DONE);
+        Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
+        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
+        Mockito.when(summaryRepository.save(any())).thenReturn(summary);
+        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenReturn(Pair.of("INVALID_SCORE","content"));
+        Mockito.when(summaryFeedbackRepository.save(any())).thenReturn(new SummaryFeedback(1L, "content", Score.EXCELLENT, summary));
+        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
+                summary.getContent(), LocalDateTime.now(), Status.DONE, 100L);
+
+
+        Assertions.assertThatThrownBy(() -> sut.saveSummary(summaryRequestDto)).isInstanceOf(CustomException.class);
+
     }
 
     @Test

@@ -18,7 +18,7 @@ public class OpinionFeedbackService  implements ChatGptService{
 
     private final ChatGptConfig chatGptConfig;
     @Override
-    public Pair<Integer, String> callGptApi(String article, String summary) {
+    public Pair<String, String> callGptApi(String article, String summary) {
         List<ChatgptRequestDto.Message> messageList = new ArrayList<>();
         messageList.add(new ChatgptRequestDto.Message("user", OpinionPrompt.getInstance().getPrompt() + article + summary));
         ChatgptRequestDto requestDto = new ChatgptRequestDto(messageList);
@@ -30,6 +30,6 @@ public class OpinionFeedbackService  implements ChatGptService{
                 .bodyToMono(ChatgptResponseDto.class)
                 .block();
 
-        return Pair.of(1, responseDto.getChoices().get(0).getMessage().getContent());
+        return Pair.of("a", responseDto.getChoices().get(0).getMessage().getContent());
     }
 }

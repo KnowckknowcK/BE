@@ -69,7 +69,7 @@ class SaveOpinionServiceTest {
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
         Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
         Mockito.when(opinionRepository.save(any())).thenReturn(opinion);
-        Mockito.when(opinionFeedbackService.callGptApi(article.getContent(), opinion.getContent())).thenReturn(Pair.of(1,"content"));
+        Mockito.when(opinionFeedbackService.callGptApi(article.getContent(), opinion.getContent())).thenReturn(Pair.of("a","content"));
         Mockito.when(opinionFeedbackRepository.save(any())).thenReturn(new OpinionFeedback(1L, "content", opinion));
         OpinionRequestDto opinionRequestDto = new OpinionRequestDto(1L, 1L,
                 opinion.getContent(), LocalDateTime.now(), Status.DONE, Position.AGREE);
