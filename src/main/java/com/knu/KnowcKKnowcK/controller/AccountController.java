@@ -24,7 +24,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/account")
-@Tag(name="Account",description="소셜, 자체 회원가입 및 로그인과 관련된 API Controller")
+@Tag(name="Account",description="회원가입 및 로그인 등 사용자 계정과 관련된 API Controller")
 public class AccountController {
 
     private final AccountService accountService;
