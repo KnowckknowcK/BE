@@ -2,6 +2,7 @@ package com.knu.KnowcKKnowcK.controller;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
+import com.knu.KnowcKKnowcK.dto.requestdto.CodeCheckRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.MailCheckRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.SigninRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.SignupRequestDto;
@@ -78,6 +79,22 @@ public class AccountController {
             return ApiResponseDto.success(SuccessCode.OK, response);
         } catch (MessagingException e) {
             throw new CustomException(ErrorCode.FAILED);
+        }
+    }
+
+    @PostMapping("/code-check")
+    @Operation(summary = "인증코드 확인 API", description = "이메일로 발송된 인증코드 일치 확인 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "인증코드 일치"),
+            @ApiResponse(responseCode = "400", description = "인증코드 불일치")
+    })
+    public  ApiResponseDto<String> codeCheck(@RequestBody CodeCheckRequestDto requestDto) {
+        boolean response = mailService.checkCode(requestDto.getEmail(), requestDto.getCode());
+
+        if (response) {
+            return ApiResponseDto.success(SuccessCode.OK, "이메일이 인증되었습니다.");
+        } else {
+            return ApiResponseDto.error(ErrorCode.FAILED, "이메일 인증에 실패하였습니다.");
         }
     }
 }

@@ -56,6 +56,19 @@ public class MailService {
         redisUtil.setData(email, code, expiredMs);
     }
 
+    public boolean checkCode(String email, String code) {
+
+        String codeFindByEmail = redisUtil.getData(email);
+
+        if(codeFindByEmail == null) {
+            return false;
+        }
+
+        redisUtil.deleteData(email);
+
+        return codeFindByEmail.equals(code);
+    }
+
     private String createdCode() {
         int leftLimit = 48; //'0'
         int rightLimit = 122; //'z'
