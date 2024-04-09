@@ -10,8 +10,11 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class MessageThreadResponseDto {
+    Long id;
     Long parentMessageId;
     String writer;
+    String profileImage;
+    String position;
     String content;
     LocalDateTime createdTime;
 }

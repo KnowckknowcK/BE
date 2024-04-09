@@ -34,14 +34,17 @@ public class Message {
     private String content;
     private LocalDateTime createdTime;
 
-    public MessageResponseDto toMessageResponseDto(String position){
+    public MessageResponseDto toMessageResponseDto(String position, long likesNum, long threadNum, String profileImage){
         return MessageResponseDto.builder()
                 .writer(member.getName())
+                .likesNum(likesNum)
+                .profileImage(profileImage)
                 .content(content)
                 .createdTime(createdTime)
                 .roomId(debateRoom.getId())
                 .messageId(id)
                 .position(position)
+                .threadNum(threadNum)
                 .build();
     }
 }
