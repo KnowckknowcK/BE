@@ -27,7 +27,7 @@ public class MailService {
     public String sendMail(String email) throws MessagingException {
 
         try {
-            String subject = "똑똑(KnowcKKnowck) 이메일 인증번호를 확인하세요.";
+            String subject = "똑똑(KnowcKKnowck)! 이메일 인증코드를 확인하세요.";
 
             String code = createdCode();
             String mailTemplate = mailUtil.mailTemplate(code);
