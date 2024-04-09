@@ -26,6 +26,10 @@ public class MailService {
 
     public String sendMail(String email) throws MessagingException {
 
+        if (redisUtil.getData(email) != null){
+            redisUtil.deleteData(email);
+        }
+
         try {
             String subject = "똑똑(KnowcKKnowck)! 이메일 인증코드를 확인하세요.";
 
