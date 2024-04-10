@@ -1,6 +1,7 @@
 package com.knu.KnowcKKnowcK.service.chatGptService;
 
 import com.knu.KnowcKKnowcK.enums.Option;
+import com.knu.KnowcKKnowcK.enums.Score;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ public class ChatGptContext {
     private final OpinionFeedbackService opinionFeedbackService;
 
 
-    public Pair<Integer, String> callGptApi(Option op, String article, String answer){
+    public Pair<Score, String> callGptApi(Option op, String article, String answer){
         if(op==Option.SUMMARY)
             return this.summaryFeedbackService.callGptApi(article, answer);
         else
