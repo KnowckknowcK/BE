@@ -59,7 +59,7 @@ class SaveSummaryTest {
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
         Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
         Mockito.when(summaryRepository.save(any())).thenReturn(summary);
-        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenReturn(Pair.of("EXCELLENT","content"));
+        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenReturn(Pair.of(Score.EXCELLENT,"content"));
         Mockito.when(summaryFeedbackRepository.save(any())).thenReturn(new SummaryFeedback(1L, "content", Score.EXCELLENT, summary));
         SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
                 summary.getContent(), LocalDateTime.now(), Status.DONE, 100L);
@@ -78,14 +78,11 @@ class SaveSummaryTest {
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
         Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
         Mockito.when(summaryRepository.save(any())).thenReturn(summary);
-        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenReturn(Pair.of("INVALID_SCORE","content"));
-        Mockito.when(summaryFeedbackRepository.save(any())).thenReturn(new SummaryFeedback(1L, "content", Score.EXCELLENT, summary));
+        Mockito.when(summaryFeedbackService.callGptApi(article.getContent(), summary.getContent())).thenThrow(CustomException.class);
         SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
                 summary.getContent(), LocalDateTime.now(), Status.DONE, 100L);
 
-
         Assertions.assertThatThrownBy(() -> sut.saveSummary(summaryRequestDto)).isInstanceOf(CustomException.class);
-
     }
 
     @Test

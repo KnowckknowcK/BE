@@ -4,6 +4,7 @@ import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.requestdto.OpinionRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.OpinionResponseDto;
 import com.knu.KnowcKKnowcK.enums.Position;
+import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.repository.*;
 import com.knu.KnowcKKnowcK.service.chatGptService.OpinionFeedbackService;
@@ -69,7 +70,7 @@ class SaveOpinionServiceTest {
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
         Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
         Mockito.when(opinionRepository.save(any())).thenReturn(opinion);
-        Mockito.when(opinionFeedbackService.callGptApi(article.getContent(), opinion.getContent())).thenReturn(Pair.of("a","content"));
+        Mockito.when(opinionFeedbackService.callGptApi(article.getContent(), opinion.getContent())).thenReturn(Pair.of(Score.EXCELLENT,"content"));
         Mockito.when(opinionFeedbackRepository.save(any())).thenReturn(new OpinionFeedback(1L, "content", opinion));
         OpinionRequestDto opinionRequestDto = new OpinionRequestDto(1L, 1L,
                 opinion.getContent(), LocalDateTime.now(), Status.DONE, Position.AGREE);

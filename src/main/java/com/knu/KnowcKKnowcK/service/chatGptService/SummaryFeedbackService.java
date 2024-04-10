@@ -4,6 +4,9 @@ import com.knu.KnowcKKnowcK.config.ChatGptConfig;
 import com.knu.KnowcKKnowcK.dto.prompt.SummaryPrompt;
 import com.knu.KnowcKKnowcK.dto.requestdto.ChatgptRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.ChatgptResponseDto;
+import com.knu.KnowcKKnowcK.enums.Score;
+import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -17,7 +20,7 @@ import java.util.List;
 public class SummaryFeedbackService implements ChatGptService{
     private final ChatGptConfig chatGptConfig;
     @Override
-    public Pair<String, String> callGptApi(String article, String summary) {
+    public Pair<Score, String> callGptApi(String article, String summary) {
 
         List<ChatgptRequestDto.Message> messageList = new ArrayList<>();
         messageList.add(new ChatgptRequestDto.Message("user", SummaryPrompt.getInstance().getPrompt() + article + summary));
@@ -33,12 +36,17 @@ public class SummaryFeedbackService implements ChatGptService{
         return parsingFeedback(responseDto.getChoices().get(0).getMessage().getContent());
     }
 
-    private Pair<String, String> parsingFeedback(String content){
+    private Pair<Score, String> parsingFeedback(String content){
 
             String[] split = content.split("#");
             String score = split[0];
             String feedback = split[1];
 
-            return Pair.of(score, feedback);
+        try {
+            return Pair.of(Score.valueOf(score), feedback);
+        }catch (Exception e){
+            throw new CustomException(ErrorCode.INVALID_INPUT);
+        }
+
     }
 }

@@ -58,16 +58,10 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
             return new SummaryResponseDto("임시 저장이 완료되었습니다.");
 
         } else if (savedSummary.getStatus().equals(Status.DONE)) {
-            Pair<String, String> parsedFeedback = summaryFeedbackService.callGptApi(article.getContent(), savedSummary.getContent());
-
-            try {
-                Score.valueOf(parsedFeedback.getFirst());
-            }catch (Exception e){
-                throw new CustomException(ErrorCode.INVALID_INPUT);
-            }
+            Pair<Score, String> parsedFeedback = summaryFeedbackService.callGptApi(article.getContent(), savedSummary.getContent());
 
             SummaryFeedback summaryFeedback = SummaryFeedback.builder()
-                    .score(Score.valueOf(parsedFeedback.getFirst()))
+                    .score(parsedFeedback.getFirst())
                     .content(parsedFeedback.getSecond())
                     .summary(savedSummary)
                     .build();
