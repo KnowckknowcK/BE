@@ -22,7 +22,7 @@ class LoadArticlesControllerTest {
     @Test
     @DisplayName("존재하는 모든 지문을 목록으로 조회한다.")
     void loadArticles() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/article/list")).andExpect(status().isOk())
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/article/list/POLITICS")).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
 

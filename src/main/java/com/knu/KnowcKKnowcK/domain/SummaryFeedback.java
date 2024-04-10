@@ -1,6 +1,5 @@
 package com.knu.KnowcKKnowcK.domain;
 
-import com.knu.KnowcKKnowcK.converter.StringToScoreConverter;
 import com.knu.KnowcKKnowcK.enums.Score;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,7 +20,7 @@ public class SummaryFeedback {
     @Lob
     private String content;
 
-    @Convert(converter = StringToScoreConverter.class)
+    @Enumerated(EnumType.STRING)
     private Score score;
 
     @OneToOne
