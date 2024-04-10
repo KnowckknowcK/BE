@@ -3,6 +3,7 @@ package com.knu.KnowcKKnowcK.dto.responsedto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
+import com.knu.KnowcKKnowcK.enums.Score;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ public class SummaryResponseDto {
 
     private String content;
 
-    private int score;
+    private Score score;
 
     private String returnMessage;
 

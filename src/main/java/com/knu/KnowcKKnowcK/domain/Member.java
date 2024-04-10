@@ -29,6 +29,7 @@ public class Member {
 
     //사용자가 작성한 견해
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+
     private List<Opinion> opinions = new ArrayList<>();
 
     @Builder

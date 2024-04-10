@@ -20,9 +20,6 @@ import java.util.List;
 @RequestMapping("/api/")
 @Tag(name = "MyPage",description = "마이페이지에 관한 요청을 처리한다.")
 public class MyPageController {
-    //TODO 참여중인 토론방 목록 확인
-    //TODO 현재 작성 중인 혹은 작성한 요약문 확인
-    //TODO 작성한 견해문 확인
 
     private final MyPageService myPageService;
 
@@ -53,7 +50,6 @@ public class MyPageController {
         return ApiResponseDto.success(SuccessCode.OK,"변경이 성공적으로 됐습니다.");
     }
 
-    //참여 중인 토론방 확인
     @GetMapping("/debate-room/ing")
     @Operation(summary = "토론방 확인 API", description = "현재 참여 중인 토론방 확인 API")
     @ApiResponses({
@@ -63,4 +59,6 @@ public class MyPageController {
         List<DebateRoom> debateRooms =  myPageService.getDebateRoom(id);
         return ApiResponseDto.success(SuccessCode.OK,debateRooms);
     }
+
+
 }
