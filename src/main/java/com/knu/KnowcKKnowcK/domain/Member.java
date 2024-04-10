@@ -41,12 +41,6 @@ public class Member {
         this.password = password;
     }
 
-    public Member update(String name, String profileImage) {
-        this.name = name;
-        this.profileImage = profileImage;
-        return this;
-    }
-
     //프로필 수정
     public void updateProfile(String name, String email, String profileImage) {
         //닉네임, 계정, 이메일, 프로필 이미지 변경

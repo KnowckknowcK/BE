@@ -32,9 +32,12 @@ public class MessageThread {
     private String content;
     private LocalDateTime createdTime;
 
-    public MessageThreadResponseDto toMessageThreadResponseDto(Long parentMessageId){
+    public MessageThreadResponseDto toMessageThreadResponseDto(Long parentMessageId, String position, String profileImage){
         return MessageThreadResponseDto.builder()
+                .id(id)
                 .content(content)
+                .position(position)
+                .profileImage(profileImage)
                 .createdTime(createdTime)
                 .parentMessageId(parentMessageId)
                 .writer(member.getName())

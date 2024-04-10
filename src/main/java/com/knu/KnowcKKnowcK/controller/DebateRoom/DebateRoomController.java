@@ -1,8 +1,9 @@
-package com.knu.KnowcKKnowcK.controller;
+package com.knu.KnowcKKnowcK.controller.DebateRoom;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Member;
+import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,14 +24,14 @@ public class DebateRoomController {
     private final MemberRepository memberRepository;
     private Member member; // 로그인 기능 추가되면 수정 예정
 
-    @PostMapping("/{debateRoomId}")
+    @PutMapping("/{debateRoomId}")
     @Operation(summary = "토론방 참여 API", description = "클라이언트가 토론방에 참여하길 바랄 때 요청하는 API")
     @Parameters({@Parameter(name = "debateRoomId", description = "참여하길 바라는 토론방 ID", example = "3")})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "토론방 참여 성공"),
             @ApiResponse(responseCode = "400", description = "토론방 참여 실패")
             })
-    public ApiResponseDto<Double> participateInDebateRoom(@PathVariable Long debateRoomId){
+    public ApiResponseDto<DebateRoomResponseDto> participateInDebateRoom(@PathVariable Long debateRoomId){
         member = memberRepository.findById(1L).orElse(null);
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.participateInDebateRoom(member, debateRoomId));
     }
