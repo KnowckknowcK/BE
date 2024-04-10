@@ -21,7 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.data.util.Pair;
+
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -84,7 +86,6 @@ class SaveSummaryTest {
 
         Assertions.assertThatThrownBy(() -> sut.saveSummary(summaryRequestDto)).isInstanceOf(CustomException.class);
     }
-
     @Test
     @DisplayName("요약 자동 제출에 성공하면 임시저장을 한다.")
     void saveSummary_when_auto() {
@@ -133,7 +134,6 @@ class SaveSummaryTest {
 
         Assertions.assertThat(summaryResponseDto.getReturnMessage()).isNotNull();
     }
-
 
     Member createMember(){
         return Member.builder()

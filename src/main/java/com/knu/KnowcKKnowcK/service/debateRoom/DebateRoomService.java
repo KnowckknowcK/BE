@@ -4,6 +4,7 @@ import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.MemberDebate;
 import com.knu.KnowcKKnowcK.domain.MemberDebateId;
+import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
@@ -12,6 +13,8 @@ import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
 
 @Service
@@ -19,16 +22,36 @@ import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRa
 public class DebateRoomService {
     private final DebateRoomRepository debateRoomRepository;
     private final MemberDebateRepository memberDebateRepository;
-    public double participateInDebateRoom(Member member, Long debateRoomId){
+    public DebateRoomResponseDto participateInDebateRoom(Member member, Long debateRoomId){
+        Position position;
         DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
-        // memberDebate 생성 후 저장(토론방 참여)
-        MemberDebate memberDebate = buildMemberDebate(member, debateRoom, decidePosition());
-        memberDebateRepository.save(memberDebate);
+        Optional<MemberDebate> memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom);
+        if(memberDebate.isEmpty()){ // 참여 상태가 아니라면 MemberDebate 생성하여 참여
+            position = decidePosition();
+            memberDebateRepository.save(buildMemberDebate(member, debateRoom, position));
 
-        // debateRoom에 있는 num 업데이트 및 비율 반환
-        return updatePositionScore(debateRoom, memberDebate.getPosition(), true);
+            // 토론방 인원 최신화 후 저장
+            if(position.equals(Position.AGREE))
+                debateRoom.setAgreeNum(debateRoom.getAgreeNum() + 1);
+            else debateRoom.setDisagreeNum(debateRoom.getDisagreeNum() + 1);
+
+            debateRoomRepository.save(debateRoom);
+        }
+
+        return buildDebateRoomResponseDto(
+                calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
+                debateRoom.getAgreeNum(),
+                debateRoom.getDisagreeNum());
+    }
+
+    private DebateRoomResponseDto buildDebateRoomResponseDto(double ratio, long agreeNum, long disagreeNum) {
+        return DebateRoomResponseDto.builder()
+                .ratio(ratio)
+                .agreeNum(agreeNum)
+                .disagreeNum(disagreeNum)
+                .build();
     }
 
     public double leaveDebateRoom(Member member, Long debateRoomId){
@@ -42,7 +65,12 @@ public class DebateRoomService {
         memberDebateRepository.delete(memberDebate);
 
         // debateRoom에 있는 num 업데이트
-        return updatePositionScore(debateRoom, memberDebate.getPosition(), false);
+        if(memberDebate.getPosition().equals(Position.AGREE)) // 찬성 수 감소
+            debateRoom.setAgreeNum(debateRoom.getAgreeNum() - 1);
+        else // 반대 수 감소
+            debateRoom.setDisagreeNum(debateRoom.getDisagreeNum() - 1);
+        debateRoomRepository.save(debateRoom);
+        return calculateRatio(debateRoom.getAgreeNum(), debateRoom.getDisagreeNum());
     }
     private Position decidePosition(){
         // 기존 찬/반 비율에 따라 찬/반 결정
@@ -58,20 +86,5 @@ public class DebateRoomService {
                 .build();
     }
 
-    private double updatePositionScore(DebateRoom debateRoom, Position position, boolean isParticipate){
-        if(isParticipate){ // 토론방에 참여한 경우
-            if(position.equals(Position.AGREE)) // 찬성 수 증가
-                debateRoom.setAgreeNum(debateRoom.getAgreeNum() + 1);
-            else // 반대 수 증가
-                debateRoom.setDisagreeNum(debateRoom.getDisagreeNum() + 1);
-        }else{ // 토론방에서 나간 경우
-            if(position.equals(Position.AGREE)) // 찬성 수 감소
-                debateRoom.setAgreeNum(debateRoom.getAgreeNum() - 1);
-            else // 반대 수 감소
-                debateRoom.setDisagreeNum(debateRoom.getDisagreeNum() - 1);
-        }
-        debateRoomRepository.save(debateRoom);
-        return calculateRatio(debateRoom.getAgreeNum(), debateRoom.getDisagreeNum());
-    }
 
 }
