@@ -1,5 +1,6 @@
 package com.knu.KnowcKKnowcK.domain;
 
+import com.knu.KnowcKKnowcK.enums.Score;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -19,7 +20,8 @@ public class SummaryFeedback {
     @Lob
     private String content;
 
-    private int score;
+    @Enumerated(EnumType.STRING)
+    private Score score;
 
     @OneToOne
     @JoinColumn(name = "summary_id")
