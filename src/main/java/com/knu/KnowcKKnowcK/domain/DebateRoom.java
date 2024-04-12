@@ -1,7 +1,7 @@
 package com.knu.KnowcKKnowcK.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 

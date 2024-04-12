@@ -3,6 +3,7 @@ package com.knu.KnowcKKnowcK.service.articleSummary;
 import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.requestdto.OpinionRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.OpinionResponseDto;
+import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
@@ -46,7 +47,7 @@ public class SaveOpinionServiceImpl  implements SaveOpinionService{
             return new OpinionResponseDto("임시 저장이 완료되었습니다.");
 
         } else if (savedOpinion.getStatus().equals(Status.DONE)) {
-            Pair<Integer, String> parsedFeedback = opinionFeedbackService.callGptApi(article.getContent(), savedOpinion.getContent());
+            Pair<Score, String> parsedFeedback = opinionFeedbackService.callGptApi(article.getContent(), savedOpinion.getContent());
 
             OpinionFeedback opinionFeedback = OpinionFeedback.builder()
                     .content(parsedFeedback.getSecond())

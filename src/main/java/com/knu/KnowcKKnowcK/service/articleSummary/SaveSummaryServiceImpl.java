@@ -6,6 +6,7 @@ import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
 import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
+import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
@@ -56,14 +57,11 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
             savedSummary = summaryRepository.save(dto.toEntity(article, member));
         }
 
-//        member.saveSummary(summary);
-
-
         if (savedSummary.getStatus().equals(Status.ING)){
             return new SummaryResponseDto("임시 저장이 완료되었습니다.");
 
         } else if (savedSummary.getStatus().equals(Status.DONE)) {
-            Pair<Integer, String> parsedFeedback = summaryFeedbackService.callGptApi(article.getContent(), savedSummary.getContent());
+            Pair<Score, String> parsedFeedback = summaryFeedbackService.callGptApi(article.getContent(), savedSummary.getContent());
 
             SummaryFeedback summaryFeedback = SummaryFeedback.builder()
                     .score(parsedFeedback.getFirst())
@@ -76,8 +74,6 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
         } else {
             throw new CustomException(ErrorCode.FAILED);
-
         }
     }
-
 }
