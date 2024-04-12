@@ -1,6 +1,7 @@
 package com.knu.KnowcKKnowcK.service.articleSummary;
 
 import com.knu.KnowcKKnowcK.domain.Article;
+import com.knu.KnowcKKnowcK.enums.Category;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,8 @@ public class LoadArticlesServiceImpl implements LoadArticlesService{
     private final ArticleRepository articleRepository;
 
     @Override
-    public List<Article> loadArticles() {
-        return articleRepository.findAll();
+    public List<Article> loadArticles(Category category) {
+        return articleRepository.findByCategory(category);
     }
 
     @Override
