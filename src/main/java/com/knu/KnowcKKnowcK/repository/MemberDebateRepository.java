@@ -12,4 +12,5 @@ public interface MemberDebateRepository extends JpaRepository<MemberDebate, Long
     Optional<MemberDebate> findByMemberAndDebateRoom(Member member, DebateRoom debateRoom);
 
     List<MemberDebate> findAllByMember(Member member);
+    List<MemberDebate> findByDebateRoom(DebateRoom debateRoom);
 }
