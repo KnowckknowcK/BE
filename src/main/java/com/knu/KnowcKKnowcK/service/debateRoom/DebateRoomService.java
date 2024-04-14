@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
 
@@ -33,7 +34,7 @@ public class DebateRoomService {
 
         Optional<MemberDebate> memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom);
         if(memberDebate.isEmpty()){ // 참여 상태가 아니라면 MemberDebate 생성하여 참여
-            position = decidePosition();
+            position = decidePosition(calculateRatio(debateRoom.getAgreeNum(), debateRoom.getDisagreeNum()));
             memberDebateRepository.save(buildMemberDebate(member, debateRoom, position));
 
             // 토론방 인원 최신화 후 저장
@@ -77,9 +78,11 @@ public class DebateRoomService {
         return makeDebateRoomMemberList(memberDebateRepository.findByDebateRoom(debateRoom));
     }
 
-    private Position decidePosition(){
-        // 기존 찬/반 비율에 따라 찬/반 결정
-        return Position.AGREE;
+    private Position decidePosition(double ratio){
+        // 비율에 따른 찬/반 결정
+        Random random = new Random();
+        int randomNumber = random.nextInt(100);
+        return randomNumber < ratio ? Position.DISAGREE : Position.AGREE;
     }
     private MemberDebate buildMemberDebate(Member member, DebateRoom debateRoom, Position position){
         MemberDebateId memberDebateId = new MemberDebateId(member.getId(), debateRoom.getId());
