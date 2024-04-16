@@ -27,8 +27,8 @@ public class Opinion {
   
     @ManyToOne
     private Article article;
-  
-    @Lob
+
+    @Column(length = 10000)
     private String content;
   
     @Enumerated(EnumType.STRING)
