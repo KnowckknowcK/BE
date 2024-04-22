@@ -86,5 +86,5 @@ jobs:
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
           sudo docker stop knowckknowck-backend 2>/dev/null || true
           sudo docker rm knowckknowck-backend
-          sudo docker-compose up
+          sudo docker-compose -f ./docker-compose.yml up -d
           sudo docker system prune -f
