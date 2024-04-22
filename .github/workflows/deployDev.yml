@@ -44,7 +44,6 @@ jobs:
       run: |
         cd ./src/main/resources
         echo "${{ secrets.APPLICATION }}" >> ./application.properties
-        cd ../../..
 
     # gradle grant execution permission and build project
     - name: Setup Gradle
@@ -82,6 +81,7 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         port: ${{ secrets.PORT }}
         script: |
+          cd BE
           sudo pwd
           sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
