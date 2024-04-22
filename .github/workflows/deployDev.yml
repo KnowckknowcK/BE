@@ -44,6 +44,7 @@ jobs:
         mkdir -p ./src/main/resources
         cd ./src/main/resources
         echo "${{ secrets.APPLICATION }}" >> ./application.properties
+        cd ../../..
 
     # gradle grant execution permission and build project
     - name: Setup Gradle
