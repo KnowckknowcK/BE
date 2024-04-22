@@ -31,7 +31,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # set up application file
+      # set up .env file
+    - name: Create .env
+      run: |
+        touch ./.env
+        echo "DOCKER_IMAGE=knowckknowck-backend" >> ./.env
+      
+
+      # set up application file
     - name: Create application.properties
       run: |
         mkdir -p ./src/main/resources
