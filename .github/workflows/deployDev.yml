@@ -14,7 +14,6 @@ on:
     branches: [ "dev" ]
 
 
-
 jobs:
   update-docker-image-push-to-hub:
     runs-on: ubuntu-latest
@@ -37,7 +36,6 @@ jobs:
         touch ./.env
         echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> ./.env
         echo "DOCKER_IMAGE=knowckknowck-backend" >> ./.env
-      
 
       # set up application file
     - name: Create application.properties
@@ -45,7 +43,6 @@ jobs:
         mkdir -p ./src/main/resources
         cd ./src/main/resources
         echo "${{ secrets.APPLICATION }}" >> ./application.properties
-        cd ../../..
 
     # gradle grant execution permission and build project
     - name: Setup Gradle
@@ -83,9 +80,9 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
-          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
           sudo docker stop knowckknowck-backend 2>/dev/null || true
           sudo docker rm knowckknowck-backend
+          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
           sudo docker-compose up -d
           sudo docker system prune -f
