@@ -73,7 +73,7 @@ jobs:
     needs: update-docker-image-push-to-hub
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@master
     - name: Deploy Docker image
       uses: appleboy/ssh-action@master
       with:
