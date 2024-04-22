@@ -42,7 +42,6 @@ jobs:
       # set up application file
     - name: Create application.properties
       run: |
-        mkdir -p ./src/main/resources
         cd ./src/main/resources
         echo "${{ secrets.APPLICATION }}" >> ./application.properties
         cd ../../..
@@ -83,6 +82,7 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         port: ${{ secrets.PORT }}
         script: |
+          sudo pwd
           sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
           sudo docker stop knowckknowck-backend 2>/dev/null || true
