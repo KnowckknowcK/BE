@@ -14,7 +14,6 @@ on:
     branches: [ "dev" ]
 
 
-
 jobs:
   update-docker-image-push-to-hub:
     runs-on: ubuntu-latest
@@ -31,7 +30,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # set up application file
+      # set up .env file
+    - name: Create .env
+      run: |
+        touch ./.env
+        echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> ./.env
+        echo "DOCKER_IMAGE=knowckknowck-backend" >> ./.env
+
+      # set up application file
     - name: Create application.properties
       run: |
         mkdir -p ./src/main/resources
@@ -74,9 +80,9 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
-          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
           sudo docker stop knowckknowck-backend 2>/dev/null || true
           sudo docker rm knowckknowck-backend
-          sudo docker run --name knowckknowck-backend -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
+          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
+          sudo docker-compose up -d
           sudo docker system prune -f
