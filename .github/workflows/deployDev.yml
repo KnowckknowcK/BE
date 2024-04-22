@@ -35,6 +35,7 @@ jobs:
     - name: Create .env
       run: |
         touch ./.env
+        echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> ./.env
         echo "DOCKER_IMAGE=knowckknowck-backend" >> ./.env
       
 

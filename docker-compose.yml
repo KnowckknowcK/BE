@@ -11,7 +11,7 @@ services:
 
   knowckknowck-backend:
     image: ${DOCKER_IMAGE}
-    container_name: ${DOCKER_IMAGE}
+    container_name: ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}
     build:
       context: .
       dockerfile: ./Dockerfile
