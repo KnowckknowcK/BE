@@ -81,7 +81,7 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          cd BE
+          cd ./BE
           sudo pwd
           sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
