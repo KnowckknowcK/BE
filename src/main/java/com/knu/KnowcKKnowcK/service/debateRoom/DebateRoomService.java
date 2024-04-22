@@ -4,6 +4,7 @@ import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.MemberDebate;
 import com.knu.KnowcKKnowcK.domain.MemberDebateId;
+import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomMemberDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.exception.CustomException;
@@ -13,7 +14,10 @@ import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
 
@@ -22,6 +26,7 @@ import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRa
 public class DebateRoomService {
     private final DebateRoomRepository debateRoomRepository;
     private final MemberDebateRepository memberDebateRepository;
+    // 토론방 참여
     public DebateRoomResponseDto participateInDebateRoom(Member member, Long debateRoomId){
         Position position;
         DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
@@ -29,7 +34,7 @@ public class DebateRoomService {
 
         Optional<MemberDebate> memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom);
         if(memberDebate.isEmpty()){ // 참여 상태가 아니라면 MemberDebate 생성하여 참여
-            position = decidePosition();
+            position = decidePosition(calculateRatio(debateRoom.getAgreeNum(), debateRoom.getDisagreeNum()));
             memberDebateRepository.save(buildMemberDebate(member, debateRoom, position));
 
             // 토론방 인원 최신화 후 저장
@@ -40,20 +45,13 @@ public class DebateRoomService {
             debateRoomRepository.save(debateRoom);
         }
 
-        return buildDebateRoomResponseDto(
+        return new DebateRoomResponseDto(
                 calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
                 debateRoom.getAgreeNum(),
                 debateRoom.getDisagreeNum());
     }
 
-    private DebateRoomResponseDto buildDebateRoomResponseDto(double ratio, long agreeNum, long disagreeNum) {
-        return DebateRoomResponseDto.builder()
-                .ratio(ratio)
-                .agreeNum(agreeNum)
-                .disagreeNum(disagreeNum)
-                .build();
-    }
-
+    // 토론방 떠나기
     public double leaveDebateRoom(Member member, Long debateRoomId){
         DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
@@ -72,9 +70,19 @@ public class DebateRoomService {
         debateRoomRepository.save(debateRoom);
         return calculateRatio(debateRoom.getAgreeNum(), debateRoom.getDisagreeNum());
     }
-    private Position decidePosition(){
-        // 기존 찬/반 비율에 따라 찬/반 결정
-        return Position.AGREE;
+
+    public ArrayList<DebateRoomMemberDto> getDebateRoomMember(Long debateRoomId){
+        DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+
+        return makeDebateRoomMemberList(memberDebateRepository.findByDebateRoom(debateRoom));
+    }
+
+    private Position decidePosition(double ratio){
+        // 비율에 따른 찬/반 결정
+        Random random = new Random();
+        int randomNumber = random.nextInt(100);
+        return randomNumber < ratio ? Position.DISAGREE : Position.AGREE;
     }
     private MemberDebate buildMemberDebate(Member member, DebateRoom debateRoom, Position position){
         MemberDebateId memberDebateId = new MemberDebateId(member.getId(), debateRoom.getId());
@@ -86,5 +94,11 @@ public class DebateRoomService {
                 .build();
     }
 
-
+    private ArrayList<DebateRoomMemberDto> makeDebateRoomMemberList(List<MemberDebate> memberDebateList){
+        ArrayList<DebateRoomMemberDto> list = new ArrayList<>();
+        for (MemberDebate memberDebate: memberDebateList) {
+            list.add(new DebateRoomMemberDto(memberDebate.getMember(), memberDebate.getPosition().name()));
+        }
+        return list;
+    }
 }

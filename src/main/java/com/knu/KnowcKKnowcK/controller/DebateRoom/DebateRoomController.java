@@ -3,6 +3,7 @@ package com.knu.KnowcKKnowcK.controller.DebateRoom;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Member;
+import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomMemberDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomService;
@@ -14,6 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("api/debate-room")
@@ -46,5 +49,16 @@ public class DebateRoomController {
     public ApiResponseDto<Double> leaveDebateRoom(@PathVariable Long debateRoomId){
         member = memberRepository.findById(1L).orElse(null);
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.leaveDebateRoom(member, debateRoomId));
+    }
+
+    @GetMapping("/{debateRoomId}")
+    @Operation(summary = "토론 참여자 리스트 API", description = "해당 토론방 참여자 리스트를 받아야할 때 요청하는 API")
+    @Parameters({@Parameter(name = "debateRoomId", description = "참여자 리스트가 필요한 토론방 ID", example = "1")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "토론방 참여자 리스트 반환"),
+            @ApiResponse(responseCode = "400", description = "존재하지 않는 토론방")
+    })
+    public ApiResponseDto<ArrayList<DebateRoomMemberDto>> getDebateRoomMember(@PathVariable Long debateRoomId){
+        return ApiResponseDto.success(SuccessCode.OK, debateRoomService.getDebateRoomMember(debateRoomId));
     }
 }

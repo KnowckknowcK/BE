@@ -53,6 +53,8 @@ public class PubSubController {
                 .saveAndReturnMessageThread(member, messageId, messageThreadRequestDto);
         template.convertAndSend(
                 "/sub/room/" +
+                        messageThreadRequestDto.getRoomId() +
+                        "/" +
                         messageId,
                         messageThread
         );
