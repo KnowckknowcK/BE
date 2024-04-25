@@ -42,7 +42,7 @@ public class AwsS3Service {
             RequestBody requestBody = RequestBody.fromBytes(multipartFile.getBytes());
             s3Client.putObject(putObjectRequest, requestBody);
         } catch (IOException e) {
-            throw new CustomException(ErrorCode.INVALID_INPUT);
+            throw new CustomException(ErrorCode.FAILED_UPLOAD);
         }
         GetUrlRequest getUrlRequest = GetUrlRequest.builder()
                 .bucket(bucketName)
