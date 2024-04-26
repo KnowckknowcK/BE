@@ -18,7 +18,7 @@ public class Article {
 
     private String title;
 
-    @Lob
+    @Column(length = 50000)
     private String content;
 
     private LocalDateTime createdTime;

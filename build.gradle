@@ -44,10 +44,10 @@ dependencies {
 	testImplementation 'org.springframework:spring-webflux'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'
 
-	//Swagger
+	//swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
   
-  //websocket
+  	//websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 	//webflux(chatgpt 비동기 호출)
@@ -59,8 +59,10 @@ dependencies {
 	//oauth
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	//email인증
+	//smtp
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 }

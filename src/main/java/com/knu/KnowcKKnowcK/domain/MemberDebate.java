@@ -31,4 +31,6 @@ public class MemberDebate {
 
     @Enumerated(EnumType.STRING)
     private Position position;
+
+
 }
