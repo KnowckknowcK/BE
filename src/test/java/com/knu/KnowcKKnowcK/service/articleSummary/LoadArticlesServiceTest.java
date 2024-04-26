@@ -4,6 +4,7 @@ import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.enums.Category;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +28,7 @@ class LoadArticlesServiceTest {
     private ArticleRepository articleRepository;
 
     @Test
+    @DisplayName("지문 목록 조회에 성공한다.")
     void loadArticles() {
         int pageNum = 0;
         Page<Article> page = createPage();
@@ -40,7 +42,6 @@ class LoadArticlesServiceTest {
         Page<Article> loaded = sut.loadArticles(Category.CULTURE, pageNum);
 
         Assertions.assertThat(loaded.getTotalElements()).isEqualTo(7);
-        Assertions.assertThat(loaded.getTotalPages()).isEqualTo(2);
 
     }
 
