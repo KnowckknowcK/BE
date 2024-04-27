@@ -1,5 +1,7 @@
 package com.knu.KnowcKKnowcK.controller.articleSummary;
 
+import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
+import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryHistoryResponseDto;
 import com.knu.KnowcKKnowcK.service.articleSummary.LoadSummaryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,10 +26,9 @@ public class LoadSummaryController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "요약 히스토리 가져오기 성공"),
             @ApiResponse(responseCode = "400", description = "요약 히스토리 가져오기 실패")})
     @GetMapping("/load/")
-    ResponseEntity<SummaryHistoryResponseDto> loadSummaryHistory(@RequestParam @Valid long userId, @RequestParam @Valid int articleId){
+    ApiResponseDto<SummaryHistoryResponseDto> loadSummaryHistory(@RequestParam @Valid long userId, @RequestParam @Valid int articleId) {
 
-        SummaryHistoryResponseDto responseDto = loadSummaryService.loadSummaryHistory(userId, articleId);
-
-        return ResponseEntity.ok(responseDto);
+            SummaryHistoryResponseDto responseDto = loadSummaryService.loadSummaryHistory(userId, articleId);
+            return ApiResponseDto.success(SuccessCode.OK, responseDto);
     }
 }

@@ -1,5 +1,7 @@
 package com.knu.KnowcKKnowcK.controller.articleSummary;
 
+import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
+import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.enums.Category;
 import com.knu.KnowcKKnowcK.service.articleSummary.LoadArticlesService;
@@ -30,8 +32,8 @@ public class LoadArticlesController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "지문 목록 조회 성공"),
                     @ApiResponse(responseCode = "400", description = "지문 목록 조회 실패")})
     @GetMapping("/api/article/list/{category}/{page}")
-    ResponseEntity<Page<Article>> loadArticles(@PathVariable @Valid Category category, @PathVariable @Valid int page){
-        return ResponseEntity.ok(loadArticlesService.loadArticles(category, page));
+    ApiResponseDto<Page<Article>> loadArticles(@PathVariable @Valid Category category, @PathVariable @Valid int page){
+        return ApiResponseDto.success(SuccessCode.OK, loadArticlesService.loadArticles(category, page));
     }
 
     @Operation(summary = "지문 개별 조회", description = "문해력 진단을 할 지문 1개를 id로 조회한다.")
