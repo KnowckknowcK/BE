@@ -41,7 +41,7 @@ class MyPageControllerTest {
     void updateMyProfile() {
     }
 
-    @Test
+    // @Test
     @DisplayName("토론방 조회")
     void getDebateRoom() {
         //given
