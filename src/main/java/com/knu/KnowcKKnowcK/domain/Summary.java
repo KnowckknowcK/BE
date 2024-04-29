@@ -27,7 +27,7 @@ public class Summary {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")
     private Article article;
-    @Lob
+    @Column(length = 10000)
     private String content;
     private LocalDateTime createdTime;
     @Enumerated(EnumType.STRING)

@@ -17,7 +17,7 @@ public class SummaryFeedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
+    @Column(length = 10000)
     private String content;
 
     @Enumerated(EnumType.STRING)
