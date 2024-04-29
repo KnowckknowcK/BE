@@ -38,7 +38,6 @@ public class Summary {
         this.content = content;
         this.status = status;
         this.takenTime = takenTime;
-
         return this;
     }
 }

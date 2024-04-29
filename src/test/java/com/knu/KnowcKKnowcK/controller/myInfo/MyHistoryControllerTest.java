@@ -52,7 +52,7 @@ class MyHistoryControllerTest {
         Summary summaryING = new Summary(1L,member,null, "content",LocalDateTime.now(), Status.ING,50L);
         summaryRepository.save(summaryING);
 
-        List<MyIngSummaryResponseDto> answer = myHistoryService.getMySummaries(1L, Status.ING);
+        List<?> answer = myHistoryService.getMySummaries(1L,Status.ING);
         System.out.println(answer);
     }
 }
