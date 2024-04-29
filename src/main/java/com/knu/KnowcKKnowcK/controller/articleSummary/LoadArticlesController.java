@@ -1,5 +1,7 @@
 package com.knu.KnowcKKnowcK.controller.articleSummary;
 
+import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
+import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.enums.Category;
 import com.knu.KnowcKKnowcK.service.articleSummary.LoadArticlesService;
@@ -10,12 +12,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,9 +31,9 @@ public class LoadArticlesController {
     @Tag(name = "지문 목록 조회", description = "모든 지문을 목록 형식으로 조회할 수 있는 API")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "지문 목록 조회 성공"),
                     @ApiResponse(responseCode = "400", description = "지문 목록 조회 실패")})
-    @GetMapping("/api/article/list/{category}")
-    ResponseEntity<List<Article>> loadArticles(@PathVariable @Valid Category category){
-        return ResponseEntity.ok(loadArticlesService.loadArticles(category));
+    @GetMapping("/api/article/list/{category}/{page}")
+    ApiResponseDto<Page<Article>> loadArticles(@PathVariable @Valid Category category, @PathVariable @Valid int page){
+        return ApiResponseDto.success(SuccessCode.OK, loadArticlesService.loadArticles(category, page));
     }
 
     @Operation(summary = "지문 개별 조회", description = "문해력 진단을 할 지문 1개를 id로 조회한다.")
