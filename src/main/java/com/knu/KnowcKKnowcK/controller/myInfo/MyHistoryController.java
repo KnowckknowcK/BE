@@ -2,6 +2,7 @@ package com.knu.KnowcKKnowcK.controller.myInfo;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
+import com.knu.KnowcKKnowcK.dto.responsedto.MySummaryResponseDto;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.service.myPage.MyHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +32,7 @@ public class MyHistoryController {
             @Parameter(name = "id", description = "임시 테스트용 추후 수정 예정", example = "1")
     })
     @GetMapping("/summary")
-    public ApiResponseDto<List<?>> getMySummary(
+    public ApiResponseDto<List<MySummaryResponseDto>> getMySummary(
             @RequestHeader("Authorization") Long id,
             @RequestParam(value = "status",defaultValue = "DONE") Status status
     ){

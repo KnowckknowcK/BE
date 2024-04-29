@@ -3,26 +3,18 @@ package com.knu.KnowcKKnowcK.controller.myInfo;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
-import com.knu.KnowcKKnowcK.dto.responsedto.MyIngSummaryResponseDto;
 import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.repository.*;
 import com.knu.KnowcKKnowcK.service.myPage.MyHistoryService;
-import com.knu.KnowcKKnowcK.service.myPage.MyPageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class MyHistoryControllerTest {
