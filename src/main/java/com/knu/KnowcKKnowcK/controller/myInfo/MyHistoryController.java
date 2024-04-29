@@ -2,6 +2,7 @@ package com.knu.KnowcKKnowcK.controller.myInfo;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
+import com.knu.KnowcKKnowcK.dto.responsedto.MyOpinionResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MySummaryResponseDto;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.service.myPage.MyHistoryService;
@@ -21,8 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class MyHistoryController {
-    //TODO 현재 작성 중인 혹은 작성한 요약문 확인
-    //TODO 작성한 견해문 확인
 
     private final MyHistoryService myHistoryService;
 
@@ -38,6 +37,17 @@ public class MyHistoryController {
     ){
         log.info("status = {}",status);
         return ApiResponseDto.success(SuccessCode.OK,myHistoryService.getMySummaries(id,status));
+    }
+
+    @Operation(summary="사용자 견해",description="사용자가 작성한 견해문 조회")
+    @Parameters({
+            @Parameter(name = "id", description = "임시 테스트용 추후 수정 예정", example = "1")
+    })
+    @GetMapping("/opinion")
+    public ApiResponseDto<List<MyOpinionResponseDto>> getMySummary(
+            @RequestHeader("Authorization") Long id
+    ){
+        return ApiResponseDto.success(SuccessCode.OK,myHistoryService.getMyOpinions(id));
     }
 
 }

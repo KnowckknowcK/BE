@@ -1,8 +1,10 @@
 package com.knu.KnowcKKnowcK.service.myPage;
 
 import com.knu.KnowcKKnowcK.domain.Member;
+import com.knu.KnowcKKnowcK.domain.Opinion;
 import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
+import com.knu.KnowcKKnowcK.dto.responsedto.MyOpinionResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MySummaryResponseDto;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.exception.CustomException;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,5 +41,11 @@ public class MyHistoryService {
             }
             return mySummaryResponseDtos;
         }
+    }
+
+    public List<MyOpinionResponseDto> getMyOpinions(Long id){
+        Member member = memberRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        List<Opinion> opinions = member.getOpinions().stream().toList();
+        return opinions.stream().map(MyOpinionResponseDto::new).toList();
     }
 }

@@ -42,5 +42,4 @@ public class MySummaryResponseDto {
         this.score = summaryFeedback.getScore();
         this.feedBackContent = summaryFeedback.getContent();
     }
-
 }
