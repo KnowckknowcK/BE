@@ -1,10 +1,10 @@
-package com.knu.KnowcKKnowcK.service;
+package com.knu.KnowcKKnowcK.utils;
 
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.util.UUID;
 
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class AwsS3Service {
+public class AwsS3Util {
     private final S3Client s3Client;
 
     @Value("${spring.cloud.aws.s3.bucket}")
