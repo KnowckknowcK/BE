@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.controller.DebateRoom;
+package com.knu.KnowcKKnowcK.controller.debateRoom;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
