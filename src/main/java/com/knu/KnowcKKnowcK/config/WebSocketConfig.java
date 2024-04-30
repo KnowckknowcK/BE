@@ -13,7 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // 클라이언트가 WebSocket 연결을 맺을 수 있는 엔드포인트를 설정/ 현재는 로컬만, 배포할 경우 테스팅 필요
-        registry.addEndpoint("/api/ws").setAllowedOrigins("http://localhost:3000/").withSockJS();
+        registry.addEndpoint("/api/ws").setAllowedOrigins("http://localhost:3000/", "https://www.knowckknowck.com/").withSockJS();
     }
 
     @Override

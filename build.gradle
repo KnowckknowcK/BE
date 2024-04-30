@@ -69,6 +69,9 @@ dependencies {
 	implementation 'org.springframework.retry:spring-retry'
 	implementation 'org.springframework:spring-aspects'
 
+	//aws s3
+	implementation 'io.awspring.cloud:spring-cloud-aws-s3:3.0.2'
+
 }
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
