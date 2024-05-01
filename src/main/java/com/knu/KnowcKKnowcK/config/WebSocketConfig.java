@@ -1,5 +1,6 @@
 package com.knu.KnowcKKnowcK.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -9,11 +10,16 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    @Value("${client.base.url}")
+    private String clientUrl;
+    @Value("${client.local.url}")
+    private String clientLocalUrl;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // 클라이언트가 WebSocket 연결을 맺을 수 있는 엔드포인트를 설정/ 현재는 로컬만, 배포할 경우 테스팅 필요
-        registry.addEndpoint("/api/ws").setAllowedOrigins("http://localhost:3000/", "https://www.knowckknowck.com/").withSockJS();
+        registry.addEndpoint("/api/ws")
+                .setAllowedOrigins(clientLocalUrl, clientUrl).withSockJS();
     }
 
     @Override
