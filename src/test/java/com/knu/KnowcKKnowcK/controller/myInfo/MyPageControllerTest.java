@@ -53,8 +53,6 @@ class MyPageControllerTest {
 //
 //    }
 
-
-}
 //
 //    // @Test
 //    @DisplayName("토론방 조회")
