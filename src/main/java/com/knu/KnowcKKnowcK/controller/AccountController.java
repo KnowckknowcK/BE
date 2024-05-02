@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -25,12 +26,11 @@ import org.springframework.web.servlet.view.RedirectView;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/account")
-@Tag(name="Account",description="회원가입 및 로그인 등 사용자 계정과 관련된 API Controller")
+@Tag(name = "Account", description = "회원가입 및 로그인 등 사용자 계정과 관련된 API Controller")
 public class AccountController {
 
     private final AccountService accountService;
     private final MailService mailService;
-
 
 
     @GetMapping("/google")
@@ -73,8 +73,8 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "인증코드 발송 성공"),
             @ApiResponse(responseCode = "400", description = "인증코드 발송 실패")
     })
-    public  ApiResponseDto<String> mailCheck(@RequestBody MailCheckRequestDto requestDto){
-        try{
+    public ApiResponseDto<String> mailCheck(@RequestBody MailCheckRequestDto requestDto) {
+        try {
             String response = mailService.sendMail(requestDto.getEmail());
             return ApiResponseDto.success(SuccessCode.OK, response);
         } catch (MessagingException e) {
@@ -88,7 +88,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "인증코드 일치"),
             @ApiResponse(responseCode = "400", description = "인증코드 불일치")
     })
-    public  ApiResponseDto<String> codeCheck(@RequestBody CodeCheckRequestDto requestDto) {
+    public ApiResponseDto<String> codeCheck(@RequestBody CodeCheckRequestDto requestDto) {
         boolean response = mailService.checkCode(requestDto.getEmail(), requestDto.getCode());
 
         if (response) {
@@ -96,5 +96,12 @@ public class AccountController {
         } else {
             return ApiResponseDto.error(ErrorCode.FAILED, "이메일 인증에 실패하였습니다.");
         }
+    }
+
+    //사용 예시(삭제 예정)
+    @GetMapping("/jwt-example")
+    public String jwtTest(Authentication authentication) {
+        String email = authentication.getName();
+        return email;
     }
 }
