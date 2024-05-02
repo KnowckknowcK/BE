@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.controller.DebateRoom;
+package com.knu.KnowcKKnowcK.controller.debateRoom;
 
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDto;
