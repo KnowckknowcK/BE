@@ -17,7 +17,7 @@ public class MySummaryResponseDto {
     private Long summaryId;
     @Nullable
     private Long feedbackId;
-    private Article article;
+    private String articleContent;
     private String content;
     private LocalDateTime createdTime;
     @Nullable
@@ -28,7 +28,7 @@ public class MySummaryResponseDto {
 
     public MySummaryResponseDto(Summary summary){
         this.summaryId = summary.getId();
-        this.article = summary.getArticle();
+        this.articleContent = summary.getArticle().getContent();
         this.content = summary.getContent();
         this.createdTime = summary.getCreatedTime();
     }
@@ -36,7 +36,7 @@ public class MySummaryResponseDto {
     public MySummaryResponseDto(Summary summary, SummaryFeedback summaryFeedback){
         this.summaryId = summary.getId();
         this.feedbackId = summaryFeedback.getId();
-        this.article = summary.getArticle();
+        this.articleContent = summary.getArticle().getContent();
         this.content = summary.getContent();
         this.createdTime = summary.getCreatedTime();
         this.score = summaryFeedback.getScore();
