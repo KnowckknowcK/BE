@@ -6,8 +6,11 @@ import com.knu.KnowcKKnowcK.dto.responsedto.SignupResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
+import com.knu.KnowcKKnowcK.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.security.SecureRandom;
 import java.util.Optional;
 
@@ -17,27 +20,32 @@ public class AccountService {
 
     private final MemberRepository memberRepository;
 
+    @Value("${jwt.secret}")
+    private String secretKey;
+    private Long expiredAt = 1000 * 60 * 60L; //1H
+
+
     public SigninResponseDto signinWithEmail(String email, String password) {
 
         Optional<Member> member = memberRepository.findByEmail(email);
 
-        if(member.isEmpty())
+        if (member.isEmpty())
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        if(member.get().getIsOAuth()){
+        if (member.get().getIsOAuth()) {
             throw new CustomException(ErrorCode.ALREADY_REGISTERED);
         }
 
-        if(member.get().getPassword().equals(password)){
+        if (member.get().getPassword().equals(password)) {
             SigninResponseDto responseDto = SigninResponseDto.builder()
                     .email(member.get().getEmail())
                     .name(member.get().getName())
                     .profileImg(member.get().getProfileImage())
+                    .jwt(JwtUtil.creatJWT(member.get().getEmail(), secretKey, expiredAt))
                     .build();
 
             return responseDto;
-        }
-        else{
+        } else {
             throw new CustomException(ErrorCode.INVALID_INPUT);
         }
     }
@@ -46,7 +54,7 @@ public class AccountService {
 
         Optional<Member> member = memberRepository.findByEmail(email);
 
-        if(member.isPresent())
+        if (member.isPresent())
             throw new CustomException(ErrorCode.ALREADY_REGISTERED);
 
         Member newMember = Member.builder()
@@ -63,6 +71,7 @@ public class AccountService {
                 .email(savedMember.getEmail())
                 .name(savedMember.getName())
                 .profileImg(savedMember.getProfileImage())
+                .jwt(JwtUtil.creatJWT(savedMember.getEmail(), secretKey, expiredAt))
                 .build();
 
         return responseDto;
