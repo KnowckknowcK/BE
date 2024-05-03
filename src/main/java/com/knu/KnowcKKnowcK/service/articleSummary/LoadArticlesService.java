@@ -11,6 +11,6 @@ public interface LoadArticlesService {
 
     Page<ArticleListResponseDto> loadArticles(Category category, int page, long memberId);
 
-    Optional<Article> loadArticleById(Long id);
+    Article loadArticleById(Long id);
 
 }

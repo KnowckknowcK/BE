@@ -6,6 +6,7 @@ import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.dto.responsedto.article.ArticleListResponseDto;
 import com.knu.KnowcKKnowcK.enums.Category;
 import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.repository.SummaryRepository;
@@ -57,7 +58,7 @@ public class LoadArticlesServiceImpl implements LoadArticlesService{
     }
 
     @Override
-    public Optional<Article> loadArticleById(Long id) {
-        return articleRepository.findById(id);
+    public Article loadArticleById(Long id) {
+        return articleRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
     }
 }
