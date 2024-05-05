@@ -45,12 +45,8 @@ public class LoadArticlesServiceImpl implements LoadArticlesService{
 
         Page<ArticleListResponseDto> articlesResponse = articles.map(article -> {
             Optional<Summary> summary = summaryRepository.findByArticleAndWriter(article, member);
+            return ArticleListResponseDto.from(article, summary.isPresent());
 
-            if (summary.isPresent()) {
-                return ArticleListResponseDto.from(article, true);
-            }
-
-            return ArticleListResponseDto.from(article, false);
         });
 
         return articlesResponse;

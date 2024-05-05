@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(value = "/api/article", produces = "application/json;charset=UTF-8")
 @Tag(name = "지문 조회 관련 API", description = "지문 조회 관련 API")
 public class ArticleListController {
