@@ -75,8 +75,6 @@ dependencies {
 	//batch
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 
-	//scheduler
-	implementation 'org.springframework.boot:spring-boot-starter-quartz'
 }
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
