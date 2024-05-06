@@ -12,10 +12,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class MyPageControllerTest {
+class MyProfileControllerTest {
 
 
-    @Mock
+        @Mock
     private MyPageService myPageService;
 
     @Autowired
