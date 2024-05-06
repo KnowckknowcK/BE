@@ -38,8 +38,11 @@ public class Opinion {
     private Status status;
   
     private LocalDateTime createdTime;
-  
-      public Opinion update(String content, Status status) {
+
+    @Column(length = 3000)
+    private String FeedbackContent;
+
+    public Opinion update(String content, Status status) {
       this.content = content;
       this.status = status;
 
