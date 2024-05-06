@@ -65,8 +65,9 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	//mockito
-	testImplementation 'org.mockito:mockito-core:5.11.0'
+	//retry
+	implementation 'org.springframework.retry:spring-retry'
+	implementation 'org.springframework:spring-aspects'
 
 	//aws s3
 	implementation 'io.awspring.cloud:spring-cloud-aws-s3:3.0.2'
