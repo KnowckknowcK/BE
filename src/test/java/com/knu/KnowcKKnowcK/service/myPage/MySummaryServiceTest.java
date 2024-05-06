@@ -23,7 +23,7 @@ import java.util.List;
 
 
 @ExtendWith(MockitoExtension.class)
-class MyHistoryServiceTest {
+class MySummaryServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
@@ -36,7 +36,7 @@ class MyHistoryServiceTest {
     private SummaryFeedbackRepository summaryFeedbackRepository;
 
     @Mock
-    private MyHistoryService myHistoryService;
+    private MySummaryService mySummaryService;
 
     @Test
     @DisplayName("사용자가 작성 완료한 요약과 피드백 조회")
@@ -55,8 +55,8 @@ class MyHistoryServiceTest {
 //        Mockito.when(summaryRepository.findByArticleAndWriter(article,member)).thenReturn(Optional.of(summary));
 //        Mockito.when(articleRepository.findById(any())).thenReturn(Optional.of(article));
         List<MySummaryResponseDto> expected = new ArrayList<>();
-        Mockito.when(myHistoryService.getMySummaries(1L,Status.DONE)).thenReturn(expected);
-        List<MySummaryResponseDto> actual = myHistoryService.getMySummaries(1L, Status.DONE);
+        Mockito.when(mySummaryService.getMySummaries(1L,Status.DONE)).thenReturn(expected);
+        List<MySummaryResponseDto> actual = mySummaryService.getMySummaries(1L, Status.DONE);
         Assertions.assertThat(actual).isEqualTo(expected);
     }
 

@@ -6,10 +6,11 @@ import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
 import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.repository.*;
-import com.knu.KnowcKKnowcK.service.myPage.MyHistoryService;
+import com.knu.KnowcKKnowcK.service.myPage.MySummaryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -17,10 +18,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class MyHistoryControllerTest {
+class MySummaryControllerTest {
 
-    @Mock
-    private MyHistoryService myHistoryService;
+    @InjectMocks
+    private MySummaryService mySummaryService;
 
     @Mock
     private MemberRepository memberRepository;
@@ -44,7 +45,7 @@ class MyHistoryControllerTest {
         Summary summaryING = new Summary(1L,member,null, "content",LocalDateTime.now(), Status.ING,50L);
         summaryRepository.save(summaryING);
 
-        List<?> answer = myHistoryService.getMySummaries(1L,Status.ING);
+        List<?> answer = mySummaryService.getMySummaries(1L,Status.ING);
         System.out.println(answer);
     }
 }
