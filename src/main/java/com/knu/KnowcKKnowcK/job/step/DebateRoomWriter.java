@@ -2,6 +2,7 @@ package com.knu.KnowcKKnowcK.job.step;
 
 import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.repository.DebateRoomRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -13,7 +14,7 @@ public class DebateRoomWriter implements ItemWriter<DebateRoom> {
     private final DebateRoomRepository debateRoomRepository;
 
     @Override
-    public void write(Chunk<? extends DebateRoom> debateRooms) throws Exception {
+    public void write(@NonNull Chunk<? extends DebateRoom> debateRooms){
         debateRoomRepository.saveAll(debateRooms);
     }
 }

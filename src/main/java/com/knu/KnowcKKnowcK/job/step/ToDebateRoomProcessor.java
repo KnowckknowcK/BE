@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class ToDebateRoomProcessor implements ItemProcessor<Article, DebateRoom> {
     private final DebateRoomRepository debateRoomRepository;
     @Override
-    public DebateRoom process(Article article) throws Exception {
+    public DebateRoom process(Article article){
         boolean exists = debateRoomRepository.existsByArticleId(article.getId());
         if(exists){
             return null;
