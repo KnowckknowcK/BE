@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class DebateRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +19,19 @@ public class DebateRoom {
 
     private String title;
 
-    private Long agreeNum = 0L;
-    private Long agreeLikesNum = 0L;
-    private Long disagreeNum = 0L;
-    private Long disagreeLikesNum = 0L;
+    private Long agreeNum;
+    private Long agreeLikesNum;
+    private Long disagreeNum;
+    private Long disagreeLikesNum;
 
+
+    @Builder
+    public DebateRoom(Article article){
+        this.article = article;
+        this.title = article.getTitle();
+        this.agreeNum = 0L;
+        this.disagreeNum = 0L;
+        this.agreeLikesNum = 0L;
+        this.disagreeLikesNum = 0L;
+    }
 }

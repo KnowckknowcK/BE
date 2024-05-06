@@ -72,6 +72,11 @@ dependencies {
 	//aws s3
 	implementation 'io.awspring.cloud:spring-cloud-aws-s3:3.0.2'
 
+	//batch
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+
+	//scheduler
+	implementation 'org.springframework.boot:spring-boot-starter-quartz'
 }
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
