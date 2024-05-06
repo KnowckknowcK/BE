@@ -15,6 +15,5 @@ public class DebateRoomWriter implements ItemWriter<DebateRoom> {
     @Override
     public void write(Chunk<? extends DebateRoom> debateRooms) throws Exception {
         debateRoomRepository.saveAll(debateRooms);
-        System.out.println(debateRooms);
     }
 }
