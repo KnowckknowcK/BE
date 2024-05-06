@@ -2,18 +2,13 @@ package com.knu.KnowcKKnowcK.controller.myInfo;
 
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
-import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import com.knu.KnowcKKnowcK.dto.requestdto.ProfileRequestDto;
-import com.knu.KnowcKKnowcK.dto.responsedto.DashboardResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.ProfileResponseDto;
 import com.knu.KnowcKKnowcK.service.myPage.MyPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
