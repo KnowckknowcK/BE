@@ -53,7 +53,7 @@ public class MySummaryService {
             List<Summary> summaries =  member.getSummaries().stream().filter(summary -> summary.getStatus().equals(Status.DONE)).toList();
             List<MySummaryResponseDto> mySummaryResponseDtos = new ArrayList<>();
             for (Summary summary: summaries){
-                SummaryFeedback summaryFeedback = summaryFeedbackRepository.findSummaryFeedbackBySummary(summary);
+                SummaryFeedback summaryFeedback = summaryFeedbackRepository.findSummaryFeedbackBySummary(summary).orElseThrow(() -> new CustomException(ErrorCode.FEEDBACK_NOT_EXIST));
                 mySummaryResponseDtos.add(new MySummaryResponseDto(summary,summaryFeedback));
             }
             return mySummaryResponseDtos;
