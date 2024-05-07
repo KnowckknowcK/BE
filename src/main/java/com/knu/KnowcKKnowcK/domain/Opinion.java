@@ -47,5 +47,5 @@ public class Opinion {
       this.status = status;
 
       return this;
-  }
+    }
 }
