@@ -9,7 +9,7 @@ public class ProfileCheckController {
     @Value("${spring.profiles.name}")
     private String profile;
     @GetMapping("profile")
-    public String healthyCheck(){
-        return profile;
+    public String profileCheck(){
+        return profile+" profile";
     }
 }

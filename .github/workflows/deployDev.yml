@@ -44,6 +44,17 @@ jobs:
         echo "${{ secrets.APPLICATION_TEST }}" >> ./application-test.properties
         echo "${{ secrets.APPLICATION_PROD }}" >> ./application-prod.properties
 
+
+      # set up mysql
+    - name: Setup MySQL
+      uses: mirromutth/mysql-action@v1.1
+      with:
+        host port: 3306
+        container port: 3306
+        mysql database: 'testdb'
+        mysql user: 'test'
+        mysql password: 'test'
+
       # apply caching
     - name: Gradle Caching
       uses: actions/cache@v3
@@ -70,11 +81,12 @@ jobs:
 
     # build Docker image
     - name: docker image build
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend .
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
 
     # push docker image
     - name: docker Hub push
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+
 
   # run docker image
   deploy:
@@ -90,9 +102,9 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          sudo docker stop knowckknowck-backend 2>/dev/null || true
-          sudo docker rm knowckknowck-backend
-          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
+          sudo docker stop ${{ secrets.DOCKER_IMAGE }} 2>/dev/null || true
+          sudo docker rm ${{ secrets.DOCKER_IMAGE }}
+          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
           sudo docker-compose up -d
           sudo docker system prune -f
