@@ -9,7 +9,7 @@ name: Test and Build dev branch
 
 on:
   pull_request:
-    branches: [ "Test/workflows" ]
+    branches: [ "dev" ]
 
 
 jobs:
@@ -36,7 +36,7 @@ jobs:
         echo "DOCKER_IMAGE=knowckknowck-backend" >> ./.env
 
       # set up application file
-    - name: Create application.properties
+    - name: Create application file
       run: |
         mkdir -p ./src/main/resources
         cd ./src/main/resources
@@ -44,6 +44,7 @@ jobs:
         echo "${{ secrets.APPLICATION_TEST }}" >> ./application-test.properties
         echo "${{ secrets.APPLICATION_PROD }}" >> ./application-prod.properties
 
+      # set up mysql
     - name: Setup MySQL
       uses: mirromutth/mysql-action@v1.1
       with:
@@ -52,6 +53,17 @@ jobs:
         mysql database: 'testdb'
         mysql user: 'test'
         mysql password: 'test'
+
+      # apply caching
+    - name: Gradle Caching
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
 
     # gradle grant execution permission and build project
     - name: Setup Gradle
@@ -73,25 +85,3 @@ jobs:
     # push docker image
     - name: docker Hub push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
-
-  
-#  # run docker image
-#  run-docker-image-on-server:
-#    runs-on: ubuntu-latest
-#    needs: update-docker-image-push-to-hub
-#
-#    steps:
-#    - name: Deploy Docker image
-#      uses: appleboy/ssh-action@master
-#      with:
-#        host: ${{ secrets.HOST }}
-#        username: ${{ secrets.USERNAME }}
-#        key: ${{ secrets.PRIVATE_KEY }}
-#        port: ${{ secrets.PORT }}
-#        script: |
-#          sudo docker stop knowckknowck-backend 2>/dev/null || true
-#          sudo docker rm knowckknowck-backend
-#          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
-#          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
-#          sudo docker-compose up -d
-#          sudo docker system prune -f

@@ -9,10 +9,73 @@ name: Deploy dev branch
 
 on:
   push:
-    branches: [ "Test/workflows" ]
+    branches: [ "dev" ]
 
 
 jobs:
+  test-build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    # set up java
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+        # set up .env file
+      - name: Create .env
+        run: |
+          touch ./.env
+          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> ./.env
+          echo "DOCKER_IMAGE=knowckknowck-backend" >> ./.env
+
+        # set up application file
+      - name: Create application file
+        run: |
+          mkdir -p ./src/main/resources
+          cd ./src/main/resources
+          echo "${{ secrets.APPLICATION }}" >> ./application.properties
+          echo "${{ secrets.APPLICATION_TEST }}" >> ./application-test.properties
+          echo "${{ secrets.APPLICATION_PROD }}" >> ./application-prod.properties
+
+        # apply caching
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # gradle grant execution permission and build project
+      - name: Setup Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build -Pprofile=prod
+
+      # login dockerhub
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # build Docker image
+      - name: docker image build
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend .
+
+      # push docker image
+      - name: docker Hub push
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/knowckknowck-backend
+
   # run docker image
   run-docker-image-on-server:
     runs-on: ubuntu-latest
