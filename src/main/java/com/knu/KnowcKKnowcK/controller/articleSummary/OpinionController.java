@@ -28,7 +28,7 @@ public class OpinionController {
     @Operation(summary = "요약 피드백 받기", description = "작성한 요약에 대한 AI  피드백에 제공됨")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "요약 피드백 반환 성공"),
             @ApiResponse(responseCode = "400", description = "요약 피드백 반환 실패")})
-    ApiResponseDto<?> getOpinionFeedback(@RequestBody @Valid OpinionRequestDto dto){
+    ApiResponseDto<OpinionResponseDto> getOpinionFeedback(@RequestBody @Valid OpinionRequestDto dto){
 
         OpinionResponseDto opinionFeedback = saveOpinionService.getOpinionFeedback(dto);
         return ApiResponseDto.success(SuccessCode.OK, opinionFeedback);
