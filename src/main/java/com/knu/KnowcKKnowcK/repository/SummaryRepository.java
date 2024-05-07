@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface SummaryRepository extends JpaRepository<Summary, Long> {
 
     Optional<Summary> findByArticleAndWriter(Article article, Member writer);
+
+    @Override
+    void delete(Summary entity);
 }

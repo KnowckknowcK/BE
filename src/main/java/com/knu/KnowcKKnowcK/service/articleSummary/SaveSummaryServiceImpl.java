@@ -19,7 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -41,36 +41,42 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
     public SummaryResponseDto saveSummary(SummaryRequestDto dto) {
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
         Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        Optional<Summary> existedSummary = summaryRepository.findByArticleAndWriter(article, member);
+        summaryRepository.findByArticleAndWriter(article, member)
+                .ifPresentOrElse(
+                summary -> summary.update(dto.getContent(), dto.getStatus(), dto.getTakenTime()),
+                () -> summaryRepository.save(dto.toEntity(article, member))
+                );
 
-        Summary savedSummary;
-
-        if (existedSummary.isPresent()){
-            if(existedSummary.get().getStatus().equals(Status.ING) && existedSummary.get().getTakenTime() > dto.getTakenTime()){
-                throw new CustomException(ErrorCode.INVALID_INPUT);
-            }
-            savedSummary = existedSummary.get().update(dto.getContent(), dto.getStatus(), dto.getTakenTime());
-        } else {
-            savedSummary = summaryRepository.save(dto.toEntity(article, member));
+        if(!dto.getStatus().equals(Status.ING)){
+            throw new CustomException(ErrorCode.INVALID_INPUT);
         }
 
-        if (savedSummary.getStatus().equals(Status.ING)){
-            return new SummaryResponseDto("임시 저장이 완료되었습니다.");
+        return new SummaryResponseDto("임시 저장이 완료되었습니다.");
+    }
 
-        } else if (savedSummary.getStatus().equals(Status.DONE)) {
-            Pair<Score, String> parsedFeedback = summaryFeedbackService.callGptApi(article.getContent(), savedSummary.getContent());
+    @Override
+    @Transactional
+    public SummaryResponseDto getSummaryFeedback(SummaryRequestDto dto) {
+        Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
+        Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        summaryRepository.findByArticleAndWriter(article, member)
+                .ifPresent((summary) -> summaryRepository.delete(summary));
 
-            SummaryFeedback summaryFeedback = SummaryFeedback.builder()
-                    .score(parsedFeedback.getFirst())
-                    .content(parsedFeedback.getSecond())
-                    .summary(savedSummary)
-                    .build();
+        Summary savedSummary = summaryRepository.save(dto.toEntity(article, member));
 
-            SummaryFeedback savedFeedback = summaryFeedbackRepository.save(summaryFeedback);
-            return new SummaryResponseDto(savedFeedback);
-
-        } else {
-            throw new CustomException(ErrorCode.FAILED);
+        if(!dto.getStatus().equals(Status.DONE)){
+            throw new CustomException(ErrorCode.INVALID_INPUT);
         }
+
+        Pair<Score, String> parsedFeedback = summaryFeedbackService.callGptApi(article.getContent(), savedSummary.getContent());
+
+        SummaryFeedback summaryFeedback = SummaryFeedback.builder()
+                .score(parsedFeedback.getFirst())
+                .content(parsedFeedback.getSecond())
+                .summary(savedSummary)
+                .build();
+
+        SummaryFeedback savedFeedback = summaryFeedbackRepository.save(summaryFeedback);
+        return new SummaryResponseDto(savedFeedback);
     }
 }
