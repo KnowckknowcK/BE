@@ -10,6 +10,6 @@ public class ProfileCheckController {
     private String profile;
     @GetMapping("profile")
     public String healthyCheck(){
-        return profile+" profile";
+        return profile+" profile 사용중";
     }
 }
