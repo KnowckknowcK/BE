@@ -9,7 +9,7 @@ name: Deploy dev branch
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "Test/workflows" ]
 
 
 jobs:
