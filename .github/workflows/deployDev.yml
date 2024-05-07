@@ -59,7 +59,7 @@ jobs:
     - name: Setup Gradle
       run: |
         chmod +x ./gradlew
-        ./gradlew clean build -Pprofile=prod
+        ./gradlew clean build
 
     # login dockerhub
     - name: docker login
