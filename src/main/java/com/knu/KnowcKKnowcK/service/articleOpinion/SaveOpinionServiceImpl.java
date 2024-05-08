@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.service.articleSummary;
+package com.knu.KnowcKKnowcK.service.articleOpinion;
 
 import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.requestdto.OpinionRequestDto;
@@ -19,9 +19,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class SaveOpinionServiceImpl  implements SaveOpinionService{
-    private final OpinionRepository opinionRepository;
 
-    private final OpinionFeedbackRepository opinionFeedbackRepository;
+    private final OpinionRepository opinionRepository;
 
     private final ArticleRepository articleRepository;
 
@@ -31,35 +30,28 @@ public class SaveOpinionServiceImpl  implements SaveOpinionService{
 
     @Override
     @Transactional
-    public OpinionResponseDto saveOpinion(OpinionRequestDto dto) {
+    public OpinionResponseDto getOpinionFeedback(OpinionRequestDto dto) {
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
         Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         Optional<Opinion> existedOpinion = opinionRepository.findByArticleAndWriter(article, member);
-        Opinion savedOpinion;
 
-        if (existedOpinion.isPresent()){
-            savedOpinion = existedOpinion.get().update(dto.getContent(), dto.getStatus());
-        } else {
-            savedOpinion = opinionRepository.save(dto.toEntity(article, member));
-        }
+         if (existedOpinion.isPresent()) {
+             throw new CustomException(ErrorCode.INVALID_INPUT);
+         }
 
-        if (savedOpinion.getStatus().equals(Status.ING)){
-            return new OpinionResponseDto("임시 저장이 완료되었습니다.");
+        Pair<Score, String> feedback = opinionFeedbackService.callGptApi(article.getContent(), dto.getContent());
 
-        } else if (savedOpinion.getStatus().equals(Status.DONE)) {
-            Pair<Score, String> parsedFeedback = opinionFeedbackService.callGptApi(article.getContent(), savedOpinion.getContent());
+        Opinion opinion = Opinion.builder()
+                .feedbackContent(feedback.getSecond())
+                .content(dto.getContent())
+                .writer(member)
+                .article(article)
+                .status(Status.DONE)
+                .position(dto.getPosition())
+                .build();
 
-            OpinionFeedback opinionFeedback = OpinionFeedback.builder()
-                    .content(parsedFeedback.getSecond())
-                    .opinion(savedOpinion)
-                    .build();
+        opinionRepository.save(opinion);
 
-            OpinionFeedback savedFeedback = opinionFeedbackRepository.save(opinionFeedback);
-            return new OpinionResponseDto(savedFeedback);
-
-        } else {
-            throw new CustomException(ErrorCode.FAILED);
-
-        }
+        return new OpinionResponseDto(opinion);
     }
 }
