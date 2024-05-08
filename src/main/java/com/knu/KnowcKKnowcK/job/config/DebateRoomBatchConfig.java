@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.job;
+package com.knu.KnowcKKnowcK.job.config;
 
 
 import com.knu.KnowcKKnowcK.domain.Article;
@@ -22,7 +22,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class BatchConfig {
+public class DebateRoomBatchConfig {
     @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
 
