@@ -40,7 +40,7 @@ public class Opinion {
     private LocalDateTime createdTime;
 
     @Column(length = 3000)
-    private String FeedbackContent;
+    private String feedbackContent;
 
     public Opinion update(String content, Status status) {
       this.content = content;
