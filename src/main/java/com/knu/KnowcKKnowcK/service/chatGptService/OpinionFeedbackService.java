@@ -19,9 +19,9 @@ public class OpinionFeedbackService  implements ChatGptService{
 
     private final ChatGptConfig chatGptConfig;
     @Override
-    public Pair<Score, String> callGptApi(String article, String summary) {
+    public Pair<Score, String> callGptApi(String article, String opinion) {
         List<ChatgptRequestDto.Message> messageList = new ArrayList<>();
-        messageList.add(new ChatgptRequestDto.Message("user", OpinionPrompt.getInstance().getPrompt() + article + summary));
+        messageList.add(new ChatgptRequestDto.Message("user", OpinionPrompt.getInstance().getPrompt() + article + opinion));
         ChatgptRequestDto requestDto = new ChatgptRequestDto(messageList);
 
         ChatgptResponseDto responseDto = chatGptConfig.gptClient()
