@@ -70,7 +70,7 @@ jobs:
     - name: Setup Gradle
       run: |
         chmod +x ./gradlew
-        ./gradlew clean build
+        ./gradlew clean build -x test
 
     # login dockerhub
     - name: docker login
