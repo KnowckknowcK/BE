@@ -1,5 +1,6 @@
 package com.knu.KnowcKKnowcK.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.formatToLocalDateTime;
 
 @Entity
 @Data
@@ -40,7 +43,7 @@ public class Message {
                 .likesNum(likesNum)
                 .profileImage(profileImage)
                 .content(content)
-                .createdTime(createdTime)
+                .createdTime(formatToLocalDateTime(createdTime))
                 .roomId(debateRoom.getId())
                 .messageId(id)
                 .position(position)
