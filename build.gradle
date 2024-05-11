@@ -74,6 +74,8 @@ dependencies {
 	//batch
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 
+	//serialization
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
 }
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
