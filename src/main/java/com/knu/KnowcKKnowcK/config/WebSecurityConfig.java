@@ -1,33 +1,33 @@
 package com.knu.KnowcKKnowcK.config;
 
-import com.knu.KnowcKKnowcK.service.account.AccountService;
+import com.knu.KnowcKKnowcK.config.jwtConfig.JwtSecurityConfig;
+import com.knu.KnowcKKnowcK.exception.jwtHandler.JwtAccessDeniedHandler;
+import com.knu.KnowcKKnowcK.exception.jwtHandler.JwtAuthenticationEntryPoint;
+import com.knu.KnowcKKnowcK.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final AccountService accountService;
-
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final JwtUtil jwtUtil;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
-        // 개발 단계에서의 임시 설정
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((session) -> session
@@ -35,19 +35,24 @@ public class WebSecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequest -> authorizeRequest
-                                .anyRequest().permitAll()
-//                        .requestMatchers("/api/account/**").permitAll()
-//                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(new JwtFilter(accountService, secretKey), UsernamePasswordAuthenticationFilter.class)
+//                        .anyRequest().permitAll()
+                        .requestMatchers("/", "/api/account/*").permitAll()
+                        .anyRequest().authenticated())
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .oauth2Login(Customizer.withDefaults());
+
+        httpSecurity.apply(new JwtSecurityConfig(jwtUtil));
 
         return httpSecurity.build();
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration
+    ) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 }
