@@ -1,14 +1,12 @@
 package com.knu.KnowcKKnowcK.service.debateRoom;
 
-import com.knu.KnowcKKnowcK.domain.DebateRoom;
-import com.knu.KnowcKKnowcK.domain.Member;
-import com.knu.KnowcKKnowcK.domain.MemberDebate;
-import com.knu.KnowcKKnowcK.domain.MemberDebateId;
+import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomMemberDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
+import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.DebateRoomRepository;
 import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +24,11 @@ import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRa
 public class DebateRoomService {
     private final DebateRoomRepository debateRoomRepository;
     private final MemberDebateRepository memberDebateRepository;
+    private final ArticleRepository articleRepository;
     // 토론방 참여
     public DebateRoomResponseDto participateInDebateRoom(Member member, Long debateRoomId){
         Position position;
-        DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        DebateRoom debateRoom = getDebateRoom(debateRoomId);
 
         Optional<MemberDebate> memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom);
         if(memberDebate.isEmpty()){ // 참여 상태가 아니라면 MemberDebate 생성하여 참여
@@ -49,6 +47,20 @@ public class DebateRoomService {
                 calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
                 debateRoom.getAgreeNum(),
                 debateRoom.getDisagreeNum());
+    }
+    DebateRoom getDebateRoom(Long debateRoomId){
+        Optional<DebateRoom> debateRoom = debateRoomRepository.findById(debateRoomId);
+        if (debateRoom.isEmpty()){
+            Article article = articleRepository
+                    .findById(debateRoomId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+            DebateRoom newRoom = new DebateRoom(article);
+            debateRoomRepository.save(newRoom);
+            return newRoom;
+        }
+        else{
+            return debateRoom.get();
+        }
     }
 
     // 토론방 떠나기

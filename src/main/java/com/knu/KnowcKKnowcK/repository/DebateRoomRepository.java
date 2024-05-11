@@ -4,4 +4,5 @@ import com.knu.KnowcKKnowcK.domain.DebateRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DebateRoomRepository extends JpaRepository<DebateRoom, Long> {
+    boolean existsByArticleId(Long id);
 }
