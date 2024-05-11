@@ -1,7 +1,6 @@
 package com.knu.KnowcKKnowcK.service.debateRoom;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

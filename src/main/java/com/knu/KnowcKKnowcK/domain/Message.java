@@ -1,6 +1,5 @@
 package com.knu.KnowcKKnowcK.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
