@@ -33,8 +33,8 @@ public class DebateRoomController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "토론방 참여 성공"),
             @ApiResponse(responseCode = "400", description = "토론방 참여 실패")
-            })
-    public ApiResponseDto<DebateRoomResponseDto> participateInDebateRoom(@PathVariable Long debateRoomId){
+    })
+    public ApiResponseDto<DebateRoomResponseDto> participateInDebateRoom(@PathVariable("debateRoomId") Long debateRoomId){
         member = memberRepository.findById(1L).orElse(null);
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.participateInDebateRoom(member, debateRoomId));
     }
@@ -46,7 +46,7 @@ public class DebateRoomController {
             @ApiResponse(responseCode = "200", description = "토론방 나가기 성공"),
             @ApiResponse(responseCode = "400", description = "토론방 나가기 실패")
     })
-    public ApiResponseDto<Double> leaveDebateRoom(@PathVariable Long debateRoomId){
+    public ApiResponseDto<Double> leaveDebateRoom(@PathVariable("debateRoomId") Long debateRoomId){
         member = memberRepository.findById(1L).orElse(null);
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.leaveDebateRoom(member, debateRoomId));
     }
@@ -58,7 +58,7 @@ public class DebateRoomController {
             @ApiResponse(responseCode = "200", description = "토론방 참여자 리스트 반환"),
             @ApiResponse(responseCode = "400", description = "존재하지 않는 토론방")
     })
-    public ApiResponseDto<ArrayList<DebateRoomMemberDto>> getDebateRoomMember(@PathVariable Long debateRoomId){
+    public ApiResponseDto<ArrayList<DebateRoomMemberDto>> getDebateRoomMember(@PathVariable("debateRoomId") Long debateRoomId){
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.getDebateRoomMember(debateRoomId));
     }
 }
