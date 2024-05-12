@@ -4,6 +4,7 @@ import com.knu.KnowcKKnowcK.config.jwtConfig.JwtSecurityConfig;
 import com.knu.KnowcKKnowcK.exception.jwtHandler.JwtAccessDeniedHandler;
 import com.knu.KnowcKKnowcK.exception.jwtHandler.JwtAuthenticationEntryPoint;
 import com.knu.KnowcKKnowcK.utils.JwtUtil;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,12 @@ public class WebSecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
+    private static final String[] WHITE_LIST = {
+            "/api/account/**",
+            "/api-docs/**", "v3/api-docs/**", "swagger-ui/**",
+            "/",
+    };
+
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
@@ -36,7 +43,7 @@ public class WebSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequest -> authorizeRequest
 //                        .anyRequest().permitAll()
-                        .requestMatchers("/", "/api/account/*").permitAll()
+                        .requestMatchers(WHITE_LIST).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(jwtAccessDeniedHandler)
