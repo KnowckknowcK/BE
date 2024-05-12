@@ -2,7 +2,9 @@ package com.knu.KnowcKKnowcK.service.chatGptService;
 
 import com.knu.KnowcKKnowcK.config.ChatGptConfig;
 import com.knu.KnowcKKnowcK.dto.prompt.OpinionPrompt;
-import com.knu.KnowcKKnowcK.dto.requestdto.ChatgptRequestDto;
+import com.knu.KnowcKKnowcK.dto.prompt.SummaryPrompt;
+import com.knu.KnowcKKnowcK.dto.requestdto.chatGpt.ChatgptRequestDto;
+import com.knu.KnowcKKnowcK.dto.requestdto.chatGpt.Message;
 import com.knu.KnowcKKnowcK.dto.responsedto.ChatgptResponseDto;
 import com.knu.KnowcKKnowcK.enums.Score;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,8 @@ public class OpinionFeedbackClient implements ChatGptClient {
     private final ChatGptConfig chatGptConfig;
     @Override
     public Pair<Score, String> callGptApi(String article, String opinion) {
-        List<ChatgptRequestDto.Message> messageList = new ArrayList<>();
-        messageList.add(new ChatgptRequestDto.Message("user", OpinionPrompt.getInstance().getPrompt() + article + opinion));
-        ChatgptRequestDto requestDto = new ChatgptRequestDto(messageList);
+        ChatgptRequestDto requestDto = new ChatgptRequestDto(
+                Message.promptContent(article, opinion, SummaryPrompt.getInstance().getPrompt()));
 
         ChatgptResponseDto responseDto = chatGptConfig.gptClient()
                 .post()
