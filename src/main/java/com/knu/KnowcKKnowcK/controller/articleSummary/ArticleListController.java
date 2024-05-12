@@ -29,7 +29,7 @@ public class ArticleListController {
             @ApiResponse(responseCode = "404", description = "지문 목록 조회 실패")})
     @GetMapping("/list/{category}/{page}")
     ApiResponseDto<Page<ArticleListResponseDto>> loadArticles(@PathVariable @Valid Category category, @PathVariable @Valid int page){
-        return ApiResponseDto.success(SuccessCode.OK, loadArticlesService.loadArticles(category, page, 1L));
+        return ApiResponseDto.success(SuccessCode.OK, loadArticlesService.loadArticles(category, page, "admin"));
     }
 
     /** loadArticleById: frontend 구현에서는 목록에서 클릭 시 기사 정보를 api 호출 없이 페이지로 넘기도록 해서 필요없는 기능이 될 수도 있음.**/

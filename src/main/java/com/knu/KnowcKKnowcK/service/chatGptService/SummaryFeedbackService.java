@@ -20,7 +20,7 @@ import java.util.List;
 public class SummaryFeedbackService implements ChatGptService{
     private final ChatGptConfig chatGptConfig;
     @Override
-    @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 4000), include = ArrayIndexOutOfBoundsException.class)
+    @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 4000), include = {ArrayIndexOutOfBoundsException.class, IllegalArgumentException.class })
     public Pair<Score, String> callGptApi(String article, String summary) {
 
         List<ChatgptRequestDto.Message> messageList = new ArrayList<>();

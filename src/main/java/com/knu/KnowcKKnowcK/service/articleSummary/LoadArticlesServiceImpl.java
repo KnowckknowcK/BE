@@ -34,9 +34,9 @@ public class LoadArticlesServiceImpl implements LoadArticlesService{
     private final MemberRepository memberRepository;
 
     @Override
-    public Page<ArticleListResponseDto> loadArticles(Category category, int page, long memberId) {
+    public Page<ArticleListResponseDto> loadArticles(Category category, int page, String memberEmail) {
 
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.asc("createdTime"));
