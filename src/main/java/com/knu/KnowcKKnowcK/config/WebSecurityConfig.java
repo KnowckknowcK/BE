@@ -1,12 +1,19 @@
 package com.knu.KnowcKKnowcK.config;
 
+import com.knu.KnowcKKnowcK.config.jwtConfig.JwtSecurityConfig;
+import com.knu.KnowcKKnowcK.exception.jwtHandler.JwtAccessDeniedHandler;
+import com.knu.KnowcKKnowcK.exception.jwtHandler.JwtAuthenticationEntryPoint;
+import com.knu.KnowcKKnowcK.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -14,16 +21,38 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
+    private final JwtUtil jwtUtil;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
-        // 개발 단계에서의 임시 설정
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequest -> authorizeRequest
-                        .anyRequest().permitAll()
-                )
+//                        .anyRequest().permitAll()
+                        .requestMatchers("/", "/api/account/*").permitAll()
+                        .anyRequest().authenticated())
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .oauth2Login(Customizer.withDefaults());
+
+        httpSecurity.apply(new JwtSecurityConfig(jwtUtil));
+
         return httpSecurity.build();
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration
+    ) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
 }

@@ -6,8 +6,16 @@ import com.knu.KnowcKKnowcK.dto.responsedto.SignupResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
+import com.knu.KnowcKKnowcK.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.security.SecureRandom;
 import java.util.Optional;
 
@@ -16,29 +24,31 @@ import java.util.Optional;
 public class AccountService {
 
     private final MemberRepository memberRepository;
+    private final Long expiredAt = 1000 * 60 * 60L; //1H
+    private final AuthenticationConfiguration authenticationConfiguration;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public SigninResponseDto signinWithEmail(String email, String password) {
+    public SigninResponseDto signinWithEmail(String email, String password) throws CustomException{
+        try {
+            //security 인증 사용(아이디 비밀번호 일치여부, 데이터베이스에 사용자 정보 존재 여부 등)
+            AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        Optional<Member> member = memberRepository.findByEmail(email);
+            Optional<Member> authenticatedMember = memberRepository.findByEmail(authentication.getName());
 
-        if(member.isEmpty())
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-
-        if(member.get().getIsOAuth()){
-            throw new CustomException(ErrorCode.ALREADY_REGISTERED);
-        }
-
-        if(member.get().getPassword().equals(password)){
             SigninResponseDto responseDto = SigninResponseDto.builder()
-                    .email(member.get().getEmail())
-                    .name(member.get().getName())
-                    .profileImg(member.get().getProfileImage())
+                    .email(authenticatedMember.get().getEmail())
+                    .name(authenticatedMember.get().getName())
+                    .profileImg(authenticatedMember.get().getProfileImage())
+                    .jwt(JwtUtil.creatJWT(authentication.getName(), expiredAt))
                     .build();
 
             return responseDto;
-        }
-        else{
+        }catch (BadCredentialsException e) {
+            System.out.println("exception");
             throw new CustomException(ErrorCode.INVALID_INPUT);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -46,13 +56,13 @@ public class AccountService {
 
         Optional<Member> member = memberRepository.findByEmail(email);
 
-        if(member.isPresent())
+        if (member.isPresent())
             throw new CustomException(ErrorCode.ALREADY_REGISTERED);
 
         Member newMember = Member.builder()
                 .email(email)
                 .name(name)
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .profileImage(profileImg)
                 .isOAuth(false)
                 .build();
@@ -63,6 +73,7 @@ public class AccountService {
                 .email(savedMember.getEmail())
                 .name(savedMember.getName())
                 .profileImg(savedMember.getProfileImage())
+                .jwt(JwtUtil.creatJWT(savedMember.getEmail(), expiredAt))
                 .build();
 
         return responseDto;
@@ -85,9 +96,7 @@ public class AccountService {
                 int index = random.nextInt(PASSWORD_CHARS.length());
                 password.append(PASSWORD_CHARS.charAt(index));
             }
-
             return password.toString();
         }
-
     }
 }
