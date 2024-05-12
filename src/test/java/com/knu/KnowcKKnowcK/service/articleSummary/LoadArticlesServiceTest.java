@@ -55,10 +55,10 @@ class LoadArticlesServiceTest {
         Pageable pageable = PageRequest.of(pageNum, 5, Sort.by(sorts));
         Mockito.when(articleRepository.findByCategory(Category.CULTURE, pageable))
                 .thenReturn(page);
-        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+        Mockito.when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
         Mockito.when(summaryRepository.findByArticleAndWriter(any(), any())).thenReturn(Optional.of(summary));
 
-        Page<ArticleListResponseDto> loaded = sut.loadArticles(Category.CULTURE, pageNum, 1L);
+        Page<ArticleListResponseDto> loaded = sut.loadArticles(Category.CULTURE, pageNum, "admin");
 
         Assertions.assertThat(loaded.getTotalElements()).isEqualTo(7);
         Assertions.assertThat(loaded.getContent().get(0).isSummaryDone()).isEqualTo(true);
