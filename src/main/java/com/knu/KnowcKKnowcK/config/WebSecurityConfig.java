@@ -30,6 +30,7 @@ public class WebSecurityConfig {
             "/api/account/**",
             "/api-docs/**", "v3/api-docs/**", "swagger-ui/**",
             "/",
+            "/login/oauth2/code/google", "/oauth2/authorization/google"
     };
 
     @Bean
