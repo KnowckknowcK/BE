@@ -66,7 +66,7 @@ public class AccountService {
                 .profileImage(profileImg)
                 .isOAuth(false)
                 .level(0L)
-                .point((0L))
+                .point(0L)
                 .build();
 
         Member savedMember = memberRepository.save(newMember);
