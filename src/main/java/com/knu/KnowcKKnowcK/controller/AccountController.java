@@ -12,6 +12,7 @@ import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.service.account.AccountService;
 import com.knu.KnowcKKnowcK.service.account.MailService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -100,6 +101,7 @@ public class AccountController {
 
     //사용 예시(삭제 예정)
     @GetMapping("/jwt-example")
+    @Hidden
     public String jwtTest(Authentication authentication) {
         String email = authentication.getName();
         return email;
