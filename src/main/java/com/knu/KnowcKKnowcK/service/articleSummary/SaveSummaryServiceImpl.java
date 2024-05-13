@@ -6,6 +6,7 @@ import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
 import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
+import com.knu.KnowcKKnowcK.enums.Option;
 import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.exception.CustomException;
@@ -14,17 +15,16 @@ import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.repository.SummaryFeedbackRepository;
 import com.knu.KnowcKKnowcK.repository.SummaryRepository;
-import com.knu.KnowcKKnowcK.service.chatGptService.SummaryFeedbackService;
-import jakarta.transaction.Transactional;
+import com.knu.KnowcKKnowcK.service.chatGptService.ChatGptContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
 @RequiredArgsConstructor
 public class SaveSummaryServiceImpl implements SaveSummaryService{
-
 
     private final SummaryRepository summaryRepository;
 
@@ -34,7 +34,7 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
     private final MemberRepository memberRepository;
 
-    private final SummaryFeedbackService summaryFeedbackService;
+    private final ChatGptContext chatGptContext;
 
     @Override
     @Transactional
@@ -54,29 +54,27 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
         return new SummaryResponseDto("임시 저장이 완료되었습니다.");
     }
 
+
     @Override
-    @Transactional
+    @Transactional(readOnly=true)
     public SummaryResponseDto getSummaryFeedback(SummaryRequestDto dto) {
+        if (dto.getStatus() != Status.DONE)
+            throw new CustomException(ErrorCode.INVALID_INPUT);
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
         Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        summaryRepository.findByArticleAndWriter(article, member)
-                .ifPresent((summary) -> summaryRepository.delete(summary));
 
-        Summary savedSummary = summaryRepository.save(dto.toEntity(article, member));
+        Pair<Score, String> parsedFeedback = chatGptContext.callGptApi(Option.SUMMARY, article.getContent(), dto.getContent());
 
-        if(!dto.getStatus().equals(Status.DONE)){
-            throw new CustomException(ErrorCode.INVALID_INPUT);
-        }
+        return new SummaryResponseDto(saveSummaryFeedback(dto.toEntity(article, member),parsedFeedback));
+    }
 
-        Pair<Score, String> parsedFeedback = summaryFeedbackService.callGptApi(article.getContent(), savedSummary.getContent());
 
-        SummaryFeedback summaryFeedback = SummaryFeedback.builder()
-                .score(parsedFeedback.getFirst())
-                .content(parsedFeedback.getSecond())
-                .summary(savedSummary)
-                .build();
-
-        SummaryFeedback savedFeedback = summaryFeedbackRepository.save(summaryFeedback);
-        return new SummaryResponseDto(savedFeedback);
+    @Transactional
+    protected SummaryFeedback saveSummaryFeedback(Summary summary, Pair<Score, String> parsedFeedback){
+        summaryRepository.findByArticleAndWriter(summary.getArticle(), summary.getWriter())
+                .ifPresent(summaryRepository::delete);
+        summaryRepository.flush();
+        Summary savedSummary = summaryRepository.save(summary);
+        return summaryFeedbackRepository.save(SummaryFeedback.from(savedSummary,parsedFeedback));
     }
 }

@@ -3,12 +3,14 @@ package com.knu.KnowcKKnowcK.service.articleOpinion;
 import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.requestdto.OpinionRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.OpinionResponseDto;
+import com.knu.KnowcKKnowcK.enums.Option;
 import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
-import com.knu.KnowcKKnowcK.service.chatGptService.OpinionFeedbackService;
+import com.knu.KnowcKKnowcK.service.chatGptService.ChatGptContext;
+import com.knu.KnowcKKnowcK.service.chatGptService.OpinionFeedbackClient;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
@@ -26,7 +28,7 @@ public class SaveOpinionServiceImpl  implements SaveOpinionService{
 
     private final MemberRepository memberRepository;
 
-    private final OpinionFeedbackService opinionFeedbackService;
+    private final ChatGptContext chatGptContext;
 
     @Override
     @Transactional
@@ -39,7 +41,7 @@ public class SaveOpinionServiceImpl  implements SaveOpinionService{
              throw new CustomException(ErrorCode.INVALID_INPUT);
          }
 
-        Pair<Score, String> feedback = opinionFeedbackService.callGptApi(article.getContent(), dto.getContent());
+        Pair<Score, String> feedback = chatGptContext.callGptApi(Option.OPINION, article.getContent(), dto.getContent());
 
         Opinion opinion = Opinion.builder()
                 .feedbackContent(feedback.getSecond())
