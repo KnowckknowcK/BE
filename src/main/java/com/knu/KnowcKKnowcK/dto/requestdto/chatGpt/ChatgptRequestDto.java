@@ -1,21 +1,16 @@
-package com.knu.KnowcKKnowcK.dto.requestdto;
+package com.knu.KnowcKKnowcK.dto.requestdto.chatGpt;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 public class ChatgptRequestDto implements Serializable {
-    private List<Message> messages;
-    @Data
-    @AllArgsConstructor
-    public static class Message{
-        private String role;
-        private String content;
-    }
+    private List<Message> messages = new ArrayList<>();
+
     private String model = "gpt-3.5-turbo";
     @JsonProperty("max_tokens")
     private Integer maxTokens = 100;
@@ -30,7 +25,16 @@ public class ChatgptRequestDto implements Serializable {
 //    @JsonProperty("presence_penalty")
 //    private Double presence_penalty=0.0;
 
-    public ChatgptRequestDto(List<Message> messages){
-        this.messages = messages;
+    public ChatgptRequestDto(Message messages){
+        this.messages.add(messages);
     }
+
+    @Override
+    public String toString(){
+        return "role: "+this.messages.get(0).getRole()+"\n"+
+                "content:\n"+this.messages.get(0).getContent();
+    }
+
+
+
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.util.Pair;
 
 @Entity
 @Getter
@@ -27,4 +28,13 @@ public class SummaryFeedback {
     @JoinColumn(name = "summary_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Summary summary;
+
+    public static SummaryFeedback from(Summary summary, Pair<Score, String> pairs){
+        return SummaryFeedback.builder()
+                .content(pairs.getSecond())
+                .score(pairs.getFirst())
+                .summary(summary)
+                .build();
+    }
+
 }

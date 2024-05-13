@@ -26,12 +26,17 @@ public class Summary {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Article article;
+
     @Column(length = 10000)
     private String content;
+
     private LocalDateTime createdTime;
+
     @Enumerated(EnumType.STRING)
     private Status status;
+
     private Long takenTime;
 
     public Summary update(String content, Status status, Long takenTime) {
