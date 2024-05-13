@@ -38,20 +38,37 @@ public class RedisUtil {
         }
     }
 
+    public <T> void setDataList(String key, List<T> dataList) {
+        List<String> stringList = new ArrayList<>();
+
+        for (T data : dataList) {
+            try {
+                String jsonString = objectMapper.writeValueAsString(data);
+                stringList.add(jsonString);
+            } catch (JsonProcessingException e) {
+                throw new CustomException(ErrorCode.FAILED);
+            }
+        }
+
+        if (!stringList.isEmpty()) {
+            redisTemplate.opsForList().rightPushAll(key, stringList.toArray(new String[0]));
+        }
+    }
+
     public <T> List<T> getDataList(String key, Class<T> type) {
         List<String> stringList = redisTemplate.opsForList().range(key, 0, -1);
-        List<T> result = new ArrayList<>();
+        List<T> dataList = new ArrayList<>();
 
         if (stringList != null) {
-            for (String messageObject : stringList) {
+            for (String dataObject : stringList) {
                 try {
-                    T message = objectMapper.readValue(messageObject, type);
-                    result.add(message);
+                    T data = objectMapper.readValue(dataObject, type);
+                    dataList.add(data);
                 } catch (Exception e) {
                     throw new CustomException(ErrorCode.FAILED);
                 }
             }
         }
-        return result;
+        return dataList;
     }
 }

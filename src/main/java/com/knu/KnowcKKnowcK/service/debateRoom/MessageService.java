@@ -72,10 +72,10 @@ public class MessageService {
     public List<MessageResponseDto> getMessages(Member member, Long roomId){
         DebateRoom debateRoom = debateRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-
+        String key = getDebateRoomKey(debateRoom.getId());
         // redis에서 관련 채팅방 정보가 있는 지 먼저 탐색
         List<MessageResponseDto> messageResponseDtoList =
-                redisUtil.getDataList(getDebateRoomKey(debateRoom.getId()), MessageResponseDto.class);
+                redisUtil.getDataList(key, MessageResponseDto.class);
 
         // 없으면 값을 가져와서 캐시에 저장한 후 반환
         if (messageResponseDtoList.isEmpty()){
@@ -90,6 +90,7 @@ public class MessageService {
                                 message.getMember().getProfileImage()
                         ));
             }
+            redisUtil.setDataList(key, messageResponseDtoList);
         }
         // 있으면 그 값을 반환
         return messageResponseDtoList;
@@ -97,8 +98,9 @@ public class MessageService {
 
     public List<MessageThreadResponseDto> getMessageThreadDtoList(Long messageId){
         // redis에서 관련 채팅방 정보가 있는 지 먼저 탐색
+        String key = getMessageThreadKey(messageId);
         List<MessageThreadResponseDto> messageThreadResponseDtoList =
-                redisUtil.getDataList(getMessageThreadKey(messageId), MessageThreadResponseDto.class);
+                redisUtil.getDataList(key, MessageThreadResponseDto.class);
 
         // 없으면 값을 가져와서 캐시에 저장한 후 반환
         if(messageThreadResponseDtoList.isEmpty()){
@@ -114,6 +116,7 @@ public class MessageService {
                                 memberDebate.getPosition().name(),
                                 message.getMember().getProfileImage()));
             }
+            redisUtil.setDataList(key, messageThreadResponseDtoList);
         }
 
         // 있으면 그 값을 반환
@@ -129,7 +132,7 @@ public class MessageService {
         // 2. 클라이언트로부터 Position을 입력 바디로 받는 방법 -> 빠름, 요청 조작 시 오류 발생 가능성 존재
         // -> 현재는 2번 선택(추후 오류 발생이 잦다면 1번 사용할 예정)
         boolean isIncrease = updatePreference(member, message, dto);
-        // 토론방 내부 ratio 변경 필요
+        // 토론방 내부 ratio 변경
         DebateRoom debateRoom = changePreferenceRatio(
                 dto.getIsAgree(),
                 isIncrease,
