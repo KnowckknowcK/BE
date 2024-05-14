@@ -44,9 +44,10 @@ public class DebateRoomService {
         }
 
         return new DebateRoomResponseDto(
-                calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
                 debateRoom.getAgreeNum(),
-                debateRoom.getDisagreeNum());
+                debateRoom.getDisagreeNum(),
+                debateRoom.getAgreeLikesNum(),
+                debateRoom.getDisagreeLikesNum());
     }
     DebateRoom getDebateRoom(Long debateRoomId){
         Optional<DebateRoom> debateRoom = debateRoomRepository.findById(debateRoomId);

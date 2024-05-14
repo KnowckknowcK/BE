@@ -8,6 +8,7 @@ import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.PreferenceResponseDto;
+import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
@@ -66,8 +67,15 @@ public class MessageService {
 
         List<MessageResponseDto> messageResponseDtoList = new ArrayList<>();
         for (Message message: messageList) {
+            Optional<MemberDebate> writerMemberDebate =
+                    memberDebateRepository
+                            .findByMemberAndDebateRoom(message.getMember(), message.getDebateRoom());
+            String position = null;
+            if (writerMemberDebate.isPresent()){
+                position = writerMemberDebate.get().getPosition().name();
+            }
             messageResponseDtoList.add(message
-                    .toMessageResponseDto(memberDebate.getPosition().name(),
+                    .toMessageResponseDto(position,
                             getPreferenceNum(message),
                             getMessageThreadNum(message) ,
                             message.getMember().getProfileImage()
@@ -112,7 +120,8 @@ public class MessageService {
                 message.getDebateRoom());
 
         return makeDto(
-                calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
+                debateRoom.getAgreeLikesNum(),
+                debateRoom.getDisagreeLikesNum(),
                 isIncrease
         );
     }
@@ -158,9 +167,10 @@ public class MessageService {
         return messageThreadRepository.findByMessage(message).size();
     }
 
-    private PreferenceResponseDto makeDto(double ratio, boolean isIncrease){
+    private PreferenceResponseDto makeDto(long agreeLikesNum, long disagreeLikesNum, boolean isIncrease){
         return PreferenceResponseDto.builder()
-                .ratio(ratio)
+                .agreeLikesNum(agreeLikesNum)
+                .disagreeLikesNum(disagreeLikesNum)
                 .isIncrease(isIncrease)
                 .build();
     }
