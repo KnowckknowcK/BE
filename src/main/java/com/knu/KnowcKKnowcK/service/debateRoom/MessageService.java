@@ -59,8 +59,6 @@ public class MessageService {
         DebateRoom debateRoom = debateRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         List<Message> messageList = messageRepository.findByDebateRoom(debateRoom);
-        MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
         List<MessageResponseDto> messageResponseDtoList = new ArrayList<>();
         for (Message message: messageList) {
