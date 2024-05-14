@@ -33,7 +33,7 @@ public class SummaryController {
             @ApiResponse(responseCode = "200", description = "요약 히스토리 가져오기 성공"),
             @ApiResponse(responseCode = "400", description = "요약 히스토리 가져오기 실패")
     })
-    ApiResponseDto<SummaryHistoryResponseDto> loadSummaryHistory(Authentication authentication, @RequestParam@Valid long userId,
+    ApiResponseDto<SummaryHistoryResponseDto> loadSummaryHistory(Authentication authentication,
                                                                  @RequestParam @Valid int articleId) {
         SummaryHistoryResponseDto responseDto = loadSummaryService.loadSummaryHistory(authentication.getName(), articleId);
         return ApiResponseDto.success(SuccessCode.OK, responseDto);
