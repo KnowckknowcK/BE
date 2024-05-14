@@ -10,7 +10,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor
 public class DebateRoom {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne
     @JoinColumn(name="article_id")
