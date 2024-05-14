@@ -34,7 +34,7 @@ public class AccountController {
     private final MailService mailService;
 
 
-    @PostMapping("/google")
+    @GetMapping("/google")
     @Operation(summary = "구글 로그인 및 회원가입 API", description = "구글 로그인 및 회원가입에 대한 API")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "구글 로그인 성공"),
