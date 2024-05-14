@@ -3,7 +3,7 @@ package com.knu.KnowcKKnowcK.controller.myInfo;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.DebateRoom;
-import com.knu.KnowcKKnowcK.service.myPage.MyPageService;
+import com.knu.KnowcKKnowcK.service.myPage.MyDebateroomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "MyPage",description = "마이페이지에 관한 요청을 처리한다.")
 public class MyDebateRoomController {
-    private final MyPageService myPageService;
+    private final MyDebateroomService myDebateroomService;
 
     @GetMapping("/ing")
     @Operation(summary = "토론방 확인 API", description = "현재 참여 중인 토론방 확인 API")
@@ -29,7 +29,7 @@ public class MyDebateRoomController {
             @ApiResponse(responseCode = "200", description = "토론방 목록 조회 성공"),
     })
     public ApiResponseDto<List<DebateRoom>> getDebateRoom(@RequestHeader("Authorization") Long id){
-        List<DebateRoom> debateRooms =  myPageService.getDebateRoom(id);
+        List<DebateRoom> debateRooms =  myDebateroomService.getDebateRoom(id);
         return ApiResponseDto.success(SuccessCode.OK,debateRooms);
     }
 }
