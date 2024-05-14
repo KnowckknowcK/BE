@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
-
 @Service
 @RequiredArgsConstructor
 public class MessageService {
@@ -61,13 +59,18 @@ public class MessageService {
         DebateRoom debateRoom = debateRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         List<Message> messageList = messageRepository.findByDebateRoom(debateRoom);
-        MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
         List<MessageResponseDto> messageResponseDtoList = new ArrayList<>();
         for (Message message: messageList) {
+            Optional<MemberDebate> writerMemberDebate =
+                    memberDebateRepository
+                            .findByMemberAndDebateRoom(message.getMember(), message.getDebateRoom());
+            String position = null;
+            if (writerMemberDebate.isPresent()){
+                position = writerMemberDebate.get().getPosition().name();
+            }
             messageResponseDtoList.add(message
-                    .toMessageResponseDto(memberDebate.getPosition().name(),
+                    .toMessageResponseDto(position,
                             getPreferenceNum(message),
                             getMessageThreadNum(message) ,
                             message.getMember().getProfileImage()
@@ -112,7 +115,8 @@ public class MessageService {
                 message.getDebateRoom());
 
         return makeDto(
-                calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
+                debateRoom.getAgreeLikesNum(),
+                debateRoom.getDisagreeLikesNum(),
                 isIncrease
         );
     }
@@ -158,9 +162,10 @@ public class MessageService {
         return messageThreadRepository.findByMessage(message).size();
     }
 
-    private PreferenceResponseDto makeDto(double ratio, boolean isIncrease){
+    private PreferenceResponseDto makeDto(long agreeLikesNum, long disagreeLikesNum, boolean isIncrease){
         return PreferenceResponseDto.builder()
-                .ratio(ratio)
+                .agreeLikesNum(agreeLikesNum)
+                .disagreeLikesNum(disagreeLikesNum)
                 .isIncrease(isIncrease)
                 .build();
     }

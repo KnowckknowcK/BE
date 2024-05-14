@@ -33,6 +33,7 @@ public class WebSecurityConfig {
     private static final String[] WHITE_LIST = {
             "/api/account/**",
             "/api-docs/**", "v3/api-docs/**", "swagger-ui/**",
+            "/api/ws/**",
             "/",
             "/login/oauth2/code/google", "/oauth2/authorization/google",
 //            "/api/article/recommand"
@@ -42,6 +43,7 @@ public class WebSecurityConfig {
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

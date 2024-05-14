@@ -52,7 +52,6 @@ public class DebateRoomServiceTest {
         // 검증
         assertThat(result).isNotNull();
         assertThat(result.getAgreeNum() + result.getDisagreeNum()).isEqualTo(1);
-        assertThat(result.getRatio()).isEqualTo(0.0);
     }
 
     @Test

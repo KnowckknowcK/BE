@@ -4,13 +4,20 @@ import lombok.Data;
 
 @Data
 public class DebateRoomResponseDto {
-    private Double ratio;
     private Long agreeNum;
+    private Long agreeLikesNum;
     private Long disagreeNum;
+    private Long disagreeLikesNum;
 
-    public DebateRoomResponseDto(double ratio, long agreeNum, long disagreeNum){
-        this.ratio =ratio;
+    public DebateRoomResponseDto(
+            long agreeNum,
+            long disagreeNum,
+            long agreeLikesNum,
+            long disagreeLikesNum
+    ){
         this.agreeNum = agreeNum;
+        this.agreeLikesNum = agreeLikesNum;
         this.disagreeNum = disagreeNum;
+        this.disagreeLikesNum = disagreeLikesNum;
     }
 }
