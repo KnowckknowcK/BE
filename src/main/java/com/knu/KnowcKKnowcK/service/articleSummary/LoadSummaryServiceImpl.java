@@ -26,9 +26,9 @@ public class LoadSummaryServiceImpl implements LoadSummaryService{
     private final MemberRepository memberRepository;
 
     @Override
-    public SummaryHistoryResponseDto loadSummaryHistory(long userId, long articleId) {
+    public SummaryHistoryResponseDto loadSummaryHistory(String userEmail, long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
-        Member member = memberRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         Optional<Summary> existedSummary = summaryRepository.findByArticleAndWriter(article, member);
 
         if (existedSummary.isEmpty() || (existedSummary.isPresent() && existedSummary.get().getStatus() == Status.DONE)) {

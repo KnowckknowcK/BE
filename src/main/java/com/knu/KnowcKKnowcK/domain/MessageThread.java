@@ -11,6 +11,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.formatToLocalDateTime;
+
 @Entity
 @Data
 @Builder
@@ -38,7 +40,7 @@ public class MessageThread {
                 .content(content)
                 .position(position)
                 .profileImage(profileImage)
-                .createdTime(createdTime)
+                .createdTime(formatToLocalDateTime(createdTime))
                 .parentMessageId(parentMessageId)
                 .writer(member.getName())
                 .build();

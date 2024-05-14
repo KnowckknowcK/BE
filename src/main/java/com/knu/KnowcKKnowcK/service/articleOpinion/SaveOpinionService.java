@@ -5,6 +5,6 @@ import com.knu.KnowcKKnowcK.dto.responsedto.OpinionResponseDto;
 
 public interface SaveOpinionService {
 
-    OpinionResponseDto getOpinionFeedback(OpinionRequestDto dto);
+    OpinionResponseDto getOpinionFeedback(OpinionRequestDto dto, String writer);
 
 }

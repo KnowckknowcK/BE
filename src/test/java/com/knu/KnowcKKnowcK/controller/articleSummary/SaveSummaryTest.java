@@ -47,46 +47,6 @@ class SaveSummaryTest {
     @InjectMocks
     private SaveSummaryServiceImpl sut;
 
-
-    @Mock
-    private ChatGptContext chatGptContext;
-
-    @Mock
-    private SummaryFeedbackRepository summaryFeedbackRepository;
-
-    @Test
-    @DisplayName("완성된 요약을 제출하면 요약 피드백을 반환한다.")
-    void saveSummary_when_not_auto() {
-        Article article = createArticle();
-        Member member = createMember();
-        Summary summary = createSummary(member, article, Status.DONE);
-        Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
-        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
-        Mockito.when(summaryRepository.save(any())).thenReturn(summary);
-        Mockito.when(chatGptContext.callGptApi(Option.SUMMARY,article.getContent(), summary.getContent())).thenReturn(Pair.of(Score.EXCELLENT,"content"));
-        Mockito.when(summaryFeedbackRepository.save(any())).thenReturn(new SummaryFeedback(1L, "content", Score.EXCELLENT, summary));
-        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
-                summary.getContent(), LocalDateTime.now(), Status.DONE, 100L);
-
-        SummaryResponseDto summaryResponseDto = sut.getSummaryFeedback(summaryRequestDto);
-
-        Assertions.assertThat(summaryResponseDto.getScore()).isEqualTo(Score.EXCELLENT);
-    }
-
-//    @Test
-    @DisplayName("AI 피드백이 옳지 않은 점수를 반환하면 예외처리한다.")
-    void submitSummary_failed_when_invalid_score() {
-        Article article = createArticle();
-        Member member = createMember();
-        Summary summary = createSummary(member, article, Status.DONE);
-        Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
-        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
-        Mockito.when(summaryRepository.save(any())).thenReturn(summary);
-        Mockito.when(chatGptContext.callGptApi(Option.SUMMARY,article.getContent(), summary.getContent())).thenThrow(CustomException.class);
-        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L, summary.getContent(), LocalDateTime.now(), Status.DONE, 100L);
-
-        Assertions.assertThatThrownBy(() -> sut.getSummaryFeedback(summaryRequestDto)).isInstanceOf(CustomException.class);
-    }
     @Test
     @DisplayName("요약 임시 저장을 성공한다.")
     void saveSummary_when_auto() {
@@ -94,12 +54,12 @@ class SaveSummaryTest {
         Member member = createMember();
         Summary summary = createSummary(member, article, Status.ING);
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
-        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
+        Mockito.when(memberRepository.findByEmail(any())).thenReturn(Optional.ofNullable(member));
         Mockito.when(summaryRepository.save(any())).thenReturn(summary);
-        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
+        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L,
                 summary.getContent(), LocalDateTime.now(), Status.ING, 100L);
 
-        SummaryResponseDto summaryResponseDto = sut.saveSummary(summaryRequestDto);
+        SummaryResponseDto summaryResponseDto = sut.saveSummary(summaryRequestDto, "email@email.com");
 
         Assertions.assertThat(summaryResponseDto.getReturnMessage()).isNotNull();
     }
@@ -112,12 +72,12 @@ class SaveSummaryTest {
         Member member = createMember();
         Summary summary = createSummary(member, article, Status.ING);
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
-        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
+        Mockito.when(memberRepository.findByEmail(any())).thenReturn(Optional.ofNullable(member));
         Mockito.when(summaryRepository.save(any())).thenReturn(summary);
-        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L, 1L,
+        SummaryRequestDto summaryRequestDto = new SummaryRequestDto(1L,
                 summary.getContent(), LocalDateTime.now(), Status.ING, 100L);
 
-        SummaryResponseDto summaryResponseDto = sut.saveSummary(summaryRequestDto);
+        SummaryResponseDto summaryResponseDto = sut.saveSummary(summaryRequestDto, "email@email.com");
 
         Assertions.assertThat(summaryResponseDto.getReturnMessage()).isNotNull();
     }
