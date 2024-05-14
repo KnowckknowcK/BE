@@ -34,8 +34,12 @@ public class AccountController {
     private final MailService mailService;
 
 
-    @GetMapping("/google")
+    @PostMapping("/google")
     @Operation(summary = "구글 로그인 및 회원가입 API", description = "구글 로그인 및 회원가입에 대한 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "구글 로그인 성공"),
+            @ApiResponse(responseCode = "400", description = "구글 로그인 실패")
+    })
     public RedirectView redirectToGoogle() {
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl("/oauth2/authorization/google");
