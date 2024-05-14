@@ -3,7 +3,6 @@ package com.knu.KnowcKKnowcK.service.myPage;
 import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.requestdto.ProfileUpdateRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.DashboardResponseDto;
-import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.ProfileResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
@@ -13,18 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
     private final MemberRepository memberRepository;
-    private final SummaryRepository summaryRepository;
-    private final OpinionRepository opinionRepository;
     //멤버의 프로필 정보 응답
     @Transactional
     public ProfileResponseDto getProfile(Long id){
@@ -46,9 +40,6 @@ public class MyPageService {
         List<Summary> totalSummaries = member.getSummaries();
         List<Opinion> totalOpinions = member.getOpinions();
 
-        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-
         //연속 참여 횟수 계산을 위한 createdTime 기준, 내림차순으로 정렬
         totalSummaries = totalSummaries.stream()
                 .sorted(Comparator.comparing(Summary::getCreatedTime).reversed())
@@ -69,9 +60,11 @@ public class MyPageService {
             }
         }
 
+        //오늘 작성한 요약개수
         Long todaySummariesCount = totalSummaries.stream().filter(s -> s.getCreatedTime().toLocalDate().equals(today)).count();
+        //오늘 작성한 견해개수
         Long todayOpinionsCount = totalOpinions.stream().filter(o -> o.getCreatedTime().toLocalDate().equals(today)).count();
-        //오늘 작성한 요약과 견해 개수
+        //오늘 작성한 요약과 견해 총 개수
         Long totalTodayWorks = todaySummariesCount + todayOpinionsCount;
 
         return new DashboardResponseDto(totalTodayWorks,totalSummaries.size(),totalOpinions.size(),consecutiveDays);
