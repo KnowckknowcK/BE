@@ -8,7 +8,6 @@ import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.PreferenceResponseDto;
-import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
@@ -18,8 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
 
 @Service
 @RequiredArgsConstructor

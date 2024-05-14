@@ -55,7 +55,7 @@ public class DebateRoomController {
             @ApiResponse(responseCode = "200", description = "토론방 나가기 성공"),
             @ApiResponse(responseCode = "400", description = "토론방 나가기 실패")
     })
-    public ApiResponseDto<Double> leaveDebateRoom(
+    public ApiResponseDto<String> leaveDebateRoom(
             @PathVariable("debateRoomId") Long debateRoomId,
             Authentication authentication
     ){

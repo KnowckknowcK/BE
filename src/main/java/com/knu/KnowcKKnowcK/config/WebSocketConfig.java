@@ -24,8 +24,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/api/ws")
                 .setAllowedOrigins(clientLocalUrl, clientUrl).withSockJS();
-
-//                .setInterceptors(new JwtChannelInterceptor(jwtUtil));
     }
 
     @Override
