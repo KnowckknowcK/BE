@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +32,9 @@ public class OpinionController {
             @ApiResponse(responseCode = "200", description = "요약 피드백 반환 성공"),
             @ApiResponse(responseCode = "400", description = "요약 피드백 반환 실패")
     })
-    ApiResponseDto<OpinionResponseDto> getOpinionFeedback(@RequestBody @Valid OpinionRequestDto dto){
+    ApiResponseDto<OpinionResponseDto> getOpinionFeedback(Authentication authentication, @RequestBody @Valid OpinionRequestDto dto){
 
-        OpinionResponseDto opinionFeedback = saveOpinionService.getOpinionFeedback(dto);
+        OpinionResponseDto opinionFeedback = saveOpinionService.getOpinionFeedback(dto, authentication.getName());
         return ApiResponseDto.success(SuccessCode.OK, opinionFeedback);
     }
 

@@ -5,6 +5,8 @@ import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomMemberDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
+import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -25,7 +28,7 @@ import java.util.ArrayList;
 public class DebateRoomController {
     final private DebateRoomService debateRoomService;
     private final MemberRepository memberRepository;
-    private Member member; // 로그인 기능 추가되면 수정 예정
+    private Member member;
 
     @PutMapping("/{debateRoomId}")
     @Operation(summary = "토론방 참여 API", description = "클라이언트가 토론방에 참여하길 바랄 때 요청하는 API")
@@ -34,8 +37,13 @@ public class DebateRoomController {
             @ApiResponse(responseCode = "200", description = "토론방 참여 성공"),
             @ApiResponse(responseCode = "400", description = "토론방 참여 실패")
     })
-    public ApiResponseDto<DebateRoomResponseDto> participateInDebateRoom(@PathVariable("debateRoomId") Long debateRoomId){
-        member = memberRepository.findById(1L).orElse(null);
+    public ApiResponseDto<DebateRoomResponseDto> participateInDebateRoom(
+            @PathVariable("debateRoomId") Long debateRoomId,
+            Authentication authentication
+    ){
+        member = memberRepository
+                .findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.participateInDebateRoom(member, debateRoomId));
     }
 
@@ -46,8 +54,13 @@ public class DebateRoomController {
             @ApiResponse(responseCode = "200", description = "토론방 나가기 성공"),
             @ApiResponse(responseCode = "400", description = "토론방 나가기 실패")
     })
-    public ApiResponseDto<Double> leaveDebateRoom(@PathVariable("debateRoomId") Long debateRoomId){
-        member = memberRepository.findById(1L).orElse(null);
+    public ApiResponseDto<String> leaveDebateRoom(
+            @PathVariable("debateRoomId") Long debateRoomId,
+            Authentication authentication
+    ){
+        member = memberRepository
+                .findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.leaveDebateRoom(member, debateRoomId));
     }
 
@@ -58,7 +71,8 @@ public class DebateRoomController {
             @ApiResponse(responseCode = "200", description = "토론방 참여자 리스트 반환"),
             @ApiResponse(responseCode = "400", description = "존재하지 않는 토론방")
     })
-    public ApiResponseDto<ArrayList<DebateRoomMemberDto>> getDebateRoomMember(@PathVariable("debateRoomId") Long debateRoomId){
+    public ApiResponseDto<ArrayList<DebateRoomMemberDto>> getDebateRoomMember(
+            @PathVariable("debateRoomId") Long debateRoomId){
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.getDebateRoomMember(debateRoomId));
     }
 }

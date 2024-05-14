@@ -33,9 +33,9 @@ public class SummaryController {
             @ApiResponse(responseCode = "200", description = "요약 히스토리 가져오기 성공"),
             @ApiResponse(responseCode = "400", description = "요약 히스토리 가져오기 실패")
     })
-    ApiResponseDto<SummaryHistoryResponseDto> loadSummaryHistory(@RequestParam@Valid long userId,
+    ApiResponseDto<SummaryHistoryResponseDto> loadSummaryHistory(Authentication authentication,
                                                                  @RequestParam @Valid int articleId) {
-        SummaryHistoryResponseDto responseDto = loadSummaryService.loadSummaryHistory(userId, articleId);
+        SummaryHistoryResponseDto responseDto = loadSummaryService.loadSummaryHistory(authentication.getName(), articleId);
         return ApiResponseDto.success(SuccessCode.OK, responseDto);
     }
 
@@ -47,9 +47,9 @@ public class SummaryController {
             @ApiResponse(responseCode = "200", description = "요약 저장 성공"),
             @ApiResponse(responseCode = "400", description = "요약 히스토리 가져오기 실패")
     })
-    ApiResponseDto<SummaryResponseDto> saveSummary(@RequestBody @Valid SummaryRequestDto dto){
+    ApiResponseDto<SummaryResponseDto> saveSummary(Authentication authentication, @RequestBody @Valid SummaryRequestDto dto){
 
-            SummaryResponseDto summaryResponseDto = saveSummaryService.saveSummary(dto);
+            SummaryResponseDto summaryResponseDto = saveSummaryService.saveSummary(dto, authentication.getName());
             return ApiResponseDto.success(SuccessCode.OK, summaryResponseDto);
     }
 
@@ -61,9 +61,9 @@ public class SummaryController {
             @ApiResponse(responseCode = "200", description = "요약 피드백 반환 성공"),
             @ApiResponse(responseCode = "400", description = "요약 피드백 반환 실패")
     })
-    ApiResponseDto<SummaryResponseDto> getSummaryFeedback(@RequestBody @Valid SummaryRequestDto dto){
+    ApiResponseDto<SummaryResponseDto> getSummaryFeedback(Authentication authentication, @RequestBody @Valid SummaryRequestDto dto){
 
-        SummaryResponseDto summaryResponseDto = saveSummaryService.getSummaryFeedback(dto);
+        SummaryResponseDto summaryResponseDto = saveSummaryService.getSummaryFeedback(dto, authentication.getName());
         return ApiResponseDto.success(SuccessCode.OK, summaryResponseDto);
     }
 }

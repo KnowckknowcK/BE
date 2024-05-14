@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class PreferenceResponseDto {
-    private Double ratio;
+    private Long agreeLikesNum;
+    private Long disagreeLikesNum;
     private Boolean isIncrease;
 }
