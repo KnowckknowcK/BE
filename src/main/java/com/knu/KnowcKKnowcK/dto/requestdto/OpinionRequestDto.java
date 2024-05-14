@@ -18,8 +18,6 @@ public class OpinionRequestDto {
     @NotNull(message = "articleId는 null일 수 없습니다.")
     private Long articleId;
 
-    @NotNull(message = "writerId는 null일 수 없습니다.")
-    private Long writerId;
 
     @NotNull(message = "내용은 null일 수 없습니다.")
     private String content;
@@ -33,10 +31,9 @@ public class OpinionRequestDto {
     private Position position;
 
     @Builder
-    public Opinion toEntity(Article article, Member writer) {
+    public Opinion toEntity(Article article) {
         return Opinion.builder()
                 .article(article)
-                .writer(writer)
                 .content(content)
                 .createdTime(LocalDateTime.now())
                 .status(status)

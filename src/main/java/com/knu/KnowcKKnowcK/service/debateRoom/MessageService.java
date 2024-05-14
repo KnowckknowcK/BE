@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.*;
 
+
 @Service
 @RequiredArgsConstructor
 public class MessageService {
@@ -72,6 +73,7 @@ public class MessageService {
     public List<MessageResponseDto> getMessages(Member member, Long roomId){
         DebateRoom debateRoom = debateRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+
         String key = getDebateRoomKey(debateRoom.getId());
         // redis에서 관련 채팅방 정보가 있는 지 먼저 탐색
         List<MessageResponseDto> messageResponseDtoList =
@@ -80,11 +82,17 @@ public class MessageService {
         // 없으면 값을 가져와서 캐시에 저장한 후 반환
         if (messageResponseDtoList.isEmpty()){
             List<Message> messageList = messageRepository.findByDebateRoom(debateRoom);
-            MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom)
-                    .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+          
             for (Message message: messageList) {
+              Optional<MemberDebate> writerMemberDebate =
+                    memberDebateRepository
+                            .findByMemberAndDebateRoom(message.getMember(), message.getDebateRoom());
+            String position = null;
+            if (writerMemberDebate.isPresent()){
+                position = writerMemberDebate.get().getPosition().name();
+            }
                 messageResponseDtoList.add(message
-                        .toMessageResponseDto(memberDebate.getPosition().name(),
+                        .toMessageResponseDto(position,
                                 getPreferenceNum(message),
                                 getMessageThreadNum(message) ,
                                 message.getMember().getProfileImage()
@@ -139,7 +147,8 @@ public class MessageService {
                 message.getDebateRoom());
 
         return makeDto(
-                calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
+                debateRoom.getAgreeLikesNum(),
+                debateRoom.getDisagreeLikesNum(),
                 isIncrease
         );
     }
@@ -185,9 +194,10 @@ public class MessageService {
         return messageThreadRepository.findByMessage(message).size();
     }
 
-    private PreferenceResponseDto makeDto(double ratio, boolean isIncrease){
+    private PreferenceResponseDto makeDto(long agreeLikesNum, long disagreeLikesNum, boolean isIncrease){
         return PreferenceResponseDto.builder()
-                .ratio(ratio)
+                .agreeLikesNum(agreeLikesNum)
+                .disagreeLikesNum(disagreeLikesNum)
                 .isIncrease(isIncrease)
                 .build();
     }

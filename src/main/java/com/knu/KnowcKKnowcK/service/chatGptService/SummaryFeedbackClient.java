@@ -2,7 +2,8 @@ package com.knu.KnowcKKnowcK.service.chatGptService;
 
 import com.knu.KnowcKKnowcK.config.ChatGptConfig;
 import com.knu.KnowcKKnowcK.dto.prompt.SummaryPrompt;
-import com.knu.KnowcKKnowcK.dto.requestdto.ChatgptRequestDto;
+import com.knu.KnowcKKnowcK.dto.requestdto.chatGpt.ChatgptRequestDto;
+import com.knu.KnowcKKnowcK.dto.requestdto.chatGpt.Message;
 import com.knu.KnowcKKnowcK.dto.responsedto.ChatgptResponseDto;
 import com.knu.KnowcKKnowcK.enums.Score;
 import lombok.RequiredArgsConstructor;
@@ -12,20 +13,15 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
-public class SummaryFeedbackService implements ChatGptService{
+public class SummaryFeedbackClient implements ChatGptClient {
     private final ChatGptConfig chatGptConfig;
     @Override
-    @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 4000), include = ArrayIndexOutOfBoundsException.class)
+    @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 4000), include = {NullPointerException.class })
     public Pair<Score, String> callGptApi(String article, String summary) {
-
-        List<ChatgptRequestDto.Message> messageList = new ArrayList<>();
-        messageList.add(new ChatgptRequestDto.Message("user", SummaryPrompt.getInstance().getPrompt() + article + summary));
-        ChatgptRequestDto requestDto = new ChatgptRequestDto(messageList);
+        ChatgptRequestDto requestDto = new ChatgptRequestDto(
+                Message.promptContent(article, summary, SummaryPrompt.getInstance().getPrompt()));
 
         ChatgptResponseDto responseDto = chatGptConfig.gptClient()
                 .post()
@@ -40,14 +36,15 @@ public class SummaryFeedbackService implements ChatGptService{
 
 
 
-    private Pair<Score, String> parsingFeedback(String content) throws ArrayIndexOutOfBoundsException {
-
-        System.out.println("content = " + content);
+    private Pair<Score, String> parsingFeedback(String content) {
         String[] split = content.split("#");
-        String score = split[0];
-        String feedback = split[1];
-
-        return Pair.of(Score.valueOf(score), feedback);
-
+        try{
+            String score = split[0];
+            String feedback = split[1];
+            return Pair.of(Score.valueOf(score), feedback);
+        }
+        catch (IllegalArgumentException | ArrayIndexOutOfBoundsException exception){
+            return Pair.of(Score.GOOD, content);
+        }
     }
 }

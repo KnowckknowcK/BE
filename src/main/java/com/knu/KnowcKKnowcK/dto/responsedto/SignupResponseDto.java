@@ -9,4 +9,5 @@ public class SignupResponseDto {
     private String email;
     private String name;
     private String profileImg;
+    private String jwt;
 }

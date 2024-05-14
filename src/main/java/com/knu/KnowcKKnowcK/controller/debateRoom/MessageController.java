@@ -7,6 +7,8 @@ import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.PreferenceResponseDto;
+import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.debateRoom.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,8 +39,13 @@ public class MessageController {
             @ApiResponse(responseCode = "200", description = "메세지 리스트 받기 성공"),
             @ApiResponse(responseCode = "400", description = "메세지 리스트 받기 실패")
     })
-    public ApiResponseDto<List<MessageResponseDto>> getMessages(@PathVariable Long debateRoomId){
-        member = memberRepository.findById(1L).orElse(null);
+    public ApiResponseDto<List<MessageResponseDto>> getMessages(
+            @PathVariable("debateRoomId") Long debateRoomId,
+            Authentication authentication
+    ){
+        member = memberRepository
+                .findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         return ApiResponseDto.success(SuccessCode.OK, messageService.getMessages(member, debateRoomId));
     }
 
@@ -48,7 +56,7 @@ public class MessageController {
             @ApiResponse(responseCode = "200", description = "메세지 스레드 리스트 받기 성공"),
             @ApiResponse(responseCode = "400", description = "메세지 스레드 리스트 받기 실패")
     })
-    public ApiResponseDto<List<MessageThreadResponseDto>> getMessageThread(@PathVariable Long messageId) {
+    public ApiResponseDto<List<MessageThreadResponseDto>> getMessageThread(@PathVariable("messageId") Long messageId) {
         return ApiResponseDto.success(SuccessCode.OK, messageService.getMessageThreadDtoList(messageId));
     }
 
@@ -56,16 +64,22 @@ public class MessageController {
     @Operation(summary = "동의 추가 API", description = "특정 메세지에 대한 동의를 표시할 때 요청하는 API")
     @Parameters({
             @Parameter(name = "messageId", description = "동의를 추가하길 바라는 특정 메세지 ID", example = "3"),
-            @Parameter(name = "PreferenceRequestDto", description = "좋아요 추가 요청 바디, " +
-                    "찬성에 대한 동의면 true 반대에 대한 동의면 false",
+            @Parameter(name = "PreferenceRequestDto",
+                    description = "좋아요 추가 요청 바디, 찬성에 대한 동의면 true 반대에 대한 동의면 false",
                     example = "{'isAgree': true}")
     })
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "동의 추가 성공"),
             @ApiResponse(responseCode = "400", description = "동의 추가 실패")
     })
-    public ApiResponseDto<PreferenceResponseDto> putPreference(@PathVariable Long messageId, @RequestBody PreferenceRequestDto preferenceRequestDTO) {
-        member = memberRepository.findById(1L).orElse(null);
+    public ApiResponseDto<PreferenceResponseDto> putPreference(
+            @PathVariable("messageId") Long messageId,
+            @RequestBody PreferenceRequestDto preferenceRequestDTO,
+            Authentication authentication
+    ) {
+        member = memberRepository
+                .findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         return ApiResponseDto.success(SuccessCode.OK, messageService.putPreference(member, messageId, preferenceRequestDTO));
     }
 }

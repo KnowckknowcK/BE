@@ -33,12 +33,14 @@ public class Member {
     private List<Opinion> opinions = new ArrayList<>();
 
     @Builder
-    public Member(String name, String email, String profileImage, Boolean isOAuth, String password) {
+    public Member(String name, String email, String profileImage, Boolean isOAuth, String password, Long point, Long level) {
         this.name = name;
         this.email = email;
         this.profileImage = profileImage;
         this.isOAuth = isOAuth;
         this.password = password;
+        this.point = point;
+        this.level = level;
     }
 
     //프로필 수정

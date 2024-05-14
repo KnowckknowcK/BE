@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface LoadArticlesService {
 
-    Page<ArticleListResponseDto> loadArticles(Category category, int page, long memberId);
+    Page<ArticleListResponseDto> loadArticles(Category category, int page, String memberEmail);
 
     Article loadArticleById(Long id);
 

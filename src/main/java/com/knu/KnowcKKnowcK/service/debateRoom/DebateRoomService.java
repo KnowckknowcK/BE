@@ -44,9 +44,10 @@ public class DebateRoomService {
         }
 
         return new DebateRoomResponseDto(
-                calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
                 debateRoom.getAgreeNum(),
-                debateRoom.getDisagreeNum());
+                debateRoom.getDisagreeNum(),
+                debateRoom.getAgreeLikesNum(),
+                debateRoom.getDisagreeLikesNum());
     }
     DebateRoom getDebateRoom(Long debateRoomId){
         Optional<DebateRoom> debateRoom = debateRoomRepository.findById(debateRoomId);
@@ -64,7 +65,7 @@ public class DebateRoomService {
     }
 
     // 토론방 떠나기
-    public double leaveDebateRoom(Member member, Long debateRoomId){
+    public String leaveDebateRoom(Member member, Long debateRoomId){
         DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
@@ -80,7 +81,8 @@ public class DebateRoomService {
         else // 반대 수 감소
             debateRoom.setDisagreeNum(debateRoom.getDisagreeNum() - 1);
         debateRoomRepository.save(debateRoom);
-        return calculateRatio(debateRoom.getAgreeNum(), debateRoom.getDisagreeNum());
+
+        return "나가기 성공";
     }
 
     public ArrayList<DebateRoomMemberDto> getDebateRoomMember(Long debateRoomId){

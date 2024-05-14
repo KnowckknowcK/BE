@@ -5,14 +5,15 @@ import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.dto.requestdto.OpinionRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.OpinionResponseDto;
+import com.knu.KnowcKKnowcK.enums.Option;
 import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.repository.OpinionRepository;
-import com.knu.KnowcKKnowcK.service.chatGptService.OpinionFeedbackService;
-import org.assertj.core.api.Assertions;
+import com.knu.KnowcKKnowcK.service.chatGptService.ChatGptContext;
+import com.knu.KnowcKKnowcK.service.chatGptService.OpinionFeedbackClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +45,7 @@ class SaveOpinionTest {
     private SaveOpinionServiceImpl sut;
 
     @Mock
-    private OpinionFeedbackService opinionFeedbackService;
+    private ChatGptContext chatGptContext;
 
     @Test
     @DisplayName("견해 제출을 하면 피드백이 제공된다.")
@@ -52,12 +53,12 @@ class SaveOpinionTest {
         Member member = createMember();
         Article article = createArticle();
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
-        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+        Mockito.when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
         Mockito.when(opinionRepository.findByArticleAndWriter(any(), any())).thenReturn(Optional.empty());
-        OpinionRequestDto requestDto = new OpinionRequestDto(1L, 1L, "content", LocalDateTime.now(), Status.DONE, Position.AGREE);
-        Mockito.when(opinionFeedbackService.callGptApi(article.getContent(), requestDto.getContent())).thenReturn((Pair<Score, String>) Pair.of(Score.EXCELLENT,"아주 좋아요."));
+        OpinionRequestDto requestDto = new OpinionRequestDto(1L, "content", LocalDateTime.now(), Status.DONE, Position.AGREE);
+        Mockito.when(chatGptContext.callGptApi(Option.OPINION, article.getContent(), requestDto.getContent())).thenReturn((Pair<Score, String>) Pair.of(Score.EXCELLENT,"아주 좋아요."));
 
-        OpinionResponseDto opinionFeedback = sut.getOpinionFeedback(requestDto);
+        OpinionResponseDto opinionFeedback = sut.getOpinionFeedback(requestDto, member.getEmail());
 
         assertThat(opinionFeedback).isNotNull();
     }

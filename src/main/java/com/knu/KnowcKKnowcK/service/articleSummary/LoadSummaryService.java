@@ -4,5 +4,5 @@ import com.knu.KnowcKKnowcK.dto.responsedto.SummaryHistoryResponseDto;
 
 public interface LoadSummaryService {
 
-    SummaryHistoryResponseDto loadSummaryHistory(long userId, long articleId);
+    SummaryHistoryResponseDto loadSummaryHistory(String userEmail, long articleId);
 }
