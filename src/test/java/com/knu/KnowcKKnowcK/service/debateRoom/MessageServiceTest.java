@@ -79,7 +79,7 @@ class MessageServiceTest extends DebateRoomSetUp{
         // 유효한 입력에 대한 테스트
 
         PreferenceResponseDto result = messageService.putPreference(member, message.getId(), preferenceRequestDto);
-        assertThat(result.getRatio()).isEqualTo(100.0);
+        assertThat(result.getIsIncrease()).isEqualTo(true);
     }
 
 }
