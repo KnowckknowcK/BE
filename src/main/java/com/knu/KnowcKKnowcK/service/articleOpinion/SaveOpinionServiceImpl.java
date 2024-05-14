@@ -32,9 +32,9 @@ public class SaveOpinionServiceImpl  implements SaveOpinionService{
 
     @Override
     @Transactional
-    public OpinionResponseDto getOpinionFeedback(OpinionRequestDto dto) {
+    public OpinionResponseDto getOpinionFeedback(OpinionRequestDto dto, String writer) {
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
-        Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        Member member = memberRepository.findByEmail(writer).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         Optional<Opinion> existedOpinion = opinionRepository.findByArticleAndWriter(article, member);
 
          if (existedOpinion.isPresent()) {

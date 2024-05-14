@@ -5,7 +5,7 @@ import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
 
 public interface SaveSummaryService {
 
-  SummaryResponseDto saveSummary(SummaryRequestDto dto);
+  SummaryResponseDto saveSummary(SummaryRequestDto dto, String writer);
 
-  SummaryResponseDto getSummaryFeedback(SummaryRequestDto dto);
+  SummaryResponseDto getSummaryFeedback(SummaryRequestDto dto, String writer);
 }

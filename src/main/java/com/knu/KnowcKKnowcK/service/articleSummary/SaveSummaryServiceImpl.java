@@ -38,9 +38,9 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
     @Override
     @Transactional
-    public SummaryResponseDto saveSummary(SummaryRequestDto dto) {
+    public SummaryResponseDto saveSummary(SummaryRequestDto dto, String writer) {
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
-        Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        Member member = memberRepository.findByEmail(writer).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         summaryRepository.findByArticleAndWriter(article, member)
                 .ifPresentOrElse(
                 summary -> summary.update(dto.getContent(), dto.getStatus(), dto.getTakenTime()),
@@ -57,11 +57,11 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
     @Override
     @Transactional(readOnly=true)
-    public SummaryResponseDto getSummaryFeedback(SummaryRequestDto dto) {
+    public SummaryResponseDto getSummaryFeedback(SummaryRequestDto dto, String writer) {
         if (dto.getStatus() != Status.DONE)
             throw new CustomException(ErrorCode.INVALID_INPUT);
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
-        Member member = memberRepository.findById(dto.getWriterId()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        Member member = memberRepository.findByEmail(writer).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
         Pair<Score, String> parsedFeedback = chatGptContext.callGptApi(Option.SUMMARY, article.getContent(), dto.getContent());
 
