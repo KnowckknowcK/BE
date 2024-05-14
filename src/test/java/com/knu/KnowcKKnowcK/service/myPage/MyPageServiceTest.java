@@ -7,21 +7,22 @@ import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
 import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
-import com.knu.KnowcKKnowcK.repository.SummaryFeedbackRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class MyPageServiceTest {
 
     @Mock
@@ -42,25 +43,34 @@ class MyPageServiceTest {
         //given
         Member member = createMember();
         member.setId(1L);
-        Article article = createArticle();
-        Summary summary = createSummary(member,article,Status.DONE);
-        SummaryFeedback feedback = createSummaryFeedback(summary);
+        Article article1 = createArticle();
+        Article article2 = createArticle();
+        Summary summary1 = createSummary(member,article1,Status.DONE,LocalDateTime.now());
+        Summary summary2 = createSummary(member,article2,Status.DONE,LocalDateTime.now().minusDays(1));
+        Summary summary3 = createSummary(member,article1,Status.DONE,LocalDateTime.now());
+
+        SummaryFeedback feedback1 = createSummaryFeedback(summary1);
+        SummaryFeedback feedback2 = createSummaryFeedback(summary2);
+
         List<Summary> summaries = new ArrayList<>();
-        summaries.add(summary);
+        summaries.add(summary1);
+        summaries.add(summary2);
+        summaries.add(summary3);
         member.setSummaries(summaries);
         //when
         Long expectedTodayWorks = 2L;
-        int expectedStrikes = 1;
+        int expectedStrikes = 2;
         int expectedTotalOpinions = 0;
-        when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
         Long actualTodayWorks = myPageService.getDashboardInfo(1L).getTodayWorks();
         int actualStrikes = myPageService.getDashboardInfo(1L).getStrikes();
         int actualTotalOpinions = myPageService.getDashboardInfo(1L).getTotalOpinions();
+        System.out.println(summary1.getCreatedTime().toLocalDate());
+        System.out.println(summary2.getCreatedTime().toLocalDate());
         //then
         Assertions.assertThat(actualTodayWorks).isEqualTo(expectedTodayWorks);
         Assertions.assertThat(actualStrikes).isEqualTo(expectedStrikes);
         Assertions.assertThat(actualTotalOpinions).isEqualTo(expectedTotalOpinions);
-
     }
 
     Member createMember(){
@@ -78,7 +88,7 @@ class MyPageServiceTest {
         return article;
     }
 
-    Summary createSummary(Member member, Article article, Status status){
+    Summary createSummary(Member member, Article article, Status status,LocalDateTime createdTime){
         return Summary.builder()
                 .id(1L)
                 .takenTime(100L)
@@ -86,7 +96,7 @@ class MyPageServiceTest {
                 .writer(member)
                 .article(article)
                 .content("요약 내용입니다.")
-                .createdTime(LocalDateTime.now())
+                .createdTime(createdTime)
                 .build();
     }
 
@@ -97,6 +107,4 @@ class MyPageServiceTest {
                 .summary(summary)
                 .build();
     }
-
-
 }
