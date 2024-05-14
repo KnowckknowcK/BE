@@ -43,11 +43,11 @@ class LoadSummaryServiceTest {
         Article article = createArticle();
         Member member = createMember();
         Summary summary = createSummary(member, article, Status.ING);
-        when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
+        when(memberRepository.findByEmail(any())).thenReturn(Optional.ofNullable(member));
         when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
         when(summaryRepository.findByArticleAndWriter(article, member)).thenReturn(Optional.ofNullable(summary));
 
-        SummaryHistoryResponseDto responseDto = sut.loadSummaryHistory(1L, 1L);
+        SummaryHistoryResponseDto responseDto = sut.loadSummaryHistory("email@email.com", 1L);
 
         assertThat(responseDto.getStatus()).isEqualTo(Status.ING);
     }
@@ -57,11 +57,11 @@ class LoadSummaryServiceTest {
     void load_summary_when_not_existed() {
         Article article = createArticle();
         Member member = createMember();
-        when(memberRepository.findById(any())).thenReturn(Optional.ofNullable(member));
+        when(memberRepository.findByEmail(any())).thenReturn(Optional.ofNullable(member));
         when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
         when(summaryRepository.findByArticleAndWriter(article, member)).thenReturn(Optional.empty());
 
-        SummaryHistoryResponseDto responseDto = sut.loadSummaryHistory(1L, 1L);
+        SummaryHistoryResponseDto responseDto = sut.loadSummaryHistory("email@email.com", 1L);
 
         assertThat(responseDto.getStatus()).isEqualTo(Status.NEW);
         assertThat(responseDto.getContent()).isNull();
