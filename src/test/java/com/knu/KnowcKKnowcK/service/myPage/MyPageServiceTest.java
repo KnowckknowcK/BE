@@ -61,10 +61,10 @@ class MyPageServiceTest {
         Long expectedTodayWorks = 2L;
         int expectedStrikes = 2;
         int expectedTotalOpinions = 0;
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
-        Long actualTodayWorks = myPageService.getDashboardInfo(1L).getTodayWorks();
-        int actualStrikes = myPageService.getDashboardInfo(1L).getStrikes();
-        int actualTotalOpinions = myPageService.getDashboardInfo(1L).getTotalOpinions();
+        when(memberRepository.findByEmail("test1@gmail.com")).thenReturn(Optional.of(member));
+        Long actualTodayWorks = myPageService.getDashboardInfo("test1@gmail.com").getTodayWorks();
+        int actualStrikes = myPageService.getDashboardInfo("test1@gmail.com").getStrikes();
+        int actualTotalOpinions = myPageService.getDashboardInfo("test1@gmail.com").getTotalOpinions();
         System.out.println(summary1.getCreatedTime().toLocalDate());
         System.out.println(summary2.getCreatedTime().toLocalDate());
         //then

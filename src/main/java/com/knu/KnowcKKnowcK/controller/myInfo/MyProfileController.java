@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,8 +28,8 @@ public class MyProfileController {
             @Parameter(name = "id", description = "임시 테스트용 추후 수정 예정", example = "1")
     })
     @GetMapping("/info")
-    public ApiResponseDto<ProfileResponseDto> getMyProfile(@RequestHeader("Authorization") Long id){
-        ProfileResponseDto response = myPageService.getProfile(id);
+    public ApiResponseDto<ProfileResponseDto> getMyProfile(Authentication authentication){
+        ProfileResponseDto response = myPageService.getProfile(authentication.getName());
         return ApiResponseDto.success(SuccessCode.OK,response);
     }
 
@@ -39,8 +40,8 @@ public class MyProfileController {
             @Parameter(name = "request", description = "수정정보 요청 Dto", example = "name : Test, email: test@gmail.com, profileImage: test.jpg"),
     }
     )
-    public ApiResponseDto<String> updateMyProfile(Long id, @RequestBody ProfileUpdateRequestDto request){
-        myPageService.updateProfile(id,request);
+    public ApiResponseDto<String> updateMyProfile(Authentication authentication, @RequestBody ProfileUpdateRequestDto request){
+        myPageService.updateProfile(authentication.getName(),request);
         return ApiResponseDto.success(SuccessCode.OK,"변경이 성공적으로 됐습니다.");
     }
 
@@ -49,7 +50,8 @@ public class MyProfileController {
     @Parameters({
             @Parameter(name = "id", description = "임시 테스트용 유저 식별", example = "1")
     })
-    public ApiResponseDto<DashboardResponseDto> getDashboardInfo(Long id){
-        return ApiResponseDto.success(SuccessCode.OK,myPageService.getDashboardInfo(id));
+    public ApiResponseDto<DashboardResponseDto> getDashboardInfo(Authentication authentication){
+        String email = authentication.getName();
+        return ApiResponseDto.success(SuccessCode.OK,myPageService.getDashboardInfo(email));
     }
 }

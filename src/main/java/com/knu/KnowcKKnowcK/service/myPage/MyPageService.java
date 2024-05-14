@@ -21,22 +21,22 @@ public class MyPageService {
     private final MemberRepository memberRepository;
     //멤버의 프로필 정보 응답
     @Transactional
-    public ProfileResponseDto getProfile(Long id){
-        Member member = memberRepository.findById(id).orElseThrow(() ->  new CustomException(ErrorCode.INVALID_INPUT));
+    public ProfileResponseDto getProfile(String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(() ->  new CustomException(ErrorCode.INVALID_INPUT));
         return new ProfileResponseDto(member);
     }
 
     //멤버의 프로필 정보 업데이트
     @Transactional
-    public void updateProfile(Long id, ProfileUpdateRequestDto request){
-        Member member = memberRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+    public void updateProfile(String email, ProfileUpdateRequestDto request){
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         member.updateProfile(request.getName(), request.getEmail(), request.getProfileImage());
     }
 
     //대시보드 정보 조회
     @Transactional
-    public DashboardResponseDto getDashboardInfo(Long id){
-        Member member = memberRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+    public DashboardResponseDto getDashboardInfo(String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         List<Summary> totalSummaries = member.getSummaries();
         List<Opinion> totalOpinions = member.getOpinions();
         int totalSummaryCount = 0;
