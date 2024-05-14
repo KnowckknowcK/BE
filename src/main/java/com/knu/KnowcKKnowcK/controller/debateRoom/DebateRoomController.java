@@ -24,7 +24,6 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("api/debate-room")
 @RequiredArgsConstructor
-@CrossOrigin
 @Tag(name="Debate Room", description = "토론방 참여/나가기와 관련된 API Controller")
 public class DebateRoomController {
     final private DebateRoomService debateRoomService;
