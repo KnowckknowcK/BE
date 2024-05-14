@@ -11,12 +11,16 @@ import com.knu.KnowcKKnowcK.dto.responsedto.PreferenceResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
+import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class MessageService {
     private final MessageThreadRepository messageThreadRepository;
     private final PreferenceRepository preferenceRepository;
     private final MemberDebateRepository memberDebateRepository;
+    private final RedisUtil redisUtil;
 
     public MessageResponseDto saveAndReturnMessage(Member member, MessageRequestDto dto){
         DebateRoom debateRoom = debateRoomRepository.findById(dto.getRoomId())
@@ -36,9 +41,15 @@ public class MessageService {
         Message message = dto.toMessage(member, debateRoom);
         messageRepository.save(message);
 
-        return message.toMessageResponseDto(memberDebate.getPosition().name(),
-                0, 0,
-                member.getProfileImage());
+        MessageResponseDto responseDto =
+                message.toMessageResponseDto(
+                        memberDebate.getPosition().name(),
+                        0, 0,
+                        member.getProfileImage());
+
+        // redis 캐시에 messageResponseDto를 리스트로 저장 -> 조회 속도 증가
+        redisUtil.addDataToList(getDebateRoomKey(debateRoom.getId()), responseDto);
+        return responseDto;
     }
     public MessageThreadResponseDto saveAndReturnMessageThread(Member member, Long messageId, MessageThreadRequestDto dto) {
         Message message = messageRepository.findById(messageId)
@@ -50,52 +61,73 @@ public class MessageService {
 
         MessageThread messageThread = dto.toMessageThread(member, message);
         messageThreadRepository.save(messageThread);
-        return messageThread.toMessageThreadResponseDto(messageId,
+
+        MessageThreadResponseDto responseDto = messageThread.toMessageThreadResponseDto(messageId,
                 memberDebate.getPosition().name(),
                 member.getProfileImage());
+        // redis 캐시에 messageThreadResponseDto를 리스트로 저장 -> 조회 속도 증가
+        redisUtil.addDataToList(getMessageThreadKey(messageId), responseDto);
+        return responseDto;
     }
 
     public List<MessageResponseDto> getMessages(Member member, Long roomId){
         DebateRoom debateRoom = debateRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        List<Message> messageList = messageRepository.findByDebateRoom(debateRoom);
 
-        List<MessageResponseDto> messageResponseDtoList = new ArrayList<>();
-        for (Message message: messageList) {
-            Optional<MemberDebate> writerMemberDebate =
+        String key = getDebateRoomKey(debateRoom.getId());
+        // redis에서 관련 채팅방 정보가 있는 지 먼저 탐색
+        List<MessageResponseDto> messageResponseDtoList =
+                redisUtil.getDataList(key, MessageResponseDto.class);
+
+        // 없으면 값을 가져와서 캐시에 저장한 후 반환
+        if (messageResponseDtoList.isEmpty()){
+            List<Message> messageList = messageRepository.findByDebateRoom(debateRoom);
+          
+            for (Message message: messageList) {
+              Optional<MemberDebate> writerMemberDebate =
                     memberDebateRepository
                             .findByMemberAndDebateRoom(message.getMember(), message.getDebateRoom());
             String position = null;
             if (writerMemberDebate.isPresent()){
                 position = writerMemberDebate.get().getPosition().name();
             }
-            messageResponseDtoList.add(message
-                    .toMessageResponseDto(position,
-                            getPreferenceNum(message),
-                            getMessageThreadNum(message) ,
-                            message.getMember().getProfileImage()
-                            ));
+                messageResponseDtoList.add(message
+                        .toMessageResponseDto(position,
+                                getPreferenceNum(message),
+                                getMessageThreadNum(message) ,
+                                message.getMember().getProfileImage()
+                        ));
+            }
+            redisUtil.setDataList(key, messageResponseDtoList);
         }
+        // 있으면 그 값을 반환
         return messageResponseDtoList;
     }
 
     public List<MessageThreadResponseDto> getMessageThreadDtoList(Long messageId){
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        MemberDebate memberDebate = memberDebateRepository
-                .findByMemberAndDebateRoom(message.getMember(), message.getDebateRoom())
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        // redis에서 관련 채팅방 정보가 있는 지 먼저 탐색
+        String key = getMessageThreadKey(messageId);
+        List<MessageThreadResponseDto> messageThreadResponseDtoList =
+                redisUtil.getDataList(key, MessageThreadResponseDto.class);
 
-        List<MessageThread> messageThraedList = messageThreadRepository.findByMessage(message);
-
-
-        List<MessageThreadResponseDto> messageThreadResponseDtoList = new ArrayList<>();
-        for (MessageThread messageThread: messageThraedList) {
-            messageThreadResponseDtoList
-                    .add(messageThread.toMessageThreadResponseDto(messageId,
-                    memberDebate.getPosition().name(),
-                    message.getMember().getProfileImage()));
+        // 없으면 값을 가져와서 캐시에 저장한 후 반환
+        if(messageThreadResponseDtoList.isEmpty()){
+            Message message = messageRepository.findById(messageId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+            List<MessageThread> messageThraedList = messageThreadRepository.findByMessage(message);
+            MemberDebate memberDebate = memberDebateRepository
+                    .findByMemberAndDebateRoom(message.getMember(), message.getDebateRoom())
+                    .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+            for (MessageThread messageThread: messageThraedList) {
+                messageThreadResponseDtoList
+                        .add(messageThread.toMessageThreadResponseDto(messageId,
+                                memberDebate.getPosition().name(),
+                                message.getMember().getProfileImage()));
+            }
+            redisUtil.setDataList(key, messageThreadResponseDtoList);
         }
+
+        // 있으면 그 값을 반환
         return messageThreadResponseDtoList;
     }
 
@@ -108,7 +140,7 @@ public class MessageService {
         // 2. 클라이언트로부터 Position을 입력 바디로 받는 방법 -> 빠름, 요청 조작 시 오류 발생 가능성 존재
         // -> 현재는 2번 선택(추후 오류 발생이 잦다면 1번 사용할 예정)
         boolean isIncrease = updatePreference(member, message, dto);
-        // 토론방 내부 ratio 변경 필요
+        // 토론방 내부 ratio 변경
         DebateRoom debateRoom = changePreferenceRatio(
                 dto.getIsAgree(),
                 isIncrease,
