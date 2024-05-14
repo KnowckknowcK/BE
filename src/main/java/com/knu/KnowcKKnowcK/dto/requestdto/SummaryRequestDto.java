@@ -36,6 +36,7 @@ public class SummaryRequestDto {
     public Summary toEntity(Article article, Member writer) {
         return Summary.builder()
                 .article(article)
+                .writer(writer)
                 .content(content)
                 .createdTime(LocalDateTime.now())
                 .status(status)
