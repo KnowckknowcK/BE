@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.exception.jwtHandler;
+package com.knu.KnowcKKnowcK.authenticationHandler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
