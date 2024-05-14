@@ -53,12 +53,12 @@ class SaveOpinionTest {
         Member member = createMember();
         Article article = createArticle();
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
-        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+        Mockito.when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
         Mockito.when(opinionRepository.findByArticleAndWriter(any(), any())).thenReturn(Optional.empty());
-        OpinionRequestDto requestDto = new OpinionRequestDto(1L, 1L, "content", LocalDateTime.now(), Status.DONE, Position.AGREE);
+        OpinionRequestDto requestDto = new OpinionRequestDto(1L, "content", LocalDateTime.now(), Status.DONE, Position.AGREE);
         Mockito.when(chatGptContext.callGptApi(Option.OPINION, article.getContent(), requestDto.getContent())).thenReturn((Pair<Score, String>) Pair.of(Score.EXCELLENT,"아주 좋아요."));
 
-        OpinionResponseDto opinionFeedback = sut.getOpinionFeedback(requestDto);
+        OpinionResponseDto opinionFeedback = sut.getOpinionFeedback(requestDto, member.getEmail());
 
         assertThat(opinionFeedback).isNotNull();
     }

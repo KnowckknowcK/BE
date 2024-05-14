@@ -19,8 +19,6 @@ public class SummaryRequestDto {
     @NotNull(message = "articleId는 null일 수 없습니다.")
     private Long articleId;
 
-    @NotNull(message = "writerId는 null일 수 없습니다.")
-    private Long writerId;
 
     @NotNull(message = "내용은 null일 수 없습니다.")
     private String content;
@@ -38,7 +36,6 @@ public class SummaryRequestDto {
     public Summary toEntity(Article article, Member writer) {
         return Summary.builder()
                 .article(article)
-                .writer(writer)
                 .content(content)
                 .createdTime(LocalDateTime.now())
                 .status(status)
