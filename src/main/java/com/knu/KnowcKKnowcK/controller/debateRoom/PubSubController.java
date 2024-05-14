@@ -15,9 +15,12 @@ import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,10 +37,11 @@ public class PubSubController {
     })
     public void sendMessage(
             MessageRequestDto messageRequestDto,
-            Authentication authentication
+            SimpMessageHeaderAccessor headerAccessor
     ) {
+        Authentication auth = (Authentication) headerAccessor.getUser();
         member = memberRepository
-                .findByEmail(authentication.getName())
+                .findByEmail(auth.getName())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         MessageResponseDto messageResponseDto = messageService.saveAndReturnMessage(member, messageRequestDto);
         template.convertAndSend(
@@ -57,10 +61,11 @@ public class PubSubController {
     public void sendMessageThread(
             @DestinationVariable Long messageId,
             MessageThreadRequestDto messageThreadRequestDto,
-            Authentication authentication
+            SimpMessageHeaderAccessor headerAccessor
     ) {
+        Authentication auth = (Authentication) headerAccessor.getUser();
         member = memberRepository
-                .findByEmail(authentication.getName())
+                .findByEmail(auth.getName())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
         MessageThreadResponseDto messageThread = messageService
