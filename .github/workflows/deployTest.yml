@@ -99,9 +99,9 @@ jobs:
       - name: Deploy Docker image
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.TEST_HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
+          key: ${{ secrets.PRIVATE_TEST_KEY }}
           port: ${{ secrets.PORT }}
           script: |
             sudo docker stop ${{ secrets.DOCKER_IMAGE }} 2>/dev/null || true
