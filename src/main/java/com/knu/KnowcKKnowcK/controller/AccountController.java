@@ -99,7 +99,7 @@ public class AccountController {
         if (response) {
             return ApiResponseDto.success(SuccessCode.OK, "이메일이 인증되었습니다.");
         } else {
-            return ApiResponseDto.error(ErrorCode.FAILED, "이메일 인증에 실패하였습니다.");
+            return ApiResponseDto.error(ErrorCode.WRONG_CODE, "이메일 인증에 실패하였습니다.");
         }
     }
 
