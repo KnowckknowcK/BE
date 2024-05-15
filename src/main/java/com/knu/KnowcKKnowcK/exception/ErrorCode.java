@@ -23,7 +23,9 @@ public enum ErrorCode {
     TOKEN_EXPIRED(401, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
     UNAUTHORIZED(403, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
     OAUTH_LOGIN_FAIL(400, HttpStatus.BAD_REQUEST,"소셜 로그인에 실패하였습니다."),
-    WRONG_CODE(400, HttpStatus.BAD_REQUEST, "인증코드가 틀렸습니다.");
+    WRONG_CODE(400, HttpStatus.BAD_REQUEST, "인증코드가 틀렸습니다."),
+    FAILED_SIGNUP(400, HttpStatus.BAD_REQUEST, "회원가입에 실패하였습니다."),
+    FAILED_SEND_CODE(500, HttpStatus.INTERNAL_SERVER_ERROR, "인증코드 발송에 실패하였습니다.");
 
     private int status;
     private HttpStatus error;

@@ -66,10 +66,15 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "회원가입 실패"),
             @ApiResponse(responseCode = "409", description = "회원가입 실패: 이미 가입 된 email")
     })
-    public ApiResponseDto<SignupResponseDto> signupWithEmail(@RequestBody SignupRequestDto requestDto) {
-        SignupResponseDto responseDto = accountService.signupWithEmail(
-                requestDto.getEmail(), requestDto.getName(), requestDto.getPassword(), requestDto.getProfileImg());
-        return ApiResponseDto.success(SuccessCode.OK, responseDto);
+    public ApiResponseDto<String> signupWithEmail(@RequestPart("userInfo") String userInfo, @RequestPart("profileImg") MultipartFile profileImg) throws JsonProcessingException {
+        HttpStatus response = accountService.signupWithEmail(userInfo, profileImg);
+
+        if (response.equals(ALREADY_REGISTERED.getError()))
+            return ApiResponseDto.error(ALREADY_REGISTERED, ALREADY_REGISTERED.getMessage());
+        else if (response.equals(CREATED_SUCCESS.getSuccess()))
+            return ApiResponseDto.success(CREATED_SUCCESS, CREATED_SUCCESS.getMessage());
+        else
+            return ApiResponseDto.error(FAILED_SIGNUP, FAILED_SIGNUP.getMessage());
     }
 
     @PostMapping("/email-check")
