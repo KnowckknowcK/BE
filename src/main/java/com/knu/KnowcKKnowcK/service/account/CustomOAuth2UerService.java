@@ -8,20 +8,25 @@ import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 @Service
 @RequiredArgsConstructor
-public class OAuth2UerService extends DefaultOAuth2UserService {
+public class CustomOAuth2UerService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest request) throws OAuth2AuthenticationException {
 
-        OAuth2User oAuth2User = super.loadUser(request);
+        OAuth2UserService<OAuth2UserRequest, OAuth2User> defaultOAuth2UserService = new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = defaultOAuth2UserService.loadUser(request);
 
         //다른 소셜 로그인 추가 시, 구분용
         String registrationId = request.getClientRegistration().getRegistrationId();
@@ -31,9 +36,15 @@ public class OAuth2UerService extends DefaultOAuth2UserService {
                 .getUserInfoEndpoint()
                 .getUserNameAttributeName();
 
-        checkMemberAndSave(OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes()));
+        //OAuth2User의 attibute
+        OAuthAttributes attributes = OAuthAttributes.of(registrationId,
+                userNameAttributeName, oAuth2User.getAttributes());
 
-        return oAuth2User;
+        Member checkedMember = checkMemberAndSave(attributes);
+
+        System.out.println(checkedMember);
+
+        return new DefaultOAuth2User(Collections.emptyList(), attributes.getAttributes(), attributes.getNameAttributeKey());
     }
 
     private Member checkMemberAndSave(OAuthAttributes attributes) {
