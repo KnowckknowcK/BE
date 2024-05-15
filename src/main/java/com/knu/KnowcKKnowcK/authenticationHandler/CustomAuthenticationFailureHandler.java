@@ -18,6 +18,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         response.setCharacterEncoding("UTF-8");
 
         response.setStatus(OAUTH_LOGIN_FAIL.getStatus());
-        response.getWriter().write("구글 로그인/회원가입 실패. 관리자에게 문의하세요.");
+
+        String errorMessage = "구글 로그인/회원가입 실패. 관리자에게 문의하세요. 원인: " + exception.getMessage();
+        response.getWriter().write(errorMessage);
     }
 }
