@@ -16,6 +16,10 @@ import static com.knu.KnowcKKnowcK.exception.ErrorCode.TOKEN_INVALID;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
         response.setStatus(TOKEN_INVALID.getStatus());
         response.getWriter().write(TOKEN_INVALID.getMessage());
     }
