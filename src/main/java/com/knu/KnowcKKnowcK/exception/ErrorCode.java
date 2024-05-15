@@ -11,7 +11,7 @@ public enum ErrorCode {
      * 대문자로 ErrorCode명 정의 (상태코드 / HttpStatus / 메세지)
      */
 
-    FAILED(500,HttpStatus.BAD_REQUEST,"ChatCpt로부터 적절한 응답을 받아오지 못했습니다."),
+    FAILED(500,HttpStatus.BAD_REQUEST,"ChatGpt로부터 적절한 응답을 받아오지 못했습니다."),
     USER_NOT_FOUND(404,HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다"),
     INVALID_PERMISSION(401,HttpStatus.UNAUTHORIZED, "권한이 없습니다"),
     INVALID_INPUT(400, HttpStatus.BAD_REQUEST,"잘못된 요청입니다."),
@@ -22,7 +22,8 @@ public enum ErrorCode {
     TOKEN_INVALID(401, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰: 로그인이 필요합니다."),
     TOKEN_EXPIRED(401, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
     UNAUTHORIZED(403, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
-    OAUTH_LOGIN_FAIL(400, HttpStatus.BAD_REQUEST,"소셜 로그인에 실패하였습니다.");
+    OAUTH_LOGIN_FAIL(400, HttpStatus.BAD_REQUEST,"소셜 로그인에 실패하였습니다."),
+    WRONG_CODE(400, HttpStatus.BAD_REQUEST, "인증코드가 틀렸습니다.");
 
     private int status;
     private HttpStatus error;
