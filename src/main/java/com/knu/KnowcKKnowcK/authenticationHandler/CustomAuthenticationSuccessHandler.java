@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.knu.KnowcKKnowcK.apiResponse.SuccessCode.OK;
+
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     private final Long expiredAt = 1000 * 60 * 60L; //1H
@@ -44,6 +46,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // 사용자 정보를 response 바디에 추가
         response.getWriter().write(userJson);
         //상태코드 200
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(OK.getStatus());
     }
 }

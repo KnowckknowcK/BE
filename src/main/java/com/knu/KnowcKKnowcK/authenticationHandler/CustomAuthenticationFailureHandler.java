@@ -8,10 +8,12 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 
 import java.io.IOException;
 
+import static com.knu.KnowcKKnowcK.exception.ErrorCode.OAUTH_LOGIN_FAIL;
+
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.setStatus(OAUTH_LOGIN_FAIL.getStatus());
         response.getWriter().write("구글 로그인/회원가입 실패. 관리자에게 문의하세요.");
     }
 }
