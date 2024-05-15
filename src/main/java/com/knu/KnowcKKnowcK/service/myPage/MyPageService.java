@@ -7,9 +7,11 @@ import com.knu.KnowcKKnowcK.dto.responsedto.ProfileResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
+import com.knu.KnowcKKnowcK.utils.AwsS3Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyPageService {
     private final MemberRepository memberRepository;
+    private final AwsS3Util awsS3Util;
     //멤버의 프로필 정보 응답
     @Transactional
     public ProfileResponseDto getProfile(String email){
@@ -28,9 +31,14 @@ public class MyPageService {
 
     //멤버의 프로필 정보 업데이트
     @Transactional
-    public void updateProfile(String email, ProfileUpdateRequestDto request){
+    public void updateProfile(String email, ProfileUpdateRequestDto request, MultipartFile profileImg){
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        member.updateProfile(request.getName(), request.getEmail(), request.getProfileImage());
+        //이미지 파일 String 타입으로 변환
+        if (!profileImg.isEmpty()) {
+            String imgName = awsS3Util.uploadFile(profileImg);
+            member.updateProfile(request.getName(), request.getPassword(), imgName);
+        }
+        member.updateProfile(request.getName(), request.getPassword());
     }
 
     //대시보드 정보 조회

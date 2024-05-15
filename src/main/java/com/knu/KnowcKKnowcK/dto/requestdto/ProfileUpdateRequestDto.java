@@ -5,6 +5,5 @@ import lombok.Getter;
 @Getter
 public class ProfileUpdateRequestDto {
     private String name;
-    private String email;
-    private String profileImage;
+    private String password;
 }

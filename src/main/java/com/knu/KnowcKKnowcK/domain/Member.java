@@ -44,10 +44,15 @@ public class Member {
     }
 
     //프로필 수정
-    public void updateProfile(String name, String email, String profileImage) {
+    public void updateProfile(String name, String password, String profileImage) {
+        //닉네임, 계정, 이메일, 프로필 이미지 변경
+        this.name = name;
+        this.password = password;
+        this.profileImage = profileImage;
+    }
+    public void updateProfile(String name, String email) {
         //닉네임, 계정, 이메일, 프로필 이미지 변경
         this.name = name;
         this.email = email;
-        this.profileImage = profileImage;
     }
 }

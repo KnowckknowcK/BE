@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -35,11 +36,16 @@ public class MyProfileController {
     @PatchMapping("/info")
     @Operation(summary="프로필 수정 API",description="프로필 정보 수정 요청을 처리한다.")
     @Parameters({
-            @Parameter(name = "request", description = "수정정보 요청 Dto", example = "name : Test, email: test@gmail.com, profileImage: test.jpg"),
+            @Parameter(name = "requestDto", description = "수정정보 요청 Dto", example = "name : Test, password : Password"),
+            @Parameter(name = "profileImg", description = "프로필 사진", example = "test.jpg")
     }
     )
-    public ApiResponseDto<String> updateMyProfile(Authentication authentication, @RequestBody ProfileUpdateRequestDto request){
-        myPageService.updateProfile(authentication.getName(),request);
+    public ApiResponseDto<String> updateMyProfile(
+            Authentication authentication,
+            @RequestPart(value = "requestDto") ProfileUpdateRequestDto requestDto,
+            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
+            ){
+        myPageService.updateProfile(authentication.getName(),requestDto,profileImg);
         return ApiResponseDto.success(SuccessCode.OK,"변경이 성공적으로 됐습니다.");
     }
 
