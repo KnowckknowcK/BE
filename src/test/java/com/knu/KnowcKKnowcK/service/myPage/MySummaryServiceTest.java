@@ -39,7 +39,6 @@ class MySummaryServiceTest {
     void getMyIngSummaries() {
         //given
         Member member = createMember();
-        member.setId(1L);
         Article article = createArticle();
         Summary summary = createSummary(member,article,Status.ING);
         List<Summary> summaries = new ArrayList<>();
@@ -47,7 +46,7 @@ class MySummaryServiceTest {
         member.setSummaries(summaries);
         //when
         List<MySummaryResponseDto> expected = new ArrayList<>();
-        when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+        when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
         expected.add(new MySummaryResponseDto(summary));
         List<MySummaryResponseDto> actual = mySummaryService.getMySummaries("test1@gmail.com", Status.ING);
         //then
