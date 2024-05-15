@@ -51,7 +51,7 @@ public class Member {
         this.profileImage = profileImage;
     }
     public void updateProfile(String name, String email) {
-        //닉네임, 계정, 이메일, 프로필 이미지 변경
+        //닉네임, 계정, 이메일
         this.name = name;
         this.email = email;
     }
