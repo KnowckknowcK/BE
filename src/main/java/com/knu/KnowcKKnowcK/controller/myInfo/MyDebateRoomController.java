@@ -3,6 +3,7 @@ package com.knu.KnowcKKnowcK.controller.myInfo;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.DebateRoom;
+import com.knu.KnowcKKnowcK.dto.responsedto.MyDebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.service.myPage.MyDebateroomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,8 +30,8 @@ public class MyDebateRoomController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "토론방 목록 조회 성공"),
     })
-    public ApiResponseDto<List<DebateRoom>> getDebateRoom(Authentication authentication){
-        List<DebateRoom> debateRooms =  myDebateroomService.getDebateRoom(authentication.getName());
+    public ApiResponseDto<List<MyDebateRoomResponseDto>> getDebateRoom(Authentication authentication){
+        List<MyDebateRoomResponseDto> debateRooms =  myDebateroomService.getDebateRoom(authentication.getName());
         return ApiResponseDto.success(SuccessCode.OK,debateRooms);
     }
 }
