@@ -15,11 +15,11 @@ import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.*;
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.getDebateRoomKey;
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.getMessageThreadKey;
 
 
 @Service

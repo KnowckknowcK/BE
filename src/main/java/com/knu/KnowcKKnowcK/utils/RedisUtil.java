@@ -76,7 +76,4 @@ public class RedisUtil {
     public void deleteDataList(String key){
         redisTemplate.delete(key);
     }
-    public Set<String> findKeysByPattern(String pattern) {
-        return redisTemplate.keys("*" + pattern + "*");
-    }
 }
