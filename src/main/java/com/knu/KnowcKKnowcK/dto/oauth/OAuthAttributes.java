@@ -11,14 +11,16 @@ import static com.knu.KnowcKKnowcK.service.account.AccountService.MemberPassword
 public class OAuthAttributes {
 
     private Map<String, Object> attributes;
+    private String nameAttributeKey;
     private String name;
     private String email;
     private String profileImg;
 
     @Builder
-    public OAuthAttributes(Map<String, Object> attributes, String name,
+    public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String name,
                            String email, String picture) {
         this.attributes = attributes;
+        this.nameAttributeKey = nameAttributeKey;
         this.name = name;
         this.email = email;
         this.profileImg = picture;
@@ -36,6 +38,7 @@ public class OAuthAttributes {
                 .email((String) attributes.get("email"))
                 .picture((String) attributes.get("picture"))
                 .attributes(attributes)
+                .nameAttributeKey(usernameAttributeName)
                 .build();
     }
 
