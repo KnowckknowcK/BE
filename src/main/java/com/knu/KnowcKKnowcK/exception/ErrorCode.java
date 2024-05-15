@@ -19,8 +19,10 @@ public enum ErrorCode {
     FAILED_UPLOAD(500, HttpStatus.INTERNAL_SERVER_ERROR,"이미지 업로드에 실패했습니다."),
     FAILED_BATCH(500, HttpStatus.INTERNAL_SERVER_ERROR, "배치 작업에 실패했습니다."),
     FEEDBACK_NOT_EXIST(400, HttpStatus.BAD_REQUEST,"피드백을 받지 않은 요약입니다."),
-    TOKEN_INVALID(401, HttpStatus.UNAUTHORIZED, "유효하지 않은 토근입니다."),
-    TOKEN_EXPIRED(401, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
+    TOKEN_INVALID(401, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰: 로그인이 필요합니다."),
+    TOKEN_EXPIRED(401, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+    UNAUTHORIZED(403, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
+    OAUTH_LOGIN_FAIL(400, HttpStatus.BAD_REQUEST,"소셜 로그인에 실패하였습니다.");
 
     private int status;
     private HttpStatus error;
