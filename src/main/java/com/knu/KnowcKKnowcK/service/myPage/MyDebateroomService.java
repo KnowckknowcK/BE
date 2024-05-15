@@ -19,8 +19,8 @@ public class MyDebateroomService {
     private final MemberRepository memberRepository;
     //참여 중인 토론방 응답
     @Transactional
-    public List<DebateRoom> getDebateRoom(Long id){
-        Member member = memberRepository.findById(id).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
+    public List<DebateRoom> getDebateRoom(String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
         //debate room 정보 가져오기
         List<MemberDebate> memberDebates = memberDebateRepository.findAllByMember(member);
         if (memberDebates.isEmpty()) {

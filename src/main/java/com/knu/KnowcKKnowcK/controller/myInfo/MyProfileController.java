@@ -25,7 +25,6 @@ public class MyProfileController {
 
     @Operation(summary="프로필 정보 API",description="사용자가 프로필 정보를 요청했을 때 보여준다")
     @Parameters({
-            @Parameter(name = "id", description = "임시 테스트용 추후 수정 예정", example = "1")
     })
     @GetMapping("/info")
     public ApiResponseDto<ProfileResponseDto> getMyProfile(Authentication authentication){
@@ -36,7 +35,6 @@ public class MyProfileController {
     @PatchMapping("/info")
     @Operation(summary="프로필 수정 API",description="프로필 정보 수정 요청을 처리한다.")
     @Parameters({
-            @Parameter(name = "id", description = "임시 테스트용 추후 수정 예정", example = "1"),
             @Parameter(name = "request", description = "수정정보 요청 Dto", example = "name : Test, email: test@gmail.com, profileImage: test.jpg"),
     }
     )
@@ -48,7 +46,6 @@ public class MyProfileController {
     @GetMapping("/dashboard")
     @Operation(summary = "대시보드 조회",description = "총 요약,견해 작성 횟수, 연속 참여 횟수, 오늘 도전 횟수 등을 조회할 수 있다.")
     @Parameters({
-            @Parameter(name = "id", description = "임시 테스트용 유저 식별", example = "1")
     })
     public ApiResponseDto<DashboardResponseDto> getDashboardInfo(Authentication authentication){
         String email = authentication.getName();

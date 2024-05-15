@@ -49,7 +49,7 @@ class MySummaryServiceTest {
         List<MySummaryResponseDto> expected = new ArrayList<>();
         when(memberRepository.findById(any())).thenReturn(Optional.of(member));
         expected.add(new MySummaryResponseDto(summary));
-        List<MySummaryResponseDto> actual = mySummaryService.getMySummaries(1L, Status.ING);
+        List<MySummaryResponseDto> actual = mySummaryService.getMySummaries("test1@gmail.com", Status.ING);
         //then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -68,10 +68,10 @@ class MySummaryServiceTest {
         member.setSummaries(summaries);
         //when
         List<MySummaryResponseDto> expected = new ArrayList<>();
-        when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+        when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
         when(summaryFeedbackRepository.findSummaryFeedbackBySummary(summary)).thenReturn(Optional.of(feedback));
         expected.add(new MySummaryResponseDto(summary,feedback));
-        List<MySummaryResponseDto> actual = mySummaryService.getMySummaries(1L, Status.DONE);
+        List<MySummaryResponseDto> actual = mySummaryService.getMySummaries("test1@gmail.com", Status.DONE);
         //then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }

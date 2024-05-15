@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +29,8 @@ public class MyDebateRoomController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "토론방 목록 조회 성공"),
     })
-    public ApiResponseDto<List<DebateRoom>> getDebateRoom(@RequestHeader("Authorization") Long id){
-        List<DebateRoom> debateRooms =  myDebateroomService.getDebateRoom(id);
+    public ApiResponseDto<List<DebateRoom>> getDebateRoom(Authentication authentication){
+        List<DebateRoom> debateRooms =  myDebateroomService.getDebateRoom(authentication.getName());
         return ApiResponseDto.success(SuccessCode.OK,debateRooms);
     }
 }
