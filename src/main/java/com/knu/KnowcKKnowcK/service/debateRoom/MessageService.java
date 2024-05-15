@@ -71,7 +71,7 @@ public class MessageService {
         return responseDto;
     }
 
-    public List<MessageResponseDto> getMessages(Member member, Long roomId){
+    public List<MessageResponseDto> getMessages(Long roomId){
         DebateRoom debateRoom = debateRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 

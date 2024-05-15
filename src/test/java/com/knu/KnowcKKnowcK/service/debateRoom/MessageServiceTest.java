@@ -52,7 +52,7 @@ class MessageServiceTest extends DebateRoomSetUp{
     @DisplayName("메세지 리스트를 제대로 받아오는 지 검증하는 테스트")
     public void getMessagesSuccess() {
         // 메소드 실행
-        List<MessageResponseDto> result = messageService.getMessages(member, roomId);
+        List<MessageResponseDto> result = messageService.getMessages(roomId);
 
         // 검증
         assertThat(result.size()).isEqualTo(1);
@@ -79,6 +79,7 @@ class MessageServiceTest extends DebateRoomSetUp{
         // 유효한 입력에 대한 테스트
 
         PreferenceResponseDto result = messageService.putPreference(member, message.getId(), preferenceRequestDto);
+        assertThat(result.getIsIncrease()).isEqualTo(true);
 
     }
 

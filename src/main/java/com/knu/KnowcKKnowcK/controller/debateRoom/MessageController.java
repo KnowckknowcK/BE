@@ -26,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/message")
 @RequiredArgsConstructor
+@CrossOrigin
 @Tag(name="Message in Debate Room", description = "토론방 내 메세지와 관련된 기능을 제공하는 API Controller")
 public class MessageController {
 
@@ -46,7 +47,7 @@ public class MessageController {
         member = memberRepository
                 .findByEmail(authentication.getName())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        return ApiResponseDto.success(SuccessCode.OK, messageService.getMessages(member, debateRoomId));
+        return ApiResponseDto.success(SuccessCode.OK, messageService.getMessages(debateRoomId));
     }
 
     @GetMapping("/thread/{messageId}")

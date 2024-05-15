@@ -19,11 +19,13 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
+@CrossOrigin
 public class PubSubController {
     private final SimpMessagingTemplate template;
     private final MessageService messageService;
