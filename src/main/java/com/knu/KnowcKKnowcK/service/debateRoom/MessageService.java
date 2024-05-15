@@ -67,6 +67,7 @@ public class MessageService {
                 member.getProfileImage());
         // redis 캐시에 messageThreadResponseDto를 리스트로 저장 -> 조회 속도 증가
         redisUtil.addDataToList(getMessageThreadKey(messageId), responseDto);
+        redisUtil.deleteDataList(getDebateRoomKey(debateRoom.getId()));
         return responseDto;
     }
 
@@ -145,7 +146,7 @@ public class MessageService {
                 dto.getIsAgree(),
                 isIncrease,
                 message.getDebateRoom());
-
+        redisUtil.deleteDataList(getDebateRoomKey(debateRoom.getId()));
         return makeDto(
                 debateRoom.getAgreeLikesNum(),
                 debateRoom.getDisagreeLikesNum(),

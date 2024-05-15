@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -70,5 +71,12 @@ public class RedisUtil {
             }
         }
         return dataList;
+    }
+
+    public void deleteDataList(String key){
+        redisTemplate.delete(key);
+    }
+    public Set<String> findKeysByPattern(String pattern) {
+        return redisTemplate.keys("*" + pattern + "*");
     }
 }
