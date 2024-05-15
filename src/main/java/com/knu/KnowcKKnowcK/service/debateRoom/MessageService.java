@@ -15,11 +15,11 @@ import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.*;
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.getDebateRoomKey;
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.getMessageThreadKey;
 
 
 @Service
@@ -70,7 +70,7 @@ public class MessageService {
         return responseDto;
     }
 
-    public List<MessageResponseDto> getMessages(Member member, Long roomId){
+    public List<MessageResponseDto> getMessages(Long roomId){
         DebateRoom debateRoom = debateRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
