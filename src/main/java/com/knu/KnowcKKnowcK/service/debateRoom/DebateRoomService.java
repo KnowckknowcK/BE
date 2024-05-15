@@ -47,7 +47,9 @@ public class DebateRoomService {
                 debateRoom.getAgreeNum(),
                 debateRoom.getDisagreeNum(),
                 debateRoom.getAgreeLikesNum(),
-                debateRoom.getDisagreeLikesNum());
+                debateRoom.getDisagreeLikesNum(),
+                debateRoom.getTitle()
+                );
     }
     DebateRoom getDebateRoom(Long debateRoomId){
         Optional<DebateRoom> debateRoom = debateRoomRepository.findById(debateRoomId);
