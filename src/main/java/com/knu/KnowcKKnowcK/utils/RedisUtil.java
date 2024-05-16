@@ -71,4 +71,8 @@ public class RedisUtil {
         }
         return dataList;
     }
+
+    public void deleteDataList(String key){
+        redisTemplate.delete(key);
+    }
 }

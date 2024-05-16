@@ -80,6 +80,7 @@ class MessageServiceTest extends DebateRoomSetUp{
 
         PreferenceResponseDto result = messageService.putPreference(member, message.getId(), preferenceRequestDto);
         assertThat(result.getIsIncrease()).isEqualTo(true);
+
     }
 
 }
