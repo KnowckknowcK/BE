@@ -104,9 +104,9 @@ jobs:
           key: ${{ secrets.PRIVATE_TEST_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            sudo docker stop ${{ secrets.DOCKER_IMAGE }} 2>/dev/null || true
-            sudo docker rm ${{ secrets.DOCKER_IMAGE }}
-            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+            sudo docker stop ${{ secrets.DOCKER_IMAGE }} prometheus grafana 2>/dev/null || true
+            sudo docker rm ${{ secrets.DOCKER_IMAGE }} prometheus grafana
+            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }} prometheus grafana
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
             sudo docker-compose -f docker-compose-monitoring.yml up -d
             sudo docker system prune -f
