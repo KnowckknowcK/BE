@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.dto.requestdto.SignupRequestDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.GoogleLoginResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
@@ -86,6 +87,17 @@ public class AccountService {
         memberRepository.save(newMember);
 
         return CREATED_SUCCESS.getSuccess();
+    }
+
+    public GoogleLoginResponseDto returnToken(String email) {
+
+        if (email.isBlank()) {
+            return null;
+        } else {
+            return GoogleLoginResponseDto.builder()
+                    .jwt(JwtUtil.creatJWT(email, expiredAt))
+                    .build();
+        }
     }
 
     public class MemberPasswordGenerator {

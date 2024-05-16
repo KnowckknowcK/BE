@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.dto.requestdto.CodeCheckRequestDto;
+import com.knu.KnowcKKnowcK.dto.requestdto.GoogleLoginRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.MailCheckRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.SigninRequestDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.GoogleLoginResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.service.account.AccountService;
@@ -47,6 +49,20 @@ public class AccountController {
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl("/oauth2/authorization/google");
         return redirectView;
+    }
+
+    @PostMapping("/return-token")
+    @Operation(summary = "구글 로그인 성공, JWT 반환", description = "구글 로그인 성공 사용자에 대한 JWT 반환")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "토큰 반환 성공"),
+            @ApiResponse(responseCode = "400", description = "구글 로그인 실패: 토큰 반환 실패")
+    })
+    public ApiResponseDto<GoogleLoginResponseDto> returnToken(@RequestBody GoogleLoginRequestDto requestDto) {
+        GoogleLoginResponseDto response = accountService.returnToken(requestDto.getEmail());
+        if(response == null)
+            return ApiResponseDto.error(OAUTH_LOGIN_FAIL, response);
+        else
+            return ApiResponseDto.success(SuccessCode.OK, response);
     }
 
     @PostMapping("/sign-in")
