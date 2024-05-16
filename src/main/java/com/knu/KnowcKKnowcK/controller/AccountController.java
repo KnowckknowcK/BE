@@ -1,27 +1,30 @@
 package com.knu.KnowcKKnowcK.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.dto.requestdto.CodeCheckRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.MailCheckRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.SigninRequestDto;
-import com.knu.KnowcKKnowcK.dto.requestdto.SignupRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
-import com.knu.KnowcKKnowcK.dto.responsedto.SignupResponseDto;
-import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.service.account.AccountService;
 import com.knu.KnowcKKnowcK.service.account.MailService;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
+
+import static com.knu.KnowcKKnowcK.apiResponse.SuccessCode.CREATED_SUCCESS;
+import static com.knu.KnowcKKnowcK.exception.ErrorCode.*;
 
 
 @RestController
@@ -66,24 +69,29 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "회원가입 실패"),
             @ApiResponse(responseCode = "409", description = "회원가입 실패: 이미 가입 된 email")
     })
-    public ApiResponseDto<SignupResponseDto> signupWithEmail(@RequestBody SignupRequestDto requestDto) {
-        SignupResponseDto responseDto = accountService.signupWithEmail(
-                requestDto.getEmail(), requestDto.getName(), requestDto.getPassword(), requestDto.getProfileImg());
-        return ApiResponseDto.success(SuccessCode.OK, responseDto);
+    public ApiResponseDto<String> signupWithEmail(@RequestPart("userInfo") String userInfo, @RequestPart("profileImg") MultipartFile profileImg) throws JsonProcessingException {
+        HttpStatus response = accountService.signupWithEmail(userInfo, profileImg);
+
+        if (response.equals(ALREADY_REGISTERED.getError()))
+            return ApiResponseDto.error(ALREADY_REGISTERED, ALREADY_REGISTERED.getMessage());
+        else if (response.equals(CREATED_SUCCESS.getSuccess()))
+            return ApiResponseDto.success(CREATED_SUCCESS, CREATED_SUCCESS.getMessage());
+        else
+            return ApiResponseDto.error(FAILED_SIGNUP, FAILED_SIGNUP.getMessage());
     }
 
     @PostMapping("/email-check")
     @Operation(summary = "이메일 인증 API", description = "이메일 인증 코드 발송 API")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "인증코드 발송 성공"),
-            @ApiResponse(responseCode = "400", description = "인증코드 발송 실패")
+            @ApiResponse(responseCode = "500", description = "인증코드 발송 실패")
     })
     public ApiResponseDto<String> mailCheck(@RequestBody MailCheckRequestDto requestDto) {
         try {
             String response = mailService.sendMail(requestDto.getEmail());
             return ApiResponseDto.success(SuccessCode.OK, response);
         } catch (MessagingException e) {
-            throw new CustomException(ErrorCode.FAILED);
+            return ApiResponseDto.error(FAILED_SEND_CODE, FAILED_SEND_CODE.getMessage()+":"+e.getMessage());
         }
     }
 
@@ -99,7 +107,7 @@ public class AccountController {
         if (response) {
             return ApiResponseDto.success(SuccessCode.OK, "이메일이 인증되었습니다.");
         } else {
-            return ApiResponseDto.error(ErrorCode.WRONG_CODE, "이메일 인증에 실패하였습니다.");
+            return ApiResponseDto.error(ErrorCode.WRONG_CODE, WRONG_CODE.getMessage());
         }
     }
 

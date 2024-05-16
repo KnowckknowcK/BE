@@ -50,7 +50,7 @@ public class MailService {
             return "이메일 인증코드 발송이 완료되었습니다.";
 
         } catch (MessagingException e) {
-            throw new CustomException(ErrorCode.FAILED);
+            return e.toString();
         }
 
     }
