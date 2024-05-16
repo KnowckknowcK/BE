@@ -9,12 +9,15 @@ public class DebateRoomResponseDto {
     private Long disagreeNum;
     private Long disagreeLikesNum;
     private String title;
+    private String position;
+
     public DebateRoomResponseDto(
             long agreeNum,
             long disagreeNum,
             long agreeLikesNum,
             long disagreeLikesNum,
-            String title
+            String title,
+            String position
 
     ){
         this.agreeNum = agreeNum;
@@ -22,5 +25,6 @@ public class DebateRoomResponseDto {
         this.disagreeNum = disagreeNum;
         this.disagreeLikesNum = disagreeLikesNum;
         this.title = title;
+        this.position = position;
     }
 }
