@@ -13,10 +13,14 @@ public class ProfileResponseDto {
     private String name;
     private String email;
     private String profileImage;
+    private Long level = 0L;
+    private Long point = 0L;
 
     public ProfileResponseDto(Member member){
         this.name = member.getName();
         this.email = member.getEmail();
         this.profileImage = member.getProfileImage();
+        this.level = member.getLevel();
+        this.point = member.getPoint();
     }
 }

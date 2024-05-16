@@ -1,7 +1,6 @@
 package com.knu.KnowcKKnowcK.service.myPage;
 
 import com.knu.KnowcKKnowcK.domain.*;
-import com.knu.KnowcKKnowcK.dto.responsedto.MyOpinionResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MySummaryResponseDto;
 import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
@@ -42,8 +41,8 @@ public class MySummaryService {
 //        SummaryFeedback feedback = new SummaryFeedback(1L,"굿", Score.EXCELLENT,summary);
 //        summaryFeedbackRepository.save(feedback);
 //    }
-    public List<MySummaryResponseDto> getMySummaries(Long id, Status status){
-        Member member = memberRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+    public List<MySummaryResponseDto> getMySummaries(String email, Status status){
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         if (status.equals(Status.ING)){
             List<Summary> summaries =  member.getSummaries().stream().filter(summary -> summary.getStatus().equals(Status.ING)).toList();
             log.info(summaries.toString());

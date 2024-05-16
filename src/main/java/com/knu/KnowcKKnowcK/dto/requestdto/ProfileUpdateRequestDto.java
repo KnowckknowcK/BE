@@ -3,8 +3,7 @@ package com.knu.KnowcKKnowcK.dto.requestdto;
 import lombok.Getter;
 
 @Getter
-public class ProfileRequestDto {
+public class ProfileUpdateRequestDto {
     private String name;
-    private String email;
-    private String profileImage;
+    private String password;
 }
