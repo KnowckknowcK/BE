@@ -56,7 +56,6 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
 
     @Override
-    @Transactional(readOnly=true)
     public SummaryResponseDto getSummaryFeedback(SummaryRequestDto dto, String writer) {
         if (dto.getStatus() != Status.DONE)
             throw new CustomException(ErrorCode.INVALID_INPUT);
@@ -67,6 +66,7 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
         return new SummaryResponseDto(saveSummaryFeedback(dto.toEntity(article, member),parsedFeedback));
     }
+
 
 
     @Transactional
