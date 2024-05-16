@@ -41,6 +41,8 @@ public class DebateRoomService {
             else debateRoom.setDisagreeNum(debateRoom.getDisagreeNum() + 1);
 
             debateRoomRepository.save(debateRoom);
+        }else{
+            position = memberDebate.get().getPosition();
         }
 
         return new DebateRoomResponseDto(
@@ -48,7 +50,8 @@ public class DebateRoomService {
                 debateRoom.getDisagreeNum(),
                 debateRoom.getAgreeLikesNum(),
                 debateRoom.getDisagreeLikesNum(),
-                debateRoom.getTitle()
+                debateRoom.getTitle(),
+                position.name()
                 );
     }
     DebateRoom getDebateRoom(Long debateRoomId){
