@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (member.getIsOAuth()) {
-            throw new CustomException(ErrorCode.ALREADY_REGISTERED);
+            throw new CustomException(ErrorCode.OAUTH_MEMBER);
         }
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>(); //권한 지정하지 않음
