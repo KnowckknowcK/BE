@@ -48,7 +48,6 @@ public class SaveOpinionServiceImpl  implements SaveOpinionService{
                 .content(dto.getContent())
                 .writer(member)
                 .article(article)
-                .status(Status.DONE)
                 .position(dto.getPosition())
                 .build();
 
