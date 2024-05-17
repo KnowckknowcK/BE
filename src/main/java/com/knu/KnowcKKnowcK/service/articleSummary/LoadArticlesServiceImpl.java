@@ -5,6 +5,7 @@ import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.dto.responsedto.article.ArticleListResponseDto;
 import com.knu.KnowcKKnowcK.enums.Category;
+import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
@@ -45,12 +46,11 @@ public class LoadArticlesServiceImpl implements LoadArticlesService{
 
         Page<ArticleListResponseDto> articlesResponse = articles.map(article -> {
             Optional<Summary> summary = summaryRepository.findByArticleAndWriter(article, member);
-            return ArticleListResponseDto.from(article, summary.isPresent());
+            return ArticleListResponseDto.from(article, summary.isPresent() && summary.get().getStatus().equals(Status.DONE));
 
         });
 
         return articlesResponse;
-
     }
 
     @Override
