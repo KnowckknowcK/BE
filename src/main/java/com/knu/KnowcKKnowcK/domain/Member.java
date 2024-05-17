@@ -50,9 +50,9 @@ public class Member {
         this.password = password;
         this.profileImage = profileImage;
     }
-    public void updateProfile(String name, String email) {
+    public void updateProfile(String name, String password) {
         //이름, 이메일
         this.name = name;
-        this.email = email;
+        this.password = password;
     }
 }

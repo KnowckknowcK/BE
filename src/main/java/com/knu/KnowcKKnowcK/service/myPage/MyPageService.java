@@ -1,5 +1,7 @@
 package com.knu.KnowcKKnowcK.service.myPage;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.requestdto.ProfileUpdateRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.DashboardResponseDto;
@@ -31,14 +33,25 @@ public class MyPageService {
 
     //멤버의 프로필 정보 업데이트
     @Transactional
-    public void updateProfile(String email, ProfileUpdateRequestDto request, MultipartFile profileImg){
+    public void updateProfile(String email, String request, MultipartFile profileImg) throws JsonProcessingException {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         //이미지 파일 String 타입으로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProfileUpdateRequestDto requestDto = objectMapper.readValue(request, ProfileUpdateRequestDto.class);
+        String name = requestDto.getName();
+        String password = requestDto.getPassword();
+        if (name == null){
+            name = member.getName();
+        }
+        if (password == null){
+            password = member.getPassword();
+        }
         if (!profileImg.isEmpty()) {
             String imgName = awsS3Util.uploadFile(profileImg);
-            member.updateProfile(request.getName(), request.getPassword(), imgName);
+            member.updateProfile(name, password, imgName);
         }
-        member.updateProfile(request.getName(), request.getPassword());
+
+        member.updateProfile(name, password);
     }
 
     //대시보드 정보 조회
