@@ -20,9 +20,11 @@ public class ArticleListResponseDto {
     private LocalDateTime createdTime;
     private String articleUrl;
     private boolean isSummaryDone;
+    private boolean isOpinionDone;
+
 
     @Builder
-    private ArticleListResponseDto(Long id, String title, Category category,String content, LocalDateTime createdTime, String articleUrl, boolean isSummaryDone){
+    private ArticleListResponseDto(Long id, String title, Category category,String content, LocalDateTime createdTime, String articleUrl, boolean isSummaryDone, boolean isOpinionDone){
         this.id = id;
         this.title = title;
         this.category = category;
@@ -30,9 +32,10 @@ public class ArticleListResponseDto {
         this.articleUrl = articleUrl;
         this.createdTime = createdTime;
         this.isSummaryDone = isSummaryDone;
+        this.isOpinionDone = isOpinionDone;
     }
 
-    public static ArticleListResponseDto from(Article article, boolean isSummaryDone){
+    public static ArticleListResponseDto from(Article article, boolean isSummaryDone, boolean isOpinionDone){
         return ArticleListResponseDto.builder()
                 .id(article.getId())
                 .title(article.getTitle())
@@ -41,6 +44,7 @@ public class ArticleListResponseDto {
                 .createdTime(article.getCreatedTime())
                 .articleUrl(article.getArticleUrl())
                 .isSummaryDone(isSummaryDone)
+                .isOpinionDone(isOpinionDone)
                 .build();
     }
 }

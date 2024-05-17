@@ -39,17 +39,19 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
     @Override
     @Transactional
     public SummaryResponseDto saveSummary(SummaryRequestDto dto, String writer) {
+        if(!dto.getStatus().equals(Status.ING)){
+            throw new CustomException(ErrorCode.INVALID_INPUT);
+        }
+
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
         Member member = memberRepository.findByEmail(writer).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        summaryRepository.findByArticleAndWriter(article,member);
+
         summaryRepository.findByArticleAndWriter(article, member)
                 .ifPresentOrElse(
                 summary -> summary.update(dto.getContent(), dto.getStatus(), dto.getTakenTime()),
                 () -> summaryRepository.save(dto.toEntity(article, member))
                 );
-
-        if(!dto.getStatus().equals(Status.ING)){
-            throw new CustomException(ErrorCode.INVALID_INPUT);
-        }
 
         return new SummaryResponseDto("임시 저장이 완료되었습니다.");
     }
@@ -59,6 +61,7 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
     public SummaryResponseDto getSummaryFeedback(SummaryRequestDto dto, String writer) {
         if (dto.getStatus() != Status.DONE)
             throw new CustomException(ErrorCode.INVALID_INPUT);
+
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
         Member member = memberRepository.findByEmail(writer).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 

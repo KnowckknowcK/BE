@@ -38,7 +38,7 @@ public class SaveOpinionServiceImpl  implements SaveOpinionService{
         Optional<Opinion> existedOpinion = opinionRepository.findByArticleAndWriter(article, member);
 
          if (existedOpinion.isPresent()) {
-             throw new CustomException(ErrorCode.INVALID_INPUT);
+             throw new CustomException(ErrorCode.ALREADY_EXISTED);
          }
 
         Pair<Score, String> feedback = chatGptContext.callGptApi(Option.OPINION, article.getContent(), dto.getContent());
@@ -48,7 +48,6 @@ public class SaveOpinionServiceImpl  implements SaveOpinionService{
                 .content(dto.getContent())
                 .writer(member)
                 .article(article)
-                .status(Status.DONE)
                 .position(dto.getPosition())
                 .build();
 
