@@ -3,6 +3,7 @@ package com.knu.KnowcKKnowcK.dto.responsedto;
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
+import com.knu.KnowcKKnowcK.enums.Category;
 import com.knu.KnowcKKnowcK.enums.Score;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class MySummaryResponseDto {
     @Nullable
     private String feedBackContent;
     private Long takenTime;
+    private Category category;
 
     public MySummaryResponseDto(Summary summary) {
         this.summaryId = summary.getId();
@@ -32,6 +34,7 @@ public class MySummaryResponseDto {
         this.title = summary.getArticle().getTitle();
         this.content = summary.getContent();
         this.createdTime = summary.getCreatedTime();
+        this.category = summary.getArticle().getCategory();
     }
 
     public MySummaryResponseDto(Summary summary, SummaryFeedback summaryFeedback) {
