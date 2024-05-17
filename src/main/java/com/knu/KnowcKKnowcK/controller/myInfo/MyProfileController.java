@@ -1,8 +1,8 @@
 package com.knu.KnowcKKnowcK.controller.myInfo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
-import com.knu.KnowcKKnowcK.dto.requestdto.ProfileUpdateRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.DashboardResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.ProfileResponseDto;
 import com.knu.KnowcKKnowcK.service.myPage.MyPageService;
@@ -40,11 +40,12 @@ public class MyProfileController {
             @Parameter(name = "profileImg", description = "프로필 사진", example = "test.jpg")
     }
     )
-    public ApiResponseDto<String> updateMyProfile(
+    public ApiResponseDto<String> updateMyProfile (
             Authentication authentication,
-            @RequestPart(value = "requestDto") ProfileUpdateRequestDto requestDto,
+            @RequestPart(value = "requestDto") String requestDto,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
-            ){
+            ) throws JsonProcessingException
+    {
         myPageService.updateProfile(authentication.getName(),requestDto,profileImg);
         return ApiResponseDto.success(SuccessCode.OK,"변경이 성공적으로 됐습니다.");
     }
