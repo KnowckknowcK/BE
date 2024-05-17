@@ -2,6 +2,8 @@ package com.knu.KnowcKKnowcK.dto.responsedto;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class DebateRoomResponseDto {
     private Long agreeNum;
@@ -10,6 +12,7 @@ public class DebateRoomResponseDto {
     private Long disagreeLikesNum;
     private String title;
     private String position;
+    private LocalDateTime now;
 
     public DebateRoomResponseDto(
             long agreeNum,
@@ -26,5 +29,6 @@ public class DebateRoomResponseDto {
         this.disagreeLikesNum = disagreeLikesNum;
         this.title = title;
         this.position = position;
+        this.now = LocalDateTime.now();
     }
 }
