@@ -12,6 +12,7 @@ import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.utils.AwsS3Util;
 import com.knu.KnowcKKnowcK.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -39,6 +40,9 @@ public class AccountService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AwsS3Util awsS3Util;
 
+    @Value("${profileImg.url}")
+    private String ImgUrl;
+
     public SigninResponseDto signinWithEmail(String email, String password) throws CustomException{
         try {
             //security 인증 사용(아이디 비밀번호 일치여부, 데이터베이스에 사용자 정보 존재 여부 등)
@@ -65,23 +69,19 @@ public class AccountService {
 
     public HttpStatus signupWithEmail(String userInfo, MultipartFile profileImg) throws JsonProcessingException {
 
-        String profileImgUrl = "";
+        String profileImgUrl;
 
         ObjectMapper objectMapper = new ObjectMapper();
         SignupRequestDto requestDto = objectMapper.readValue(userInfo, SignupRequestDto.class);
 
         Optional<Member> member = memberRepository.findByEmail(requestDto.getEmail());
-
         if (member.isPresent())
             return ALREADY_REGISTERED.getError();
 
-        if (profileImg == null || profileImg.isEmpty()) {
-            profileImgUrl = randomDefaultImg();
-        }
-        else{
+        if (profileImg == null || profileImg.isEmpty())
+            profileImgUrl = ImgUrl + randomImgNum();
+        else
             profileImgUrl = awsS3Util.uploadFile(profileImg);
-        }
-
 
         Member newMember = Member.builder()
                 .email(requestDto.getEmail())
@@ -109,14 +109,9 @@ public class AccountService {
         }
     }
 
-    public String randomDefaultImg() {
+    public String randomImgNum() {
 
-        String[] defaultImg = {
-                "https://knowckknowck-bucket.s3.ap-northeast-2.amazonaws.com/profile/profile1.png",
-                "https://knowckknowck-bucket.s3.ap-northeast-2.amazonaws.com/profile/profile2.png",
-                "https://knowckknowck-bucket.s3.ap-northeast-2.amazonaws.com/profile/profile3.png",
-                "https://knowckknowck-bucket.s3.ap-northeast-2.amazonaws.com/profile/profile4.png"
-        };
+        String[] defaultImg = {"1.png","2.png","3.png","4.png"};
 
         Random random = new Random();
         int imgNumber = random.nextInt(4);
