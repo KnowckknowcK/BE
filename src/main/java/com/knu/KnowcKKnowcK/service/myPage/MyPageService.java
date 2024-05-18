@@ -11,6 +11,7 @@ import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
 import com.knu.KnowcKKnowcK.utils.AwsS3Util;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,7 @@ import java.util.List;
 public class MyPageService {
     private final MemberRepository memberRepository;
     private final AwsS3Util awsS3Util;
+    private final BCryptPasswordEncoder passwordEncoder;
     //멤버의 프로필 정보 응답
     @Transactional
     public ProfileResponseDto getProfile(String email){
@@ -38,20 +40,22 @@ public class MyPageService {
         //이미지 파일 String 타입으로 변환
         ObjectMapper objectMapper = new ObjectMapper();
         ProfileUpdateRequestDto requestDto = objectMapper.readValue(request, ProfileUpdateRequestDto.class);
-        String name = requestDto.getName();
-        String password = requestDto.getPassword();
-        if (name == null){
-            name = member.getName();
-        }
-        if (password == null){
-            password = member.getPassword();
-        }
-        if (!profileImg.isEmpty()) {
-            String imgName = awsS3Util.uploadFile(profileImg);
-            member.updateProfile(name, password, imgName);
+        String name = member.getName();
+        String password = member.getPassword();
+        String imgName = member.getProfileImage();
+        if (requestDto.getPassword() != null){
+            password = passwordEncoder.encode(password);
         }
 
-        member.updateProfile(name, password);
+        if (requestDto.getName() != null){
+            name = requestDto.getName();
+        }
+
+        if (!profileImg.isEmpty()) {
+            imgName = awsS3Util.uploadFile(profileImg);
+            member.updateProfile(name, password, imgName);
+        }
+        member.updateProfile(name, password,imgName);
     }
 
     //대시보드 정보 조회
