@@ -38,12 +38,11 @@ public class MessageService {
         MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
-        Message message = dto.toMessage(member, debateRoom);
+        Message message = dto.toMessage(member, debateRoom, memberDebate.getPosition());
         messageRepository.save(message);
 
         MessageResponseDto responseDto =
                 message.toMessageResponseDto(
-                        memberDebate.getPosition().name(),
                         0, 0,
                         member.getProfileImage());
 
@@ -59,11 +58,10 @@ public class MessageService {
         MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
-        MessageThread messageThread = dto.toMessageThread(member, message);
+        MessageThread messageThread = dto.toMessageThread(member, message, memberDebate.getPosition());
         messageThreadRepository.save(messageThread);
 
         MessageThreadResponseDto responseDto = messageThread.toMessageThreadResponseDto(messageId,
-                memberDebate.getPosition().name(),
                 member.getProfileImage());
         // redis 캐시에 messageThreadResponseDto를 리스트로 저장 -> 조회 속도 증가
         redisUtil.addDataToList(getMessageThreadKey(messageId), responseDto);
@@ -85,15 +83,8 @@ public class MessageService {
             List<Message> messageList = messageRepository.findByDebateRoom(debateRoom);
           
             for (Message message: messageList) {
-              Optional<MemberDebate> writerMemberDebate =
-                    memberDebateRepository
-                            .findByMemberAndDebateRoom(message.getMember(), message.getDebateRoom());
-            String position = null;
-            if (writerMemberDebate.isPresent()){
-                position = writerMemberDebate.get().getPosition().name();
-            }
                 messageResponseDtoList.add(message
-                        .toMessageResponseDto(position,
+                        .toMessageResponseDto(
                                 getPreferenceNum(message),
                                 getMessageThreadNum(message) ,
                                 message.getMember().getProfileImage()
@@ -116,13 +107,10 @@ public class MessageService {
             Message message = messageRepository.findById(messageId)
                     .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
             List<MessageThread> messageThraedList = messageThreadRepository.findByMessage(message);
-            MemberDebate memberDebate = memberDebateRepository
-                    .findByMemberAndDebateRoom(message.getMember(), message.getDebateRoom())
-                    .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+
             for (MessageThread messageThread: messageThraedList) {
                 messageThreadResponseDtoList
                         .add(messageThread.toMessageThreadResponseDto(messageId,
-                                memberDebate.getPosition().name(),
                                 message.getMember().getProfileImage()));
             }
             redisUtil.setDataList(key, messageThreadResponseDtoList);
