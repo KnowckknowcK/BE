@@ -66,11 +66,11 @@ public abstract class DebateRoomSetUp {
         debateRoom = createDebateRoom();
         memberDebate = createMemberDebate(member, debateRoom);
         messageDto = createMessageRequestDto();
-        message = messageDto.toMessage(member, debateRoom);
+        message = messageDto.toMessage(member, debateRoom, memberDebate.getPosition());
         threadDto = createMessageThreadRequestDto();
         preferenceRequestDto = createPreferenceRequestDto();
         preference = preferenceRequestDto.toPreference(member, message);
-        MessageThread thread = threadDto.toMessageThread(member, message);
+        MessageThread thread = threadDto.toMessageThread(member, message, memberDebate.getPosition());
         List<MessageThread> threadList = new ArrayList<>();
         threadList.add(thread);
         List<Preference> preferenceList = new ArrayList<>();
