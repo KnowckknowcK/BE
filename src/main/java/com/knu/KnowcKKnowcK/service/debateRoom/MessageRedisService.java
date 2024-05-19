@@ -15,7 +15,6 @@ public class MessageRedisService implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Set<String> set = redisUtil.findKeysWithPattern("*message*");
-        System.out.println(set);
         for(String key:set){
             System.out.println(key);
             redisUtil.deleteDataList(key);
