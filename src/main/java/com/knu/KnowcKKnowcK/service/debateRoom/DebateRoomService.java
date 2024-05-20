@@ -56,8 +56,6 @@ public class DebateRoomService {
     }
     DebateRoom getDebateRoom(Long debateRoomId){
         Optional<DebateRoom> debateRoom = debateRoomRepository.findById(debateRoomId);
-        String key = getDebateRoomKey(debateRoomId);
-        redisUtil.deleteDataList(key);
 
         if (debateRoom.isEmpty()){
             Article article = articleRepository
@@ -65,6 +63,11 @@ public class DebateRoomService {
                     .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
             DebateRoom newRoom = new DebateRoom(article);
             debateRoomRepository.save(newRoom);
+
+            // 최초 토론방 생성이라면 redis 초기화
+            String key = getDebateRoomKey(debateRoomId);
+            redisUtil.deleteDataList(key);
+
             return newRoom;
         }
         else{
