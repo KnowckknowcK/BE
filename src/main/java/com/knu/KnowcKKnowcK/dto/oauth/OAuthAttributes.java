@@ -49,6 +49,8 @@ public class OAuthAttributes {
                 .profileImage(profileImg)
                 .password(generateRandomPassword(10))
                 .isOAuth(true)
+                .level(0L)
+                .point(0L)
                 .build();
     }
 }
