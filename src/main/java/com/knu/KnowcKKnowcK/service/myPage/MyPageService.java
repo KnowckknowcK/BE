@@ -51,7 +51,7 @@ public class MyPageService {
             name = requestDto.getName();
         }
 
-        if (!profileImg.isEmpty()) {
+        if (profileImg != null) {
             imgName = awsS3Util.uploadFile(profileImg);
             member.updateProfile(name, password, imgName);
         }
