@@ -9,15 +9,14 @@ import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.DebateRoomRepository;
 import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
+import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.getDebateRoomKey;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +24,7 @@ public class DebateRoomService {
     private final DebateRoomRepository debateRoomRepository;
     private final MemberDebateRepository memberDebateRepository;
     private final ArticleRepository articleRepository;
+    private final RedisUtil redisUtil;
     // 토론방 참여
     public DebateRoomResponseDto participateInDebateRoom(Member member, Long debateRoomId){
         Position position;
@@ -56,12 +56,18 @@ public class DebateRoomService {
     }
     DebateRoom getDebateRoom(Long debateRoomId){
         Optional<DebateRoom> debateRoom = debateRoomRepository.findById(debateRoomId);
+
         if (debateRoom.isEmpty()){
             Article article = articleRepository
                     .findById(debateRoomId)
                     .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
             DebateRoom newRoom = new DebateRoom(article);
             debateRoomRepository.save(newRoom);
+
+            // 최초 토론방 생성이라면 redis 초기화
+            String key = getDebateRoomKey(debateRoomId);
+            redisUtil.deleteDataList(key);
+
             return newRoom;
         }
         else{

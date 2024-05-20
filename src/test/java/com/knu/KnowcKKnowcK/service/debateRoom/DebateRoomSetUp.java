@@ -1,29 +1,20 @@
 package com.knu.KnowcKKnowcK.service.debateRoom;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.requestdto.MessageRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.MessageThreadRequestDto;
 import com.knu.KnowcKKnowcK.dto.requestdto.PreferenceRequestDto;
 import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.repository.*;
-import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.getDebateRoomKey;
-import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.getMessageThreadKey;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -59,18 +50,18 @@ public abstract class DebateRoomSetUp {
     protected Message message;
 
     @BeforeEach
-    protected void setUp() throws JsonProcessingException {
+    protected void setUp(){
         // 테스트에 사용될 객체 초기화
         roomId = 1L;
         member = createMember();
         debateRoom = createDebateRoom();
         memberDebate = createMemberDebate(member, debateRoom);
         messageDto = createMessageRequestDto();
-        message = messageDto.toMessage(member, debateRoom);
+        message = messageDto.toMessage(member, debateRoom, memberDebate.getPosition());
         threadDto = createMessageThreadRequestDto();
         preferenceRequestDto = createPreferenceRequestDto();
         preference = preferenceRequestDto.toPreference(member, message);
-        MessageThread thread = threadDto.toMessageThread(member, message);
+        MessageThread thread = threadDto.toMessageThread(member, message, memberDebate.getPosition());
         List<MessageThread> threadList = new ArrayList<>();
         threadList.add(thread);
         List<Preference> preferenceList = new ArrayList<>();
