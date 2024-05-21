@@ -1,6 +1,7 @@
 package com.knu.KnowcKKnowcK.domain;
 
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
+import com.knu.KnowcKKnowcK.enums.Position;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,8 +36,9 @@ public class Message {
 
     private String content;
     private LocalDateTime createdTime;
+    private Position position;
 
-    public MessageResponseDto toMessageResponseDto(String position, long likesNum, long threadNum, String profileImage){
+    public MessageResponseDto toMessageResponseDto(long likesNum, long threadNum, String profileImage){
         return MessageResponseDto.builder()
                 .writer(member.getName())
                 .likesNum(likesNum)
@@ -45,7 +47,7 @@ public class Message {
                 .createdTime(formatToLocalDateTime(createdTime))
                 .roomId(debateRoom.getId())
                 .messageId(id)
-                .position(position)
+                .position(position.name())
                 .threadNum(threadNum)
                 .build();
     }
