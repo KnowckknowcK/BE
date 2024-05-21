@@ -9,9 +9,11 @@ import com.knu.KnowcKKnowcK.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +51,7 @@ public abstract class DebateRoomSetUp {
     protected Long roomId;
     protected Message message;
 
+    protected List<MessageThread> threadList;
     @BeforeEach
     protected void setUp(){
         // 테스트에 사용될 객체 초기화
@@ -62,7 +65,7 @@ public abstract class DebateRoomSetUp {
         preferenceRequestDto = createPreferenceRequestDto();
         preference = preferenceRequestDto.toPreference(member, message);
         MessageThread thread = threadDto.toMessageThread(member, message, memberDebate.getPosition());
-        List<MessageThread> threadList = new ArrayList<>();
+        threadList = new ArrayList<>();
         threadList.add(thread);
         List<Preference> preferenceList = new ArrayList<>();
         preferenceList.add(preference);
