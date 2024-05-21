@@ -44,14 +44,14 @@ public class MyPageService {
         String password = member.getPassword();
         String imgName = member.getProfileImage();
         if (requestDto.getPassword() != null){
-            password = passwordEncoder.encode(password);
+            password = passwordEncoder.encode(requestDto.getPassword());
         }
 
         if (requestDto.getName() != null){
             name = requestDto.getName();
         }
 
-        if (!profileImg.isEmpty()) {
+        if (profileImg != null) {
             imgName = awsS3Util.uploadFile(profileImg);
             member.updateProfile(name, password, imgName);
         }
@@ -110,6 +110,6 @@ public class MyPageService {
         //오늘 작성한 요약과 견해 총 개수
         Long totalTodayWorks = todaySummariesCount + todayOpinionsCount;
 
-        return new DashboardResponseDto(totalTodayWorks,totalSummaryCount,totalOpinionCount,consecutiveDays);
+        return new DashboardResponseDto(totalTodayWorks,totalSummaryCount,totalOpinionCount,consecutiveDays,member.getPoint());
     }
 }
