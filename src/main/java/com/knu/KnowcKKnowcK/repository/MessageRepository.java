@@ -22,7 +22,9 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "GROUP BY m.id, m.member.profileImage")
     List<Object[]> findMessagesWithCounts(@Param("debateRoom") DebateRoom debateRoom);
 
-
-    @Query("SELECT m FROM Message m LEFT JOIN FETCH m.messageThreads WHERE m.id = :id")
-    Optional<Message> findByIdWithMessageThreads(@Param("id") Long id);
+    @Query("SELECT m FROM Message m " +
+            "LEFT JOIN FETCH m.messageThreads " +
+            "LEFT JOIN FETCH m.member " +
+            "WHERE m.id = :id")
+    Optional<Message> findByIdWithMessageThreadsAndMember(@Param("id") Long id);
 }

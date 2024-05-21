@@ -78,17 +78,22 @@ public class MessageService {
         List<MessageResponseDto> messageResponseDtoList =
                 redisUtil.getDataList(key, MessageResponseDto.class);
 
-        // 없으면 값을 가져와서 캐시에 저장한 후 반환
+        // 없으면 값을 가져와서 캐시에 저장한 후 반환 총 13개의 쿠러ㅣ
         if (messageResponseDtoList.isEmpty()){
-            List<Message> messageList = messageRepository.findByDebateRoom(debateRoom);
-          
-            for (Message message: messageList) {
-                messageResponseDtoList.add(message
-                        .toMessageResponseDto(
-                                getPreferenceNum(message),
-                                getMessageThreadNum(message) ,
-                                message.getMember().getProfileImage()
-                        ));
+            List<Object[]> results = messageRepository.findMessagesWithCounts(debateRoom);
+
+            for (Object[] result : results) {
+                Message message = (Message) result[0];
+                long messageThreadCount = (long) result[1];
+                long preferenceCount = (long) result[2];
+                String profileImage = (String) result[3];
+
+                MessageResponseDto dto = message.toMessageResponseDto(
+                        preferenceCount,
+                        messageThreadCount,
+                        profileImage
+                );
+                messageResponseDtoList.add(dto);
             }
             redisUtil.setDataList(key, messageResponseDtoList);
         }
@@ -104,11 +109,10 @@ public class MessageService {
 
         // 없으면 값을 가져와서 캐시에 저장한 후 반환
         if(messageThreadResponseDtoList.isEmpty()){
-            Message message = messageRepository.findById(messageId)
+            Message message = messageRepository.findByIdWithMessageThreadsAndMember(messageId)
                     .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-            List<MessageThread> messageThraedList = messageThreadRepository.findByMessage(message);
 
-            for (MessageThread messageThread: messageThraedList) {
+            for (MessageThread messageThread: message.getMessageThreads()) {
                 messageThreadResponseDtoList
                         .add(messageThread.toMessageThreadResponseDto(messageId,
                                 message.getMember().getProfileImage()));
@@ -173,14 +177,6 @@ public class MessageService {
         }
         debateRoomRepository.save(debateRoom);
         return debateRoom;
-    }
-
-    private long getPreferenceNum(Message message){
-        return preferenceRepository.findByMessage(message).size();
-    }
-
-    private long getMessageThreadNum(Message message){
-        return messageThreadRepository.findByMessage(message).size();
     }
 
     private PreferenceResponseDto makeDto(long agreeLikesNum, long disagreeLikesNum, boolean isIncrease){
