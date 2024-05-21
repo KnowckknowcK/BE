@@ -1,6 +1,7 @@
 package com.knu.KnowcKKnowcK.domain;
 
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
+import com.knu.KnowcKKnowcK.enums.Position;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,12 +34,13 @@ public class MessageThread {
 
     private String content;
     private LocalDateTime createdTime;
+    private Position position;
 
-    public MessageThreadResponseDto toMessageThreadResponseDto(Long parentMessageId, String position, String profileImage){
+    public MessageThreadResponseDto toMessageThreadResponseDto(Long parentMessageId, String profileImage){
         return MessageThreadResponseDto.builder()
                 .id(id)
                 .content(content)
-                .position(position)
+                .position(position.name())
                 .profileImage(profileImage)
                 .createdTime(formatToLocalDateTime(createdTime))
                 .parentMessageId(parentMessageId)

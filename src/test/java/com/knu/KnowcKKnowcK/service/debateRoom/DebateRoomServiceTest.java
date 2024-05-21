@@ -36,6 +36,8 @@ public class DebateRoomServiceTest {
 
     @Mock
     private ArticleRepository articleRepository;
+    @Mock
+    private RedisUtil redisUtil;
 
     @Test
     @DisplayName("토론방이 존재하지만, 사용자가 참여중이 아닐 때 요청 처리 테스트")

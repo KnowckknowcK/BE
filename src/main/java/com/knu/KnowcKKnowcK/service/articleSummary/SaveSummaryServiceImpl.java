@@ -67,17 +67,21 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
         Pair<Score, String> parsedFeedback = chatGptContext.callGptApi(Option.SUMMARY, article.getContent(), dto.getContent());
 
-        return new SummaryResponseDto(saveSummaryFeedback(dto.toEntity(article, member),parsedFeedback));
+        return new SummaryResponseDto(saveSummaryFeedback(dto.toEntity(article, member),parsedFeedback, member));
     }
 
 
 
     @Transactional
-    protected SummaryFeedback saveSummaryFeedback(Summary summary, Pair<Score, String> parsedFeedback){
-        summaryRepository.findByArticleAndWriter(summary.getArticle(), summary.getWriter())
+    protected SummaryFeedback saveSummaryFeedback(Summary summary, Pair<Score, String> parsedFeedback, Member member){
+        summaryRepository.findByArticleAndWriter(summary.getArticle(), member)
                 .ifPresent(summaryRepository::delete);
         summaryRepository.flush();
         Summary savedSummary = summaryRepository.save(summary);
+
+        member.setPoint(member.getPoint() + parsedFeedback.getFirst().getExp());
+        memberRepository.save(member);
+
         return summaryFeedbackRepository.save(SummaryFeedback.from(savedSummary,parsedFeedback));
     }
 }
