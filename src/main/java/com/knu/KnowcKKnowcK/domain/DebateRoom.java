@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -23,10 +25,12 @@ public class DebateRoom {
     private Long disagreeNum;
     private Long disagreeLikesNum;
 
+    @OneToMany(mappedBy = "debateRoom", fetch = FetchType.LAZY)
+    private List<MemberDebate> memberDebates;
 
     @Builder
     public DebateRoom(Article article){
-        this.id = article.getId();  // 애초에 기사-토론방은 1대1 관계라 id 필드가 필요 없었을 거 같아요.
+        this.id = article.getId();
         this.article = article;
         this.title = article.getTitle();
         this.agreeNum = 0L;
