@@ -46,5 +46,6 @@ public class MySummaryResponseDto {
         this.score = summaryFeedback.getScore();
         this.feedBackContent = summaryFeedback.getContent();
         this.takenTime = summary.getTakenTime();
+        this.category = summary.getArticle().getCategory();
     }
 }
