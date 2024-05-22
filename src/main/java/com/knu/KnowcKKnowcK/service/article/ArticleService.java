@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.service;
+package com.knu.KnowcKKnowcK.service.article;
 
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.dto.responsedto.article.ArticleResponseDto;
@@ -6,26 +6,24 @@ import com.knu.KnowcKKnowcK.enums.Category;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
-    private static final Category[] categoryList =
-            { Category.IT, Category.ECONOMICS, Category.POLITICS };
 
-    public List<ArticleResponseDto> getRecommandedArticles(){
-        List<ArticleResponseDto> articleList = new ArrayList<>();
 
-        for (Category category: categoryList){
-            Article article = articleRepository.findTop1ByCategory(category).orElse(new Article());
-            articleList.add(ArticleResponseDto.from(article));
-        }
+    @Transactional(readOnly = true)
+    public List<ArticleResponseDto> getRecommendedArticles(){
 
-        return articleList;
+        return articleRepository.find1ByCategory().stream()
+                .map(ArticleResponseDto::from)
+                .collect(Collectors.toList());
     }
 
 }
