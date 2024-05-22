@@ -110,6 +110,6 @@ public class MyPageService {
         //오늘 작성한 요약과 견해 총 개수
         Long totalTodayWorks = todaySummariesCount + todayOpinionsCount;
 
-        return new DashboardResponseDto(totalTodayWorks,totalSummaryCount,totalOpinionCount,consecutiveDays);
+        return new DashboardResponseDto(totalTodayWorks,totalSummaryCount,totalOpinionCount,consecutiveDays,member.getPoint());
     }
 }
