@@ -100,8 +100,9 @@ public class DebateRoomService {
         DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
-        return makeDebateRoomMemberList(memberDebateRepository.findByDebateRoom(debateRoom));
+        return makeDebateRoomMemberList(debateRoom.getMemberDebates());
     }
+
 
     private Position decidePosition(double ratio){
         // 비율에 따른 찬/반 결정

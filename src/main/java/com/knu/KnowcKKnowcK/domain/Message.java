@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.formatToLocalDateTime;
 
@@ -37,6 +38,12 @@ public class Message {
     private String content;
     private LocalDateTime createdTime;
     private Position position;
+
+    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY)
+    private List<MessageThread> messageThreads;
+
+    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY)
+    private List<Preference> preferences;
 
     public MessageResponseDto toMessageResponseDto(long likesNum, long threadNum, String profileImage){
         return MessageResponseDto.builder()
