@@ -18,7 +18,7 @@ public class MySummaryResponseDto {
     private Long summaryId;
     private String title;
     @Nullable
-    private Article article;
+    private String articleContent;
     private String content;
     private LocalDateTime createdTime;
     @Nullable
@@ -30,7 +30,7 @@ public class MySummaryResponseDto {
 
     public MySummaryResponseDto(Summary summary) {
         this.summaryId = summary.getId();
-        this.article = summary.getArticle();
+        this.articleContent = summary.getArticle().getContent();
         this.title = summary.getArticle().getTitle();
         this.content = summary.getContent();
         this.createdTime = summary.getCreatedTime();
@@ -39,7 +39,7 @@ public class MySummaryResponseDto {
 
     public MySummaryResponseDto(Summary summary, SummaryFeedback summaryFeedback) {
         this.summaryId = summary.getId();
-        this.article = summary.getArticle();
+        this.articleContent = summary.getArticle().getContent();
         this.content = summary.getContent();
         this.title = summary.getArticle().getTitle();
         this.createdTime = summary.getCreatedTime();
