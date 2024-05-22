@@ -62,7 +62,7 @@ public class ArticleController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "조회 실패")
     })
-    public ApiResponseDto<List<ArticleResponseDto>> getRecommandArticles(Authentication authentication){
+    public ApiResponseDto<List<ArticleResponseDto>> getRecommandArticles(){
         return ApiResponseDto.success(SuccessCode.OK, articleService.getRecommendedArticles());
     }
 
