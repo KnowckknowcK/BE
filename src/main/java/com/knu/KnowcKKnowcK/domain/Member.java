@@ -55,4 +55,9 @@ public class Member {
         this.name = name;
         this.password = password;
     }
+
+    public Member updatePoint(Long point){
+        this.point += point;
+        return this;
+    }
 }
