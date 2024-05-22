@@ -17,7 +17,7 @@ public class MySummaryResponseDto {
     //작성을 완료한 요약은 피드백과 함께 반환해야한다
     private Long summaryId;
     private String title;
-    @Nullable
+    private Long articleId;
     private String articleContent;
     private String content;
     private LocalDateTime createdTime;
@@ -30,6 +30,7 @@ public class MySummaryResponseDto {
 
     public MySummaryResponseDto(Summary summary) {
         this.summaryId = summary.getId();
+        this.articleId = summary.getArticle().getId();
         this.articleContent = summary.getArticle().getContent();
         this.title = summary.getArticle().getTitle();
         this.content = summary.getContent();
@@ -39,6 +40,7 @@ public class MySummaryResponseDto {
 
     public MySummaryResponseDto(Summary summary, SummaryFeedback summaryFeedback) {
         this.summaryId = summary.getId();
+        this.articleId = summary.getArticle().getId();
         this.articleContent = summary.getArticle().getContent();
         this.content = summary.getContent();
         this.title = summary.getArticle().getTitle();
