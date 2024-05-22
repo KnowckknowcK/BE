@@ -33,12 +33,10 @@ public class MessageService {
     private final RedisUtil redisUtil;
 
     public MessageResponseDto saveAndReturnMessage(Member member, MessageRequestDto dto){
-        DebateRoom debateRoom = debateRoomRepository.findById(dto.getRoomId())
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom)
+        MemberDebate memberDebate = memberDebateRepository.findByMemberIdAndDebateRoomId(member.getId(), dto.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
-        Message message = dto.toMessage(member, debateRoom, memberDebate.getPosition());
+        Message message = dto.toMessage(member, memberDebate.getDebateRoom(), memberDebate.getPosition());
         messageRepository.save(message);
 
         MessageResponseDto responseDto =
@@ -47,15 +45,14 @@ public class MessageService {
                         member.getProfileImage());
 
         // redis 캐시에 messageResponseDto를 리스트로 저장 -> 조회 속도 증가
-        redisUtil.addDataToList(getDebateRoomKey(debateRoom.getId()), responseDto);
+        redisUtil.addDataToList(getDebateRoomKey(dto.getRoomId()), responseDto);
         return responseDto;
     }
+
     public MessageThreadResponseDto saveAndReturnMessageThread(Member member, Long messageId, MessageThreadRequestDto dto) {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        DebateRoom debateRoom = debateRoomRepository.findById(dto.getRoomId())
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        MemberDebate memberDebate = memberDebateRepository.findByMemberAndDebateRoom(member, debateRoom)
+        MemberDebate memberDebate = memberDebateRepository.findByMemberIdAndDebateRoomId(member.getId(), dto.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
         MessageThread messageThread = dto.toMessageThread(member, message, memberDebate.getPosition());
@@ -65,7 +62,7 @@ public class MessageService {
                 member.getProfileImage());
         // redis 캐시에 messageThreadResponseDto를 리스트로 저장 -> 조회 속도 증가
         redisUtil.addDataToList(getMessageThreadKey(messageId), responseDto);
-        redisUtil.deleteDataList(getDebateRoomKey(debateRoom.getId()));
+        redisUtil.deleteDataList(getDebateRoomKey(dto.getRoomId()));
         return responseDto;
     }
 
@@ -78,7 +75,7 @@ public class MessageService {
         List<MessageResponseDto> messageResponseDtoList =
                 redisUtil.getDataList(key, MessageResponseDto.class);
 
-        // 없으면 값을 가져와서 캐시에 저장한 후 반환 총 13개의 쿠러ㅣ
+        // 없으면 값을 가져와서 캐시에 저장한 후 반환
         if (messageResponseDtoList.isEmpty()){
             List<Object[]> results = messageRepository.findMessagesWithCounts(debateRoom);
 
