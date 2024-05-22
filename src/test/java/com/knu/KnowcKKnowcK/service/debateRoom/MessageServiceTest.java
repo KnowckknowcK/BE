@@ -27,6 +27,8 @@ class MessageServiceTest extends DebateRoomSetUp{
     @Test
     @DisplayName("토론방 메세지를 적절한 형태로 가공하여 보내는 지 검증하는 테스트")
     void saveAndReturnMessage() {
+        when(memberDebateRepository.findByMemberIdAndDebateRoomId(member.getId(), debateRoom.getId())).thenReturn(Optional.ofNullable(memberDebate));
+
         // 메소드 실행
         MessageResponseDto result = messageService.saveAndReturnMessage(member, messageDto);
 
@@ -40,6 +42,7 @@ class MessageServiceTest extends DebateRoomSetUp{
     @Test
     @DisplayName("토론방 메세지 스레드를 적절한 형태로 가공하여 보내는 지 검증하는 테스트")
     void saveAndReturnMessageThread() {
+        when(memberDebateRepository.findByMemberIdAndDebateRoomId(member.getId(), debateRoom.getId())).thenReturn(Optional.ofNullable(memberDebate));
         // 메소드 실행
         MessageThreadResponseDto result = messageService.saveAndReturnMessageThread(member, message.getId(),threadDto);
 
