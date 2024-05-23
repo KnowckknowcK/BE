@@ -6,7 +6,7 @@ import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.dto.responsedto.article.ArticleListResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.article.ArticleResponseDto;
 import com.knu.KnowcKKnowcK.enums.Category;
-import com.knu.KnowcKKnowcK.service.ArticleService;
+import com.knu.KnowcKKnowcK.service.article.ArticleService;
 import com.knu.KnowcKKnowcK.service.articleSummary.LoadArticlesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -56,14 +56,14 @@ public class ArticleController {
     }
 
 
-    @GetMapping("/recommand")
+    @GetMapping("/recommended")
     @Operation(summary = "추천 기사 조회 API", description = "사용자에 따른 추천기사를 3개 제공하는 API")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "조회 실패")
     })
-    public ApiResponseDto<List<ArticleResponseDto>> getRecommandArticles(Authentication authentication){
-        return ApiResponseDto.success(SuccessCode.OK, articleService.getRecommandedArticles());
+    public ApiResponseDto<List<ArticleResponseDto>> getRecommandArticles(){
+        return ApiResponseDto.success(SuccessCode.OK, articleService.getRecommendedArticles());
     }
 
 }
