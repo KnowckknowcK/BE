@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -46,6 +47,7 @@ public class OpinionService{
                 .writer(member)
                 .article(article)
                 .position(dto.getPosition())
+                .createdTime(LocalDateTime.now())
                 .build();
 
         opinionRepository.save(opinion);
