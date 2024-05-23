@@ -5,15 +5,13 @@ import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryHistoryResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
-import com.knu.KnowcKKnowcK.service.articleSummary.LoadSummaryService;
-import com.knu.KnowcKKnowcK.service.articleSummary.SaveSummaryService;
+import com.knu.KnowcKKnowcK.service.summary.SummaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "요약 관련 API", description = "요약 관련 API")
 public class SummaryController {
 
-    private final SaveSummaryService saveSummaryService;
-    private final LoadSummaryService loadSummaryService;
+    private final SummaryService summaryService;
 
 
     @GetMapping("/load")
@@ -35,7 +32,7 @@ public class SummaryController {
     })
     ApiResponseDto<SummaryHistoryResponseDto> loadSummaryHistory(Authentication authentication,
                                                                  @RequestParam @Valid int articleId) {
-        SummaryHistoryResponseDto responseDto = loadSummaryService.loadSummaryHistory(authentication.getName(), articleId);
+        SummaryHistoryResponseDto responseDto = summaryService.loadSummaryHistory(authentication.getName(), articleId);
         return ApiResponseDto.success(SuccessCode.OK, responseDto);
     }
 
@@ -49,7 +46,7 @@ public class SummaryController {
     })
     ApiResponseDto<SummaryResponseDto> saveSummary(Authentication authentication, @RequestBody @Valid SummaryRequestDto dto){
 
-            SummaryResponseDto summaryResponseDto = saveSummaryService.saveSummary(dto, authentication.getName());
+            SummaryResponseDto summaryResponseDto = summaryService.saveSummary(dto, authentication.getName());
             return ApiResponseDto.success(SuccessCode.OK, summaryResponseDto);
     }
 
@@ -63,7 +60,7 @@ public class SummaryController {
     })
     ApiResponseDto<SummaryResponseDto> getSummaryFeedback(Authentication authentication, @RequestBody @Valid SummaryRequestDto dto){
 
-        SummaryResponseDto summaryResponseDto = saveSummaryService.getSummaryFeedback(dto, authentication.getName());
+        SummaryResponseDto summaryResponseDto = summaryService.getSummaryFeedback(dto, authentication.getName());
         return ApiResponseDto.success(SuccessCode.OK, summaryResponseDto);
     }
 }

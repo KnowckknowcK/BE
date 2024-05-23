@@ -7,7 +7,6 @@ import com.knu.KnowcKKnowcK.dto.responsedto.article.ArticleListResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.article.ArticleResponseDto;
 import com.knu.KnowcKKnowcK.enums.Category;
 import com.knu.KnowcKKnowcK.service.article.ArticleService;
-import com.knu.KnowcKKnowcK.service.articleSummary.LoadArticlesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,7 +26,6 @@ import java.util.List;
 @Tag(name = "Article", description = "지문 조회 관련 API")
 public class ArticleController {
 
-    private final LoadArticlesService loadArticlesService;
     private final ArticleService articleService;
 
     @Operation(summary = "카테고리 별 지문 목록 조회", description = "카테고리 별로 지문 목록을 조회한다. page 번호와 Category를 PathVariable로 받는다.")
@@ -39,7 +37,7 @@ public class ArticleController {
     ApiResponseDto<Page<ArticleListResponseDto>> loadArticles(Authentication authentication,
                                                               @PathVariable("category") @Valid Category category,
                                                               @PathVariable("page") @Valid int page){
-        return ApiResponseDto.success(SuccessCode.OK, loadArticlesService.loadArticles(category, page, authentication.getName()));
+        return ApiResponseDto.success(SuccessCode.OK, articleService.loadArticles(category, page, authentication.getName()));
     }
 
 
@@ -52,7 +50,7 @@ public class ArticleController {
             @ApiResponse(responseCode = "400", description = "지문 조회 실패")
     })
     ApiResponseDto<Article> loadArticleById(@PathVariable("articleId") Long articleId){
-        return ApiResponseDto.success(SuccessCode.OK, loadArticlesService.loadArticleById(articleId));
+        return ApiResponseDto.success(SuccessCode.OK, articleService.loadArticleById(articleId));
     }
 
 

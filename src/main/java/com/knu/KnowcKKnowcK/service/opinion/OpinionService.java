@@ -1,16 +1,14 @@
-package com.knu.KnowcKKnowcK.service.articleOpinion;
+package com.knu.KnowcKKnowcK.service.opinion;
 
 import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.requestdto.OpinionRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.OpinionResponseDto;
 import com.knu.KnowcKKnowcK.enums.Option;
 import com.knu.KnowcKKnowcK.enums.Score;
-import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.*;
 import com.knu.KnowcKKnowcK.service.chatGptService.ChatGptContext;
-import com.knu.KnowcKKnowcK.service.chatGptService.OpinionFeedbackClient;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
@@ -20,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class SaveOpinionServiceImpl  implements SaveOpinionService{
+public class OpinionService{
 
     private final OpinionRepository opinionRepository;
 
@@ -30,7 +28,6 @@ public class SaveOpinionServiceImpl  implements SaveOpinionService{
 
     private final ChatGptContext chatGptContext;
 
-    @Override
     @Transactional
     public OpinionResponseDto getOpinionFeedback(OpinionRequestDto dto, String writer) {
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));

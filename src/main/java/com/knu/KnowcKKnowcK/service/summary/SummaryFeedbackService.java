@@ -23,7 +23,7 @@ public class SummaryFeedbackService {
 
 
     @Transactional
-    public SummaryFeedback saveSummaryFeedback(Summary summary, Pair<Score, String> parsedFeedback, Member member){
+    protected SummaryFeedback saveSummaryFeedback(Summary summary, Pair<Score, String> parsedFeedback, Member member){
         summaryRepository.findByArticleAndWriter(summary.getArticle(), member)
                 .ifPresent(summaryRepository::delete);
         summaryRepository.flush();

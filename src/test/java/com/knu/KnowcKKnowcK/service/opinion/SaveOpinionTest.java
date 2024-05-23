@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.service.articleOpinion;
+package com.knu.KnowcKKnowcK.service.opinion;
 
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.domain.Member;
@@ -41,7 +41,7 @@ class SaveOpinionTest {
     private OpinionRepository opinionRepository;
 
     @InjectMocks
-    private SaveOpinionServiceImpl sut;
+    private OpinionService sut;
 
     @Mock
     private ChatGptContext chatGptContext;
