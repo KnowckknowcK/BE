@@ -1,8 +1,10 @@
-package com.knu.KnowcKKnowcK.service.articleSummary;
+package com.knu.KnowcKKnowcK.service.summary;
 
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.domain.Member;
+import com.knu.KnowcKKnowcK.domain.Summary;
 import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.SummaryHistoryResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
 import com.knu.KnowcKKnowcK.enums.Option;
 import com.knu.KnowcKKnowcK.enums.Score;
@@ -13,16 +15,16 @@ import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.repository.SummaryRepository;
 import com.knu.KnowcKKnowcK.service.chatGptService.ChatGptContext;
-import com.knu.KnowcKKnowcK.service.summary.SummaryFeedbackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class SaveSummaryServiceImpl implements SaveSummaryService{
+public class SummaryService {
 
     private final SummaryRepository summaryRepository;
 
@@ -34,9 +36,12 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
     private final ChatGptContext chatGptContext;
 
-    @Override
     @Transactional
     public SummaryResponseDto saveSummary(SummaryRequestDto dto, String writer) {
+        return summaryStatusCheck(dto, writer, articleRepository, memberRepository, summaryRepository);
+    }
+
+    public static SummaryResponseDto summaryStatusCheck(SummaryRequestDto dto, String writer, ArticleRepository articleRepository, MemberRepository memberRepository, SummaryRepository summaryRepository) {
         if(!dto.getStatus().equals(Status.ING)){
             throw new CustomException(ErrorCode.INVALID_INPUT);
         }
@@ -47,15 +52,14 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
         summaryRepository.findByArticleAndWriter(article, member)
                 .ifPresentOrElse(
-                summary -> summary.update(dto.getContent(), dto.getStatus(), dto.getTakenTime()),
-                () -> summaryRepository.save(dto.toEntity(article, member))
+                        summary -> summary.update(dto.getContent(), dto.getStatus(), dto.getTakenTime()),
+                        () -> summaryRepository.save(dto.toEntity(article, member))
                 );
 
         return new SummaryResponseDto("임시 저장이 완료되었습니다.");
     }
 
 
-    @Override
     public SummaryResponseDto getSummaryFeedback(SummaryRequestDto dto, String writer) {
         if (dto.getStatus() != Status.DONE)
             throw new CustomException(ErrorCode.INVALID_INPUT);
@@ -69,4 +73,15 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
                 (dto.toEntity(article, member), parsedFeedback, member));
     }
 
+    public SummaryHistoryResponseDto loadSummaryHistory(String userEmail, long articleId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        Optional<Summary> existedSummary = summaryRepository.findByArticleAndWriter(article, member);
+
+        if (existedSummary.isEmpty() || (existedSummary.isPresent() && existedSummary.get().getStatus() == Status.DONE)) {
+            return new SummaryHistoryResponseDto(Status.NEW);
+        }
+
+        return new SummaryHistoryResponseDto(existedSummary.get());
+    }
 }
