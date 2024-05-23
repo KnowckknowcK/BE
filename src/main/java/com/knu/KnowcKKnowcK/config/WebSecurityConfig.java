@@ -36,7 +36,7 @@ public class WebSecurityConfig {
             "/api/ws/**",
             "/",
             "/login/oauth2/code/google", "/oauth2/authorization/google",
-//            "/api/article/recommand"
+//            "/api/article/recommended"
     };
 
     @Bean
