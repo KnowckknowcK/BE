@@ -2,8 +2,6 @@ package com.knu.KnowcKKnowcK.service.articleSummary;
 
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.domain.Member;
-import com.knu.KnowcKKnowcK.domain.Summary;
-import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
 import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
 import com.knu.KnowcKKnowcK.enums.Option;
@@ -13,9 +11,9 @@ import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
-import com.knu.KnowcKKnowcK.repository.SummaryFeedbackRepository;
 import com.knu.KnowcKKnowcK.repository.SummaryRepository;
 import com.knu.KnowcKKnowcK.service.chatGptService.ChatGptContext;
+import com.knu.KnowcKKnowcK.service.summary.SummaryFeedbackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
 
     private final SummaryRepository summaryRepository;
 
-    private final SummaryFeedbackRepository summaryFeedbackRepository;
+    private final SummaryFeedbackService summaryFeedbackService;
 
     private final ArticleRepository articleRepository;
 
@@ -63,25 +61,12 @@ public class SaveSummaryServiceImpl implements SaveSummaryService{
             throw new CustomException(ErrorCode.INVALID_INPUT);
 
         Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(()-> new CustomException(ErrorCode.INVALID_INPUT));
-        Member member = memberRepository.findByEmail(writer).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+        Member member = memberRepository.getUserByEmail(writer);
 
         Pair<Score, String> parsedFeedback = chatGptContext.callGptApi(Option.SUMMARY, article.getContent(), dto.getContent());
 
-        return new SummaryResponseDto(saveSummaryFeedback(dto.toEntity(article, member),parsedFeedback, member));
+        return new SummaryResponseDto(summaryFeedbackService.saveSummaryFeedback
+                (dto.toEntity(article, member), parsedFeedback, member));
     }
 
-
-
-    @Transactional
-    protected SummaryFeedback saveSummaryFeedback(Summary summary, Pair<Score, String> parsedFeedback, Member member){
-        summaryRepository.findByArticleAndWriter(summary.getArticle(), member)
-                .ifPresent(summaryRepository::delete);
-        summaryRepository.flush();
-        Summary savedSummary = summaryRepository.save(summary);
-
-        member.setPoint(member.getPoint() + parsedFeedback.getFirst().getExp());
-        memberRepository.save(member);
-
-        return summaryFeedbackRepository.save(SummaryFeedback.from(savedSummary,parsedFeedback));
-    }
 }
