@@ -3,28 +3,19 @@ package com.knu.KnowcKKnowcK.controller.articleSummary;
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.domain.Summary;
-import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
 import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
-import com.knu.KnowcKKnowcK.enums.Option;
-import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
-import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
-import com.knu.KnowcKKnowcK.repository.SummaryFeedbackRepository;
 import com.knu.KnowcKKnowcK.repository.SummaryRepository;
-import com.knu.KnowcKKnowcK.service.articleSummary.SaveSummaryServiceImpl;
-import com.knu.KnowcKKnowcK.service.chatGptService.ChatGptContext;
-import com.knu.KnowcKKnowcK.service.chatGptService.SummaryFeedbackClient;
+import com.knu.KnowcKKnowcK.service.summary.SummaryService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import org.springframework.data.util.Pair;
 
 
 import java.time.LocalDateTime;
@@ -45,7 +36,7 @@ class SaveSummaryTest {
     private SummaryRepository summaryRepository;
 
     @InjectMocks
-    private SaveSummaryServiceImpl sut;
+    private SummaryService sut;
 
     @Test
     @DisplayName("요약 임시 저장을 성공한다.")

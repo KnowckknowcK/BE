@@ -12,6 +12,7 @@ import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.repository.OpinionRepository;
 import com.knu.KnowcKKnowcK.repository.SummaryRepository;
+import com.knu.KnowcKKnowcK.service.article.ArticleService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 class LoadArticlesServiceTest {
 
     @InjectMocks
-    private LoadArticlesServiceImpl sut;
+    private ArticleService sut;
 
     @Mock
     private ArticleRepository articleRepository;

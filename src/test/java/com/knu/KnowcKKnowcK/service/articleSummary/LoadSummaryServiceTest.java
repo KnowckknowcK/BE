@@ -8,6 +8,7 @@ import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.repository.SummaryRepository;
+import com.knu.KnowcKKnowcK.service.summary.SummaryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +36,7 @@ class LoadSummaryServiceTest {
     private MemberRepository memberRepository;
 
     @InjectMocks
-    private LoadSummaryServiceImpl sut;
+    private SummaryService sut;
 
     @Test
     @DisplayName("진행 중(Status.ING)인 요약이 존재하면 정보를 불러온다.")
