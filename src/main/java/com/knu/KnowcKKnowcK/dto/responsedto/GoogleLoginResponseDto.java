@@ -7,4 +7,5 @@ import lombok.Data;
 @Builder
 public class GoogleLoginResponseDto {
     private String jwt;
+    private String refreshToken;
 }

@@ -10,4 +10,5 @@ public class SigninResponseDto {
     private String name;
     private String profileImg;
     private String jwt;
+    private String refreshToken;
 }
