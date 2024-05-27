@@ -11,5 +11,6 @@ public class DashboardResponseDto {
     private int totalSummaries = 0;
     private int totalOpinions = 0;
     private int strikes;
-    private Long point = 0L;
+    private Long totalPoint = 0L;
+    private int todayPoint = 0;
 }

@@ -17,13 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
     private final MemberRepository memberRepository;
+    private final SummaryFeedbackRepository summaryFeedbackRepository;
     private final AwsS3Util awsS3Util;
     private final BCryptPasswordEncoder passwordEncoder;
     //멤버의 프로필 정보 응답
@@ -62,26 +67,28 @@ public class MyPageService {
     @Transactional
     public DashboardResponseDto getDashboardInfo(String email){
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        List<Summary> totalSummaries = member.getSummaries();
+        List<SummaryFeedback> totalDoneSummaries = summaryFeedbackRepository.findSummaryFeedbacksWithSummaries(member).orElse(new ArrayList<>());
         List<Opinion> totalOpinions = member.getOpinions();
         int totalSummaryCount = 0;
         int totalOpinionCount = 0;
         //오늘 날짜
         LocalDate today = LocalDate.now();
-        long todaySummariesCount = 0L;
         long todayOpinionsCount = 0L;
+        //
+        SimpleEntry<Long,Integer> todaySummariesAndScore = new SimpleEntry<>(0L,0);
         //연속 일자
         int consecutiveDays = 0;
 
-        if (!totalSummaries.isEmpty()){
+
+        if (!totalDoneSummaries.isEmpty()){
             //연속 참여 횟수 계산을 위한 createdTime 기준, 내림차순으로 정렬
-            totalSummaries = totalSummaries.stream()
-                    .sorted(Comparator.comparing(Summary::getCreatedTime).reversed())
+            totalDoneSummaries = totalDoneSummaries.stream()
+                    .sorted(Comparator.comparing((SummaryFeedback sf) -> sf.getSummary().getCreatedTime()).reversed())
                     .toList();
             LocalDate previousDate = null;
             //연속 횟수 계산
-            for (Summary summary : totalSummaries) {
-                LocalDate summaryDate = summary.getCreatedTime().toLocalDate();
+            for (SummaryFeedback sf : totalDoneSummaries) {
+                LocalDate summaryDate = sf.getSummary().getCreatedTime().toLocalDate();
                 // 오늘 날짜부터 시작하여 연속된 일수 계산
                 if (!summaryDate.equals(previousDate)){
                     if (summaryDate.equals(today.minusDays(consecutiveDays))) {
@@ -94,11 +101,17 @@ public class MyPageService {
                 }
             }
 
-            //오늘 작성한 요약개수
-            todaySummariesCount = totalSummaries.stream().filter(s -> s.getCreatedTime().toLocalDate().equals(today)).count();
+            //오늘 작성한 요약개수와 오늘 획득한 경험치 계산
+            todaySummariesAndScore= totalDoneSummaries.stream()
+                    .filter(sf -> sf.getSummary().getCreatedTime().toLocalDate().equals(today))
+                    .collect(Collectors.teeing(
+                            Collectors.counting(),
+                            Collectors.summingInt(sf -> sf.getScore().getExp()),
+                            SimpleEntry::new
+                    ));
 
             //총 요약개수
-            totalSummaryCount = totalSummaries.size();
+            totalSummaryCount = member.getSummaries().size();
         }
         if (!totalOpinions.isEmpty()){
             //오늘 작성한 견해개수
@@ -108,8 +121,8 @@ public class MyPageService {
         }
 
         //오늘 작성한 요약과 견해 총 개수
-        Long totalTodayWorks = todaySummariesCount + todayOpinionsCount;
+        Long totalTodayWorks = todaySummariesAndScore.getKey() + todayOpinionsCount;
 
-        return new DashboardResponseDto(totalTodayWorks,totalSummaryCount,totalOpinionCount,consecutiveDays,member.getPoint());
+        return new DashboardResponseDto(totalTodayWorks,totalSummaryCount,totalOpinionCount,consecutiveDays,member.getPoint(),todaySummariesAndScore.getValue());
     }
 }

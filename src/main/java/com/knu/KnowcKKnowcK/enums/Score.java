@@ -11,6 +11,6 @@ public enum Score {
     GOOD("GOOD", 25),
     FAIR("FAIR", 10);
 
-    private String scoreString;
-    private Integer exp;
+    private final String scoreString;
+    private final Integer exp;
 }
