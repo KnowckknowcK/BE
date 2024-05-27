@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class MyProfileControllerTest {
 
 
-        @Mock
+    @Mock
     private MyPageService myPageService;
 
     @Autowired
