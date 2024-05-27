@@ -35,10 +35,10 @@ import static com.knu.KnowcKKnowcK.exception.ErrorCode.ALREADY_REGISTERED;
 public class AccountService {
 
     private final MemberRepository memberRepository;
-    private final Long expiredAt = 1000 * 60 * 60L; //1H
     private final AuthenticationConfiguration authenticationConfiguration;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AwsS3Util awsS3Util;
+    private final JwtUtil jwtUtil;
 
     @Value("${profileImg.url}")
     private String ImgUrl;
@@ -55,7 +55,8 @@ public class AccountService {
                     .email(authenticatedMember.get().getEmail())
                     .name(authenticatedMember.get().getName())
                     .profileImg(authenticatedMember.get().getProfileImage())
-                    .jwt(JwtUtil.creatJWT(authentication.getName(), expiredAt))
+                    .jwt(JwtUtil.createAccessToken(authentication.getName()))
+                    .refreshToken(jwtUtil.createRefreshToken(authentication.getName()))
                     .build();
 
             return responseDto;
@@ -104,7 +105,8 @@ public class AccountService {
             return null;
         } else {
             return GoogleLoginResponseDto.builder()
-                    .jwt(JwtUtil.creatJWT(email, expiredAt))
+                    .jwt(JwtUtil.createAccessToken(email))
+                    .refreshToken(jwtUtil.createRefreshToken(email))
                     .build();
         }
     }

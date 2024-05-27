@@ -5,6 +5,7 @@ import com.knu.KnowcKKnowcK.authenticationHandler.CustomAuthenticationSuccessHan
 import com.knu.KnowcKKnowcK.authenticationHandler.JwtAccessDeniedHandler;
 import com.knu.KnowcKKnowcK.authenticationHandler.JwtAuthenticationEntryPoint;
 import com.knu.KnowcKKnowcK.config.jwtConfig.JwtFilter;
+import com.knu.KnowcKKnowcK.service.account.TokenService;
 import com.knu.KnowcKKnowcK.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ import org.springframework.web.cors.CorsUtils;
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private static final String[] WHITE_LIST = {
@@ -36,7 +38,7 @@ public class WebSecurityConfig {
             "/api/ws/**",
             "/",
             "/login/oauth2/code/google", "/oauth2/authorization/google",
-//            "/api/article/recommand"
+//            "/api/article/recommended"
     };
 
     @Bean
@@ -59,7 +61,7 @@ public class WebSecurityConfig {
                 .oauth2Login(oauth2Login -> oauth2Login
                         .successHandler(new CustomAuthenticationSuccessHandler())
                         .failureHandler(new CustomAuthenticationFailureHandler()))
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil, tokenService), UsernamePasswordAuthenticationFilter.class);
 
 
         return httpSecurity.build();
