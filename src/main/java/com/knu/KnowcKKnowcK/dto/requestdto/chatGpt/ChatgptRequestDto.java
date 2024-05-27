@@ -12,8 +12,8 @@ public class ChatgptRequestDto implements Serializable {
     private List<Message> messages = new ArrayList<>();
 
     private String model = "gpt-3.5-turbo";
-    @JsonProperty("max_tokens")
-    private Integer maxTokens = 100;
+//    @JsonProperty("max_tokens")
+//    private Integer maxTokens = 200;
 
 //    private Double temperature=1.0;
 //    @JsonProperty("stop")
