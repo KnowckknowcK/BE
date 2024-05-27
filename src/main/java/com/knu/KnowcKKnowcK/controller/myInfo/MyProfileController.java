@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class MyProfileController {
 
     private final MyPageService myPageService;
-    //헤더는 로그인 기능 이후 수정 예정
 
     @Operation(summary="프로필 정보 API",description="사용자가 프로필 정보를 요청했을 때 보여준다")
     @Parameters({
