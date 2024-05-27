@@ -33,7 +33,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private static final String[] WHITE_LIST = {
             "/api/account/**",
-            "/api-docs/**", "v3/api-docs/**", "swagger-ui/**",
+            "/api-docs/**", "/v3/api-docs/**", "/swagger-ui/**",
             "/api/ws/**",
             "/",
             "/login/oauth2/code/google", "/oauth2/authorization/google",
