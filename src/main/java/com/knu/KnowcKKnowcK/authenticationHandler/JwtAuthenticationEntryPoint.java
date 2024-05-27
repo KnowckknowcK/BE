@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 import static com.knu.KnowcKKnowcK.exception.ErrorCode.TOKEN_INVALID;
-
+/**
+ * 유저 정보 없이 접근한 경우 : TOKEN_INVALID(유효하지 않은 토큰: 로그인이 필요합니다) (401) 응답
+ */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override

@@ -22,6 +22,19 @@ public class RedisUtil {
         redisTemplate.opsForValue().set(key, value, expiredTime, TimeUnit.MILLISECONDS);
     }
 
+    public void setEmailCode(String email, String Code, Long expiredTime){
+        String key = "emailCode:" + email;
+        redisTemplate.opsForValue().set(key, Code, expiredTime, TimeUnit.MILLISECONDS);
+    }
+
+    public void setRefreshToken(String email, String refreshToken, Long expiredTime){
+        String key = "refreshToken:" + email;
+        if (getData(key) != null){
+            deleteData(key);
+        }
+        redisTemplate.opsForValue().set(key, refreshToken, expiredTime, TimeUnit.MILLISECONDS);
+    }
+
     public String getData(String key){
         return redisTemplate.opsForValue().get(key);
     }
