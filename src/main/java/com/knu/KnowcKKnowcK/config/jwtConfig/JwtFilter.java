@@ -25,13 +25,12 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final TokenService tokenService;
     private static final String[] WHITE_LIST = {
-            "/**",
             "/api/account/**",
             "/api-docs/**", "v3/api-docs/**", "swagger-ui/**",
             "/api/ws/**",
             "/",
             "/login/oauth2/code/google", "/oauth2/authorization/google",
-//            "/api/article/recommended"
+            "/api/article/recommended"
     };
 
     @Override
