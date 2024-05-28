@@ -3,16 +3,14 @@ package com.knu.KnowcKKnowcK.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
 import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
-import com.knu.KnowcKKnowcK.dto.requestdto.CodeCheckRequestDto;
-import com.knu.KnowcKKnowcK.dto.requestdto.GoogleLoginRequestDto;
-import com.knu.KnowcKKnowcK.dto.requestdto.MailCheckRequestDto;
-import com.knu.KnowcKKnowcK.dto.requestdto.SigninRequestDto;
+import com.knu.KnowcKKnowcK.dto.requestdto.*;
 import com.knu.KnowcKKnowcK.dto.responsedto.GoogleLoginResponseDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.NewAuthResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.service.account.AccountService;
 import com.knu.KnowcKKnowcK.service.account.MailService;
-import io.swagger.v3.oas.annotations.Hidden;
+import com.knu.KnowcKKnowcK.service.account.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
@@ -37,6 +34,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final MailService mailService;
+    private final TokenService tokenService;
 
 
     @GetMapping("/google")
@@ -128,11 +126,14 @@ public class AccountController {
         }
     }
 
-    //사용 예시(삭제 예정)
-    @GetMapping("/jwt-example")
-    @Hidden
-    public String jwtTest(Authentication authentication) {
-        String email = authentication.getName();
-        return email;
+    @PostMapping("/refresh")
+    @Operation(summary = "accessToken 만료 시 갱신 API", description = "만료된 accessToken에 대하여 refreshToken으로 새로운 accessToken 반환하는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "토큰 반환 성공"),
+            @ApiResponse(responseCode = "401", description = "토큰 반환 실패: 유효하지 않은 refresh 토큰")
+    })
+    public ApiResponseDto<NewAuthResponseDto> returnNewAuth(@RequestBody NewAuthRequestDto requestDto) {
+        NewAuthResponseDto response = tokenService.createNewAccessToken(requestDto.getRefreshToken());
+        return ApiResponseDto.success(SuccessCode.OK, response);
     }
 }

@@ -1,10 +1,16 @@
 package com.knu.KnowcKKnowcK.service.account;
 
+import com.knu.KnowcKKnowcK.dto.responsedto.NewAuthResponseDto;
+import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.utils.JwtUtil;
 import com.knu.KnowcKKnowcK.utils.RedisUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import static com.knu.KnowcKKnowcK.exception.ErrorCode.TOKEN_EXPIRED;
+import static com.knu.KnowcKKnowcK.exception.ErrorCode.TOKEN_INVALID;
 
 
 @Service
@@ -32,9 +38,23 @@ public class TokenService {
         return refreshTokenFindByKey.equals(refreshToken);
     }
 
-    public String createNewAccessToken(String refreshToken){
-        String email = JwtUtil.parseToken(refreshToken).get("email", String.class);
-        return JwtUtil.createAccessToken(email);
+    public NewAuthResponseDto createNewAccessToken(String refreshToken) {
+        String email = getEmailFromToken(refreshToken);
+
+        if(validateRefreshToken(email, refreshToken)){
+            return NewAuthResponseDto.builder().newAccessToken(JwtUtil.createAccessToken(email)).build();
+        }
+        else{
+            throw new CustomException(TOKEN_INVALID);
+        }
+    }
+
+    public String getEmailFromToken (String refreshToken){
+        try{
+            return JwtUtil.parseToken(refreshToken).get("email", String.class);
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(TOKEN_EXPIRED);
+        }
     }
 
 }
