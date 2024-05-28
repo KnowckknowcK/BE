@@ -18,12 +18,12 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static com.knu.KnowcKKnowcK.exception.ErrorCode.TOKEN_EXPIRED;
+import static com.knu.KnowcKKnowcK.exception.ErrorCode.TOKEN_INVALID;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final TokenService tokenService;
     private static final String[] WHITE_LIST = {
             "/api/account/**",
             "/api-docs/**", "/v3/api-docs/**", "/swagger-ui/**",
@@ -63,34 +63,20 @@ public class JwtFilter extends OncePerRequestFilter {
                     response.getWriter().write("Authentication failed error_");
                 }
             }
-        } catch (CustomException e){
-            if(e.getErrorCode() == TOKEN_EXPIRED){
-                String refreshToken = request.getHeader("RefreshToken");
-                String email = JwtUtil.parseToken(refreshToken).get("email", String.class);
-                if(tokenService.validateRefreshToken(email, refreshToken)){
-                    //accessToken 재발급
-                    String newAccessToken = tokenService.createNewAccessToken(refreshToken);
+        } catch (CustomException e) {
+            if (e.getErrorCode() == TOKEN_EXPIRED) {
+                //만료 표시 419
+                response.setStatus(419);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("AccessToken Expired");
+                return;
 
-                    //헤더 "Authorization"에 재발급된 accessToken 추가
-                    response.setHeader("Authorization", newAccessToken);
-
-                    //status = 202
-                    response.setStatus(HttpServletResponse.SC_ACCEPTED);
-
-                    //newAccessToken으로 인증 정보 설정
-                    Authentication auth = jwtUtil.getAuthentication(newAccessToken);
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                }
-                else{
-                    response.setContentType("application/json");
-                    response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("Invalid RefreshToken error_");
-                }
+            } else if (e.getErrorCode() == TOKEN_INVALID) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("Invalid AccessToken error_");
             }
-        } catch (Exception e) {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("Invalid AccessToken error_");
         }
         filterChain.doFilter(request, response);
     }
