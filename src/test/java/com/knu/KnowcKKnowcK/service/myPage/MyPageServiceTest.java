@@ -7,6 +7,7 @@ import com.knu.KnowcKKnowcK.domain.SummaryFeedback;
 import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
+import com.knu.KnowcKKnowcK.repository.SummaryFeedbackRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,8 @@ class MyPageServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private SummaryFeedbackRepository summaryFeedbackRepository;
     @InjectMocks
     private MyPageService myPageService;
     @Test
@@ -47,10 +50,13 @@ class MyPageServiceTest {
         Article article2 = createArticle();
         Summary summary1 = createSummary(member,article1,Status.DONE,LocalDateTime.now());
         Summary summary2 = createSummary(member,article2,Status.DONE,LocalDateTime.now().minusDays(1));
-        Summary summary3 = createSummary(member,article1,Status.DONE,LocalDateTime.now());
+        Summary summary3 = createSummary(member,article1,Status.ING,LocalDateTime.now());
 
         SummaryFeedback feedback1 = createSummaryFeedback(summary1);
         SummaryFeedback feedback2 = createSummaryFeedback(summary2);
+        ArrayList<SummaryFeedback> feedbacks = new ArrayList<>();
+        feedbacks.add(feedback1);
+        feedbacks.add(feedback2);
 
         List<Summary> summaries = new ArrayList<>();
         summaries.add(summary1);
@@ -58,10 +64,11 @@ class MyPageServiceTest {
         summaries.add(summary3);
         member.setSummaries(summaries);
         //when
-        Long expectedTodayWorks = 2L;
+        Long expectedTodayWorks = 1L;
         int expectedStrikes = 2;
         int expectedTotalOpinions = 0;
         when(memberRepository.findByEmail("test1@gmail.com")).thenReturn(Optional.of(member));
+        when(summaryFeedbackRepository.findSummaryFeedbacksWithSummaries(member)).thenReturn(Optional.of(feedbacks));
         Long actualTodayWorks = myPageService.getDashboardInfo("test1@gmail.com").getTodayWorks();
         int actualStrikes = myPageService.getDashboardInfo("test1@gmail.com").getStrikes();
         int actualTotalOpinions = myPageService.getDashboardInfo("test1@gmail.com").getTotalOpinions();
