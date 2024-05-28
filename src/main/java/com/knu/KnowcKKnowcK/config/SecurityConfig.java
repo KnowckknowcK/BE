@@ -32,6 +32,8 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private static final String[] WHITE_LIST = {
+            "/**",
+            "/profile","/redis",
             "/api/account/**",
             "/api-docs/**", "/v3/api-docs/**", "/swagger-ui/**",
             "/api/ws/**",
