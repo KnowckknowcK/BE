@@ -13,11 +13,13 @@ public class WebConfig implements WebMvcConfigurer {
     private String baseUrl;
     @Value("${client.base.url}")
     private String topBaseUrl;
+    @Value("${server.base.url}")
+    private String serverUrl;
     @Override
     public void addCorsMappings(CorsRegistry registry) {
 
         registry.addMapping("/**")
-                .allowedOrigins(localUrl,baseUrl,topBaseUrl)
+                .allowedOrigins(localUrl,baseUrl,topBaseUrl,serverUrl)
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true)

@@ -23,7 +23,7 @@ public class OpinionFeedbackClient implements ChatGptClient {
     @Override
     public Pair<Score, String> callGptApi(String article, String opinion) {
         ChatgptRequestDto requestDto = new ChatgptRequestDto(
-                Message.promptContent(article, opinion, SummaryPrompt.getInstance().getPrompt()));
+                Message.promptContent(article, opinion, OpinionPrompt.getInstance().getPrompt()));
 
         ChatgptResponseDto responseDto = chatGptConfig.gptClient()
                 .post()
