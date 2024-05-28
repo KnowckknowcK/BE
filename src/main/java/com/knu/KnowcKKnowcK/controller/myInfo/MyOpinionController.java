@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,4 +31,17 @@ public class MyOpinionController {
     ){
         return ApiResponseDto.success(SuccessCode.OK,myOpinionService.getMyOpinions(authentication.getName()));
     }
+
+    @Operation(summary="사용자 견해",description="사용자가 작성한 개별 견해 조회")
+    @Parameters(
+            {@Parameter(name = "debateRoomId", description = "나가길 원하는 토론방 ID", example = "3")}
+    )
+    @GetMapping("/{id}")
+    public ApiResponseDto<MyOpinionResponseDto> getMySummary(
+            Authentication authentication,
+            @PathVariable("id") Long articleId
+    ){
+        return ApiResponseDto.success(SuccessCode.OK,myOpinionService.getMySingleOpinion(authentication.getName(),articleId));
+    }
+
 }
