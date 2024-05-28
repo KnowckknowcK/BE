@@ -62,13 +62,15 @@ class MySummaryServiceTest {
         Article article = createArticle();
         Summary summary = createSummary(member,article,Status.DONE);
         SummaryFeedback feedback = createSummaryFeedback(summary);
+        List<SummaryFeedback> feedbacks = new ArrayList<>();
         List<Summary> summaries = new ArrayList<>();
         summaries.add(summary);
+        feedbacks.add(feedback);
         member.setSummaries(summaries);
         //when
         List<MySummaryResponseDto> expected = new ArrayList<>();
         when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
-        when(summaryFeedbackRepository.findSummaryFeedbackBySummary(summary)).thenReturn(Optional.of(feedback));
+        when(summaryFeedbackRepository.findSummaryFeedbacksWithSummaries(member)).thenReturn(Optional.of(feedbacks));
         expected.add(new MySummaryResponseDto(summary,feedback));
         List<MySummaryResponseDto> actual = mySummaryService.getMySummaries("test1@gmail.com", Status.DONE);
         //then

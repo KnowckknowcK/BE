@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,28 +25,10 @@ import java.util.List;
 public class MySummaryService {
     private final MemberRepository memberRepository;
     private final SummaryFeedbackRepository summaryFeedbackRepository;
-    private final ArticleRepository articleRepository;
-    private final SummaryRepository summaryRepository;
 
     public List<MySummaryResponseDto> getMySummaries(String email, Status status){
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-//        Article article = new Article();
-//        article.setContent("기사 내용임");
-//        article.setTitle("기사제목임");
-//        article.setId(1L);
-//        articleRepository.save(article);
-//        Summary s1 = new Summary(1L,member,article,"요약임", LocalDateTime.now(),Status.DONE,9L);
-//        Summary s3 = new Summary(3L,member,article,"요약임", LocalDateTime.now(),Status.ING,9L);
-//        Summary s4 = new Summary(4L,member,article,"요약임", LocalDateTime.now(),Status.ING,9L);
-//        Summary s2 = new Summary(2L,member,article,"요약임2",LocalDateTime.now(),Status.DONE,7L);
-//
-//        summaryRepository.save(s1);
-//        summaryRepository.save(s2);
-//        summaryRepository.save(s3);
-//        summaryRepository.save(s4);
-//
-//        summaryFeedbackRepository.save(new SummaryFeedback(1L,"굳",Score.EXCELLENT,s1));
-//        summaryFeedbackRepository.save(new SummaryFeedback(2L,"낫굳",Score.FAIR,s2));
+
         if (member.getSummaries().isEmpty()){
             return new ArrayList<>();
         }
@@ -55,13 +38,8 @@ public class MySummaryService {
             return summaries.stream().map(MySummaryResponseDto::new).toList();
         }
         else {
-            List<Summary> summaries =  member.getSummaries().stream().filter(summary -> summary.getStatus().equals(Status.DONE)).toList();
-            List<MySummaryResponseDto> mySummaryResponseDtos = new ArrayList<>();
-            for (Summary summary: summaries){
-                SummaryFeedback summaryFeedback = summaryFeedbackRepository.findSummaryFeedbackBySummary(summary).orElseThrow(() -> new CustomException(ErrorCode.FEEDBACK_NOT_EXIST));
-                mySummaryResponseDtos.add(new MySummaryResponseDto(summary,summaryFeedback));
-            }
-            return mySummaryResponseDtos;
+            List<SummaryFeedback> summaryFeedbacks = summaryFeedbackRepository.findSummaryFeedbacksWithSummaries(member).orElse(new ArrayList<>());
+            return summaryFeedbacks.stream().map(sf -> new MySummaryResponseDto(sf.getSummary(),sf)).collect(Collectors.toList());
         }
     }
 }

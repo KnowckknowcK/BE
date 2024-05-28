@@ -25,6 +25,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private static final String[] WHITE_LIST = {
+            "/actuator/**",
+            "/profile","/redis",
             "/api/account/**",
             "/api-docs/**", "/v3/api-docs/**", "/swagger-ui/**",
             "/api/ws/**",

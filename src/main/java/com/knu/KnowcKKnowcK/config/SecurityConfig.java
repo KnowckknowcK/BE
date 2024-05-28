@@ -31,12 +31,14 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private static final String[] WHITE_LIST = {
+            "/actuator/**",
+            "/profile","/redis",
             "/api/account/**",
             "/api-docs/**", "/v3/api-docs/**", "/swagger-ui/**",
             "/api/ws/**",
             "/",
             "/login/oauth2/code/google", "/oauth2/authorization/google",
-            "/api/article/recommended"
+            "/api/article/recommended",
     };
 
     @Bean

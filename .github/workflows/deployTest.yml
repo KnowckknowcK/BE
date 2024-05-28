@@ -8,6 +8,8 @@
 name: Deploy dev branch
 
 on:
+  push:
+    branches: ["test"]
   pull_request:
     branches: [ "test" ]
 
@@ -33,7 +35,7 @@ jobs:
         run: |
           touch ./.env
           echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> ./.env
-          echo "DOCKER_IMAGE=knowckknowck-backend" >> ./.env
+          echo "DOCKER_IMAGE=${{ secrets.DOCKER_IMAGE }}" >> ./.env
 
         # set up application file
       - name: Create application file
@@ -97,14 +99,14 @@ jobs:
       - name: Deploy Docker image
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.TEST_HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
+          key: ${{ secrets.PRIVATE_TEST_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            sudo docker stop ${{ secrets.DOCKER_IMAGE }} 2>/dev/null || true
-            sudo docker rm ${{ secrets.DOCKER_IMAGE }}
-            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+            sudo docker stop ${{ secrets.DOCKER_IMAGE }} prometheus grafana 2>/dev/null || true
+            sudo docker rm ${{ secrets.DOCKER_IMAGE }} prometheus grafana
+            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }} prometheus grafana
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
-            sudo docker-compose up -d
+            sudo docker-compose -f docker-compose-monitoring.yml up -d
             sudo docker system prune -f
