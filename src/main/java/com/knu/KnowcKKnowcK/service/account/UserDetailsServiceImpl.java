@@ -25,10 +25,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Member member = memberRepository.findByEmail(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if (member.getIsOAuth()) {
-            throw new CustomException(ErrorCode.ALREADY_REGISTERED);
-        }
-
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>(); //권한 지정하지 않음
 
         return new org

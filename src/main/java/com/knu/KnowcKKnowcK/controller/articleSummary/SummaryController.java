@@ -5,15 +5,13 @@ import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.dto.requestdto.SummaryRequestDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryHistoryResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SummaryResponseDto;
-import com.knu.KnowcKKnowcK.service.articleSummary.LoadSummaryService;
-import com.knu.KnowcKKnowcK.service.articleSummary.SaveSummaryService;
+import com.knu.KnowcKKnowcK.service.summary.SummaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "요약 관련 API", description = "요약 관련 API")
 public class SummaryController {
 
-    private final SaveSummaryService saveSummaryService;
-    private final LoadSummaryService loadSummaryService;
+    private final SummaryService summaryService;
 
 
     @GetMapping("/load")
@@ -33,9 +30,9 @@ public class SummaryController {
             @ApiResponse(responseCode = "200", description = "요약 히스토리 가져오기 성공"),
             @ApiResponse(responseCode = "400", description = "요약 히스토리 가져오기 실패")
     })
-    ApiResponseDto<SummaryHistoryResponseDto> loadSummaryHistory(@RequestParam@Valid long userId,
+    ApiResponseDto<SummaryHistoryResponseDto> loadSummaryHistory(Authentication authentication,
                                                                  @RequestParam @Valid int articleId) {
-        SummaryHistoryResponseDto responseDto = loadSummaryService.loadSummaryHistory(userId, articleId);
+        SummaryHistoryResponseDto responseDto = summaryService.loadSummaryHistory(authentication.getName(), articleId);
         return ApiResponseDto.success(SuccessCode.OK, responseDto);
     }
 
@@ -47,9 +44,9 @@ public class SummaryController {
             @ApiResponse(responseCode = "200", description = "요약 저장 성공"),
             @ApiResponse(responseCode = "400", description = "요약 히스토리 가져오기 실패")
     })
-    ApiResponseDto<SummaryResponseDto> saveSummary(@RequestBody @Valid SummaryRequestDto dto){
+    ApiResponseDto<SummaryResponseDto> saveSummary(Authentication authentication, @RequestBody @Valid SummaryRequestDto dto){
 
-            SummaryResponseDto summaryResponseDto = saveSummaryService.saveSummary(dto);
+            SummaryResponseDto summaryResponseDto = summaryService.saveSummary(dto, authentication.getName());
             return ApiResponseDto.success(SuccessCode.OK, summaryResponseDto);
     }
 
@@ -61,9 +58,9 @@ public class SummaryController {
             @ApiResponse(responseCode = "200", description = "요약 피드백 반환 성공"),
             @ApiResponse(responseCode = "400", description = "요약 피드백 반환 실패")
     })
-    ApiResponseDto<SummaryResponseDto> getSummaryFeedback(@RequestBody @Valid SummaryRequestDto dto){
+    ApiResponseDto<SummaryResponseDto> getSummaryFeedback(Authentication authentication, @RequestBody @Valid SummaryRequestDto dto){
 
-        SummaryResponseDto summaryResponseDto = saveSummaryService.getSummaryFeedback(dto);
+        SummaryResponseDto summaryResponseDto = summaryService.getSummaryFeedback(dto, authentication.getName());
         return ApiResponseDto.success(SuccessCode.OK, summaryResponseDto);
     }
 }

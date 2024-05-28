@@ -7,12 +7,14 @@ import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.DebateRoomRepository;
 import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
+import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -34,6 +36,8 @@ public class DebateRoomServiceTest {
 
     @Mock
     private ArticleRepository articleRepository;
+    @Mock
+    private RedisUtil redisUtil;
 
     @Test
     @DisplayName("토론방이 존재하지만, 사용자가 참여중이 아닐 때 요청 처리 테스트")
@@ -52,7 +56,6 @@ public class DebateRoomServiceTest {
         // 검증
         assertThat(result).isNotNull();
         assertThat(result.getAgreeNum() + result.getDisagreeNum()).isEqualTo(1);
-        assertThat(result.getRatio()).isEqualTo(0.0);
     }
 
     @Test

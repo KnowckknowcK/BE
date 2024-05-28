@@ -1,15 +1,15 @@
 package com.knu.KnowcKKnowcK.config;
 
+import com.knu.KnowcKKnowcK.authenticationHandler.CustomAuthenticationFailureHandler;
+import com.knu.KnowcKKnowcK.authenticationHandler.CustomAuthenticationSuccessHandler;
+import com.knu.KnowcKKnowcK.authenticationHandler.JwtAccessDeniedHandler;
+import com.knu.KnowcKKnowcK.authenticationHandler.JwtAuthenticationEntryPoint;
 import com.knu.KnowcKKnowcK.config.jwtConfig.JwtFilter;
-import com.knu.KnowcKKnowcK.config.jwtConfig.JwtSecurityConfig;
-import com.knu.KnowcKKnowcK.exception.jwtHandler.JwtAccessDeniedHandler;
-import com.knu.KnowcKKnowcK.exception.jwtHandler.JwtAuthenticationEntryPoint;
+import com.knu.KnowcKKnowcK.service.account.TokenService;
 import com.knu.KnowcKKnowcK.utils.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -25,25 +25,28 @@ import org.springframework.web.cors.CorsUtils;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class WebSecurityConfig {
+public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private static final String[] WHITE_LIST = {
             "/**",
             "/profile","/redis",
             "/api/account/**",
-            "/api-docs/**", "v3/api-docs/**", "swagger-ui/**",
+            "/api-docs/**", "/v3/api-docs/**", "/swagger-ui/**",
+            "/api/ws/**",
             "/",
             "/login/oauth2/code/google", "/oauth2/authorization/google",
-//            "/api/article/recommand"
+            "/api/article/recommended"
     };
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -53,11 +56,13 @@ public class WebSecurityConfig {
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .requestMatchers(WHITE_LIST).permitAll()
                         .anyRequest().authenticated())
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .successHandler(new CustomAuthenticationSuccessHandler())
+                        .failureHandler(new CustomAuthenticationFailureHandler()))
+                .addFilterBefore(new JwtFilter(jwtUtil, tokenService), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(jwtAccessDeniedHandler)
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .oauth2Login(Customizer.withDefaults())
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint));
 
 
         return httpSecurity.build();

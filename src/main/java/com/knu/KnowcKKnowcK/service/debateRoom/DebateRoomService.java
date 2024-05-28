@@ -9,15 +9,14 @@ import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.DebateRoomRepository;
 import com.knu.KnowcKKnowcK.repository.MemberDebateRepository;
+import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.calculateRatio;
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.getDebateRoomKey;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +24,7 @@ public class DebateRoomService {
     private final DebateRoomRepository debateRoomRepository;
     private final MemberDebateRepository memberDebateRepository;
     private final ArticleRepository articleRepository;
+    private final RedisUtil redisUtil;
     // 토론방 참여
     public DebateRoomResponseDto participateInDebateRoom(Member member, Long debateRoomId){
         Position position;
@@ -41,21 +41,33 @@ public class DebateRoomService {
             else debateRoom.setDisagreeNum(debateRoom.getDisagreeNum() + 1);
 
             debateRoomRepository.save(debateRoom);
+        }else{
+            position = memberDebate.get().getPosition();
         }
 
         return new DebateRoomResponseDto(
-                calculateRatio(debateRoom.getAgreeLikesNum(), debateRoom.getDisagreeLikesNum()),
                 debateRoom.getAgreeNum(),
-                debateRoom.getDisagreeNum());
+                debateRoom.getDisagreeNum(),
+                debateRoom.getAgreeLikesNum(),
+                debateRoom.getDisagreeLikesNum(),
+                debateRoom.getTitle(),
+                position.name()
+                );
     }
     DebateRoom getDebateRoom(Long debateRoomId){
         Optional<DebateRoom> debateRoom = debateRoomRepository.findById(debateRoomId);
+
         if (debateRoom.isEmpty()){
             Article article = articleRepository
                     .findById(debateRoomId)
                     .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
             DebateRoom newRoom = new DebateRoom(article);
             debateRoomRepository.save(newRoom);
+
+            // 최초 토론방 생성이라면 redis 초기화
+            String key = getDebateRoomKey(debateRoomId);
+            redisUtil.deleteDataList(key);
+
             return newRoom;
         }
         else{
@@ -64,7 +76,7 @@ public class DebateRoomService {
     }
 
     // 토론방 떠나기
-    public double leaveDebateRoom(Member member, Long debateRoomId){
+    public String leaveDebateRoom(Member member, Long debateRoomId){
         DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
@@ -80,15 +92,17 @@ public class DebateRoomService {
         else // 반대 수 감소
             debateRoom.setDisagreeNum(debateRoom.getDisagreeNum() - 1);
         debateRoomRepository.save(debateRoom);
-        return calculateRatio(debateRoom.getAgreeNum(), debateRoom.getDisagreeNum());
+
+        return "나가기 성공";
     }
 
     public ArrayList<DebateRoomMemberDto> getDebateRoomMember(Long debateRoomId){
         DebateRoom debateRoom = debateRoomRepository.findById(debateRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 
-        return makeDebateRoomMemberList(memberDebateRepository.findByDebateRoom(debateRoom));
+        return makeDebateRoomMemberList(debateRoom.getMemberDebates());
     }
+
 
     private Position decidePosition(double ratio){
         // 비율에 따른 찬/반 결정

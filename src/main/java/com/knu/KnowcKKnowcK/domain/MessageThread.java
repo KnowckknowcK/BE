@@ -1,6 +1,7 @@
 package com.knu.KnowcKKnowcK.domain;
 
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageThreadResponseDto;
+import com.knu.KnowcKKnowcK.enums.Position;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.formatToLocalDateTime;
 
 @Entity
 @Data
@@ -31,14 +34,15 @@ public class MessageThread {
 
     private String content;
     private LocalDateTime createdTime;
+    private Position position;
 
-    public MessageThreadResponseDto toMessageThreadResponseDto(Long parentMessageId, String position, String profileImage){
+    public MessageThreadResponseDto toMessageThreadResponseDto(Long parentMessageId, String profileImage){
         return MessageThreadResponseDto.builder()
                 .id(id)
                 .content(content)
-                .position(position)
+                .position(position.name())
                 .profileImage(profileImage)
-                .createdTime(createdTime)
+                .createdTime(formatToLocalDateTime(createdTime))
                 .parentMessageId(parentMessageId)
                 .writer(member.getName())
                 .build();

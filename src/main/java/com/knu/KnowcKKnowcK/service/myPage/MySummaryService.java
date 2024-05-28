@@ -3,6 +3,7 @@ package com.knu.KnowcKKnowcK.service.myPage;
 import com.knu.KnowcKKnowcK.domain.*;
 import com.knu.KnowcKKnowcK.dto.responsedto.MyOpinionResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.MySummaryResponseDto;
+import com.knu.KnowcKKnowcK.enums.Position;
 import com.knu.KnowcKKnowcK.enums.Score;
 import com.knu.KnowcKKnowcK.enums.Status;
 import com.knu.KnowcKKnowcK.exception.CustomException;
@@ -23,27 +24,31 @@ import java.util.List;
 public class MySummaryService {
     private final MemberRepository memberRepository;
     private final SummaryFeedbackRepository summaryFeedbackRepository;
-    private final SummaryRepository summaryRepository;
     private final ArticleRepository articleRepository;
+    private final SummaryRepository summaryRepository;
 
-//    @PostConstruct
-//    public void init(){
-//        Member member = Member.builder().build();
-//        member.setId(1L);
-//        memberRepository.save(member);
+    public List<MySummaryResponseDto> getMySummaries(String email, Status status){
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
 //        Article article = new Article();
 //        article.setContent("기사 내용임");
+//        article.setTitle("기사제목임");
+//        article.setId(1L);
 //        articleRepository.save(article);
-//        Summary summary = new Summary(1L,member,article,"요약임", LocalDateTime.now(),Status.DONE,1L);
-//        Summary summaryING = new Summary(2L,member,article,"요약임2", LocalDateTime.now(),Status.ING,1L);
+//        Summary s1 = new Summary(1L,member,article,"요약임", LocalDateTime.now(),Status.DONE,9L);
+//        Summary s3 = new Summary(3L,member,article,"요약임", LocalDateTime.now(),Status.ING,9L);
+//        Summary s4 = new Summary(4L,member,article,"요약임", LocalDateTime.now(),Status.ING,9L);
+//        Summary s2 = new Summary(2L,member,article,"요약임2",LocalDateTime.now(),Status.DONE,7L);
 //
-//        summaryRepository.save(summary);
-//        summaryRepository.save(summaryING);
-//        SummaryFeedback feedback = new SummaryFeedback(1L,"굿", Score.EXCELLENT,summary);
-//        summaryFeedbackRepository.save(feedback);
-//    }
-    public List<MySummaryResponseDto> getMySummaries(Long id, Status status){
-        Member member = memberRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
+//        summaryRepository.save(s1);
+//        summaryRepository.save(s2);
+//        summaryRepository.save(s3);
+//        summaryRepository.save(s4);
+//
+//        summaryFeedbackRepository.save(new SummaryFeedback(1L,"굳",Score.EXCELLENT,s1));
+//        summaryFeedbackRepository.save(new SummaryFeedback(2L,"낫굳",Score.FAIR,s2));
+        if (member.getSummaries().isEmpty()){
+            return new ArrayList<>();
+        }
         if (status.equals(Status.ING)){
             List<Summary> summaries =  member.getSummaries().stream().filter(summary -> summary.getStatus().equals(Status.ING)).toList();
             log.info(summaries.toString());

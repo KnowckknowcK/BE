@@ -1,7 +1,5 @@
 package com.knu.KnowcKKnowcK.service.account;
 
-import com.knu.KnowcKKnowcK.exception.CustomException;
-import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.utils.MailUtil;
 import com.knu.KnowcKKnowcK.utils.RedisUtil;
 import jakarta.mail.MessagingException;
@@ -11,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
 import java.util.Random;
 
 @Service
@@ -50,19 +49,18 @@ public class MailService {
             return "이메일 인증코드 발송이 완료되었습니다.";
 
         } catch (MessagingException e) {
-            throw new CustomException(ErrorCode.FAILED);
+            return e.toString();
         }
-
     }
 
     public void saveCode(String email, String code) {
         Long expiredMs = 1000*60*5L; //5분
-        redisUtil.setData(email, code, expiredMs);
+        redisUtil.setEmailCode(email, code, expiredMs);
     }
 
     public boolean checkCode(String email, String code) {
-
-        String codeFindByEmail = redisUtil.getData(email);
+        String key = "emailCode:" + email;
+        String codeFindByEmail = redisUtil.getData(key);
 
         if(codeFindByEmail == null) {
             return false;

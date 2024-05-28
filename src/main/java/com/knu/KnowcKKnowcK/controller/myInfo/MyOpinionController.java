@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +30,8 @@ public class MyOpinionController {
     })
     @GetMapping("")
     public ApiResponseDto<List<MyOpinionResponseDto>> getMySummary(
-            @RequestHeader("Authorization") Long id
+            Authentication authentication
     ){
-        return ApiResponseDto.success(SuccessCode.OK,myOpinionService.getMyOpinions(id));
+        return ApiResponseDto.success(SuccessCode.OK,myOpinionService.getMyOpinions(authentication.getName()));
     }
 }

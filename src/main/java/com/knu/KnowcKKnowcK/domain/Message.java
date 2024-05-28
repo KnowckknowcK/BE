@@ -1,6 +1,7 @@
 package com.knu.KnowcKKnowcK.domain;
 
 import com.knu.KnowcKKnowcK.dto.responsedto.MessageResponseDto;
+import com.knu.KnowcKKnowcK.enums.Position;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,9 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomUtil.formatToLocalDateTime;
 
 @Entity
 @Data
@@ -33,17 +37,24 @@ public class Message {
 
     private String content;
     private LocalDateTime createdTime;
+    private Position position;
 
-    public MessageResponseDto toMessageResponseDto(String position, long likesNum, long threadNum, String profileImage){
+    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY)
+    private List<MessageThread> messageThreads;
+
+    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY)
+    private List<Preference> preferences;
+
+    public MessageResponseDto toMessageResponseDto(long likesNum, long threadNum, String profileImage){
         return MessageResponseDto.builder()
                 .writer(member.getName())
                 .likesNum(likesNum)
                 .profileImage(profileImage)
                 .content(content)
-                .createdTime(createdTime)
+                .createdTime(formatToLocalDateTime(createdTime))
                 .roomId(debateRoom.getId())
                 .messageId(id)
-                .position(position)
+                .position(position.name())
                 .threadNum(threadNum)
                 .build();
     }

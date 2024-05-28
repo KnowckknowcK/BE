@@ -1,13 +1,19 @@
 package com.knu.KnowcKKnowcK.service.account;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.KnowcKKnowcK.domain.Member;
+import com.knu.KnowcKKnowcK.dto.requestdto.SignupRequestDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.GoogleLoginResponseDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.SigninResponseDto;
-import com.knu.KnowcKKnowcK.dto.responsedto.SignupResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
+import com.knu.KnowcKKnowcK.utils.AwsS3Util;
 import com.knu.KnowcKKnowcK.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,18 +21,27 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
 import java.util.Optional;
+import java.util.Random;
+
+import static com.knu.KnowcKKnowcK.apiResponse.SuccessCode.CREATED_SUCCESS;
+import static com.knu.KnowcKKnowcK.exception.ErrorCode.ALREADY_REGISTERED;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
 
     private final MemberRepository memberRepository;
-    private final Long expiredAt = 1000 * 60 * 60L; //1H
     private final AuthenticationConfiguration authenticationConfiguration;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final AwsS3Util awsS3Util;
+    private final JwtUtil jwtUtil;
+
+    @Value("${profileImg.url}")
+    private String ImgUrl;
 
     public SigninResponseDto signinWithEmail(String email, String password) throws CustomException{
         try {
@@ -40,7 +55,8 @@ public class AccountService {
                     .email(authenticatedMember.get().getEmail())
                     .name(authenticatedMember.get().getName())
                     .profileImg(authenticatedMember.get().getProfileImage())
-                    .jwt(JwtUtil.creatJWT(authentication.getName(), expiredAt))
+                    .jwt(JwtUtil.createAccessToken(authentication.getName()))
+                    .refreshToken(jwtUtil.createRefreshToken(authentication.getName()))
                     .build();
 
             return responseDto;
@@ -52,33 +68,57 @@ public class AccountService {
         }
     }
 
-    public SignupResponseDto signupWithEmail(String email, String name, String password, String profileImg) {
+    public HttpStatus signupWithEmail(String userInfo, MultipartFile profileImg) throws JsonProcessingException {
 
-        Optional<Member> member = memberRepository.findByEmail(email);
+        String profileImgUrl;
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        SignupRequestDto requestDto = objectMapper.readValue(userInfo, SignupRequestDto.class);
+
+        Optional<Member> member = memberRepository.findByEmail(requestDto.getEmail());
         if (member.isPresent())
-            throw new CustomException(ErrorCode.ALREADY_REGISTERED);
+            return ALREADY_REGISTERED.getError();
+
+        if (profileImg == null || profileImg.isEmpty())
+            profileImgUrl = ImgUrl + randomImgNum();
+        else
+            profileImgUrl = awsS3Util.uploadFile(profileImg);
 
         Member newMember = Member.builder()
-                .email(email)
-                .name(name)
-                .password(passwordEncoder.encode(password))
-                .profileImage(profileImg)
+                .email(requestDto.getEmail())
+                .name(requestDto.getName())
+                .password(passwordEncoder.encode(requestDto.getPassword()))
+                .profileImage(profileImgUrl)
                 .isOAuth(false)
                 .level(0L)
                 .point(0L)
                 .build();
 
-        Member savedMember = memberRepository.save(newMember);
+        memberRepository.save(newMember);
 
-        SignupResponseDto responseDto = SignupResponseDto.builder()
-                .email(savedMember.getEmail())
-                .name(savedMember.getName())
-                .profileImg(savedMember.getProfileImage())
-                .jwt(JwtUtil.creatJWT(savedMember.getEmail(), expiredAt))
-                .build();
+        return CREATED_SUCCESS.getSuccess();
+    }
 
-        return responseDto;
+    public GoogleLoginResponseDto returnToken(String email) {
+
+        if (email.isBlank()) {
+            return null;
+        } else {
+            return GoogleLoginResponseDto.builder()
+                    .jwt(JwtUtil.createAccessToken(email))
+                    .refreshToken(jwtUtil.createRefreshToken(email))
+                    .build();
+        }
+    }
+
+    public String randomImgNum() {
+
+        String[] defaultImg = {"1.png","2.png","3.png","4.png"};
+
+        Random random = new Random();
+        int imgNumber = random.nextInt(4);
+
+        return defaultImg[imgNumber];
     }
 
     public class MemberPasswordGenerator {

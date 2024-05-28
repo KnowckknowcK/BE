@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.service.articleOpinion;
+package com.knu.KnowcKKnowcK.service.opinion;
 
 import com.knu.KnowcKKnowcK.domain.Article;
 import com.knu.KnowcKKnowcK.domain.Member;
@@ -13,7 +13,6 @@ import com.knu.KnowcKKnowcK.repository.ArticleRepository;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.repository.OpinionRepository;
 import com.knu.KnowcKKnowcK.service.chatGptService.ChatGptContext;
-import com.knu.KnowcKKnowcK.service.chatGptService.OpinionFeedbackClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +41,7 @@ class SaveOpinionTest {
     private OpinionRepository opinionRepository;
 
     @InjectMocks
-    private SaveOpinionServiceImpl sut;
+    private OpinionService sut;
 
     @Mock
     private ChatGptContext chatGptContext;
@@ -53,12 +52,12 @@ class SaveOpinionTest {
         Member member = createMember();
         Article article = createArticle();
         Mockito.when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
-        Mockito.when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+        Mockito.when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
         Mockito.when(opinionRepository.findByArticleAndWriter(any(), any())).thenReturn(Optional.empty());
-        OpinionRequestDto requestDto = new OpinionRequestDto(1L, 1L, "content", LocalDateTime.now(), Status.DONE, Position.AGREE);
+        OpinionRequestDto requestDto = new OpinionRequestDto(1L, "content", LocalDateTime.now(), Position.AGREE);
         Mockito.when(chatGptContext.callGptApi(Option.OPINION, article.getContent(), requestDto.getContent())).thenReturn((Pair<Score, String>) Pair.of(Score.EXCELLENT,"아주 좋아요."));
 
-        OpinionResponseDto opinionFeedback = sut.getOpinionFeedback(requestDto);
+        OpinionResponseDto opinionFeedback = sut.getOpinionFeedback(requestDto, member.getEmail());
 
         assertThat(opinionFeedback).isNotNull();
     }

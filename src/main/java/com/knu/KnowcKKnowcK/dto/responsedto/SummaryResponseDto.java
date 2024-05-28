@@ -16,7 +16,9 @@ public class SummaryResponseDto {
 
     private String content;
 
-    private Score score;
+    private String score;
+
+    private int point;
 
     private String returnMessage;
 
@@ -26,7 +28,8 @@ public class SummaryResponseDto {
     public SummaryResponseDto(SummaryFeedback feedback){
         this.id = feedback.getId();
         this.content = feedback.getContent();
-        this.score = feedback.getScore();
+        this.score = feedback.getScore().getScoreString();
+        this.point = feedback.getScore().getExp();
     }
 
     public SummaryResponseDto(String msg){

@@ -1,6 +1,7 @@
 package com.knu.KnowcKKnowcK.utils;
 
 import com.knu.KnowcKKnowcK.exception.CustomException;
+import com.knu.KnowcKKnowcK.service.account.TokenService;
 import com.knu.KnowcKKnowcK.service.account.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,15 +22,28 @@ import static com.knu.KnowcKKnowcK.exception.ErrorCode.TOKEN_INVALID;
 public class JwtUtil {
 
     private static String secretKey;
+    private static long accessExpirationTime;
+    private static long refreshExpirationTime;
 
-    @Value("${jwt.secret}")
+    @Value("${spring.jwt.secret}")
     public void setSecretKey(String secretKey) {
         JwtUtil.secretKey = secretKey;
     }
 
-    private final UserDetailsServiceImpl userDetailsService;
+    @Value("${spring.jwt.token.access-expiration-time}")
+    public void setAccessExpirationTime(long accessExpirationTime) {
+        JwtUtil.accessExpirationTime = accessExpirationTime;
+    }
 
-    public static String creatJWT(String email, Long expiredMs) {
+    @Value("${spring.jwt.token.refresh-expiration-time}")
+    public void setRefreshExpirationTime(long refreshExpirationTime) {
+        JwtUtil.refreshExpirationTime = refreshExpirationTime;
+    }
+
+    private final UserDetailsServiceImpl userDetailsService;
+    private final TokenService tokenService;
+
+    public static String createAccessToken(String email) {
         Claims claims = Jwts.claims();
         claims.put("email", email);
 
@@ -37,9 +51,26 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
+                .setExpiration(new Date(System.currentTimeMillis() + accessExpirationTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+    }
+
+    public String createRefreshToken(String email){
+        Claims claims = Jwts.claims();
+        claims.put("email", email);
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setSubject(email)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationTime))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+
+        tokenService.saveRefreshToken(email, refreshToken);
+
+        return refreshToken;
     }
 
     //헤더에서 토큰 가져오기
@@ -64,9 +95,13 @@ public class JwtUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
+    public static Claims parseToken(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+    }
+
     public boolean validateToken(String token){
         try{
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            parseToken(token);
             return true;
         } catch(ExpiredJwtException e) {
 //            log.error(TOKEN_EXPIRED.getMessage());

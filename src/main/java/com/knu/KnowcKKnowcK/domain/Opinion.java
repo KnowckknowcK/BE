@@ -1,13 +1,11 @@
 package com.knu.KnowcKKnowcK.domain;
 
 import com.knu.KnowcKKnowcK.enums.Position;
-import com.knu.KnowcKKnowcK.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,18 +32,9 @@ public class Opinion {
     @Enumerated(EnumType.STRING)
     private Position position;
   
-    @Enumerated(EnumType.STRING)
-    private Status status;
-  
     private LocalDateTime createdTime;
 
     @Column(length = 3000)
     private String feedbackContent;
 
-    public Opinion update(String content, Status status) {
-      this.content = content;
-      this.status = status;
-
-      return this;
-    }
 }
