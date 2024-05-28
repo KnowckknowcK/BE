@@ -42,7 +42,7 @@ public class TokenService {
         String email = getEmailFromToken(refreshToken);
 
         if(validateRefreshToken(email, refreshToken)){
-            return NewAuthResponseDto.builder().refreshToken(JwtUtil.createAccessToken(email)).build();
+            return NewAuthResponseDto.builder().newAccessToken(JwtUtil.createAccessToken(email)).build();
         }
         else{
             throw new CustomException(TOKEN_INVALID);
