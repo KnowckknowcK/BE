@@ -35,6 +35,7 @@ public class Message {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
+    @Column(length = 10000)
     private String content;
     private LocalDateTime createdTime;
     private Position position;
