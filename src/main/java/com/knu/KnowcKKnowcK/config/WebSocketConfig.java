@@ -19,11 +19,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private String clientUrl;
     @Value("${client.local.url}")
     private String clientLocalUrl;
+    @Value("${client.dev.url}")
+    private String clientDevUrl;
+
     private final JwtUtil jwtUtil;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/api/ws")
-                .setAllowedOrigins(clientLocalUrl, clientUrl).withSockJS();
+                .setAllowedOrigins(clientLocalUrl, clientUrl, clientDevUrl).withSockJS();
     }
 
     @Override
