@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/profile")
 @RequiredArgsConstructor
-@Tag(name = "Profile",description = "사용자 프로필에 관한 요청을 처리.")
+@Tag(name = "Profile",description = "사용자 프로필에 관한 기능을 제공하는 API Controller.")
 public class MyProfileController {
 
     private final MyPageService myPageService;
