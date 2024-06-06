@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/summary")
-@Tag(name = "MyHistory",description = "사용자가 작성한 요약에 관한 처리")
+@Tag(name = "MySummary",description = "사용자가 작성한 요약에 관한 처리")
 @RequiredArgsConstructor
 @Slf4j
 public class MySummaryController {

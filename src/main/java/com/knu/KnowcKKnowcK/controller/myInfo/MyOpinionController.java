@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/opinion")
-@Tag(name = "MyOpinion",description = "내가 작성한 요약 조회에 관한 처리")
+@Tag(name = "MyOpinion",description = "사용자가 작성한 요약 조회에 관한 처리")
 @RequiredArgsConstructor
 public class MyOpinionController {
     private final MyOpinionService myOpinionService;
