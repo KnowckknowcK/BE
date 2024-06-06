@@ -5,10 +5,12 @@ import com.knu.KnowcKKnowcK.apiResponse.SuccessCode;
 import com.knu.KnowcKKnowcK.domain.Member;
 import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomMemberDto;
 import com.knu.KnowcKKnowcK.dto.responsedto.DebateRoomResponseDto;
+import com.knu.KnowcKKnowcK.dto.responsedto.MyDebateRoomResponseDto;
 import com.knu.KnowcKKnowcK.exception.CustomException;
 import com.knu.KnowcKKnowcK.exception.ErrorCode;
 import com.knu.KnowcKKnowcK.repository.MemberRepository;
 import com.knu.KnowcKKnowcK.service.debateRoom.DebateRoomService;
+import com.knu.KnowcKKnowcK.service.myPage.MyDebateroomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -20,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/debate-room")
@@ -29,6 +32,8 @@ import java.util.ArrayList;
 public class DebateRoomController {
     final private DebateRoomService debateRoomService;
     private final MemberRepository memberRepository;
+    private final MyDebateroomService myDebateroomService;
+
     private Member member;
 
     @PutMapping("/{debateRoomId}")
@@ -46,6 +51,17 @@ public class DebateRoomController {
                 .findByEmail(authentication.getName())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
         return ApiResponseDto.success(SuccessCode.OK, debateRoomService.participateInDebateRoom(member, debateRoomId));
+    }
+
+    @GetMapping("/ing")
+    @Operation(summary = "참여 중인 토론방 확인 API", description = "현재 참여 중인 토론방 확인 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "토론방 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "토론방 목록 조회 실패")
+    })
+    public ApiResponseDto<List<MyDebateRoomResponseDto>> getDebateRoom(Authentication authentication){
+        List<MyDebateRoomResponseDto> debateRooms =  myDebateroomService.getDebateRoom(authentication.getName());
+        return ApiResponseDto.success(SuccessCode.OK,debateRooms);
     }
 
     @DeleteMapping("/{debateRoomId}")

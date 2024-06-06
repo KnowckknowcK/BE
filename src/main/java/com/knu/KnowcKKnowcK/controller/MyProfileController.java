@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.controller.myInfo;
+package com.knu.KnowcKKnowcK.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
