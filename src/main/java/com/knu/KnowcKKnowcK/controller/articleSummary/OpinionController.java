@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/opinion", produces = "application/json;charset=UTF-8")
-@Tag(name = "견해 작성 관련 API", description = "견해 관련 API")
+@Tag(name = "Opinion", description = "견해 관련 API Controller")
 public class OpinionController {
 
     private final OpinionService opinionService;
@@ -43,7 +43,7 @@ public class OpinionController {
     }
 
     @GetMapping("")
-    @Operation(summary="사용자 견해",description="사용자가 작성한 견해문 조회")
+    @Operation(summary="사용자 견해 조회 API",description="사용자가 작성한 견해문 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "작성한 견해 조회 성공"),
             @ApiResponse(responseCode = "400", description = "작성한 견해 조회 실패")
@@ -55,7 +55,7 @@ public class OpinionController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary="사용자 견해",description="사용자가 작성한 개별 견해 조회")
+    @Operation(summary="사용자 견해 개별 조회 API",description="사용자가 작성한 개별 견해 조회")
     @Parameters(
             {@Parameter(name = "articleId", description = "조회하고자하는 견해에 대한 기사 아이디", example = "3")}
     )

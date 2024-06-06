@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/summary", produces = "application/json;charset=UTF-8")
-@Tag(name = "요약 관련 API", description = "요약 관련 API")
+@Tag(name = "Summary", description = "요약 관련 API Controller")
 public class SummaryController {
 
     private final SummaryService summaryService;
@@ -73,7 +73,7 @@ public class SummaryController {
     }
 
     @GetMapping("")
-    @Operation(summary="사용자 요약",description="사용자가 작성했거나 작성한 요약 조회")
+    @Operation(summary="사용자 요약 조회 API",description="사용자가 작성했거나 작성한 요약 조회")
     @Parameters({
             @Parameter(name = "status",description = "원하는 요약이 작성 중인지,작성 한건지",example = "DONE"),
     })
