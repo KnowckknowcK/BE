@@ -21,12 +21,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/debate-room")
 @RequiredArgsConstructor
-@Tag(name = "MyPage",description = "마이페이지에 관한 요청을 처리한다.")
+@Tag(name = "MyDebateroom ",description = "사용자가 참여 중인 토론방에 관한 처리")
 public class MyDebateRoomController {
     private final MyDebateroomService myDebateroomService;
 
     @GetMapping("/ing")
-    @Operation(summary = "토론방 확인 API", description = "현재 참여 중인 토론방 확인 API")
+    @Operation(summary = "참여 중인 토론방 확인 API", description = "현재 참여 중인 토론방 확인 API")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "토론방 목록 조회 성공"),
     })

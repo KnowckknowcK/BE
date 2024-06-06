@@ -18,12 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/profile")
 @RequiredArgsConstructor
-@Tag(name = "MyPage",description = "마이페이지에 관한 요청을 처리한다.")
+@Tag(name = "Profile",description = "사용자 프로필에 관한 요청을 처리.")
 public class MyProfileController {
 
     private final MyPageService myPageService;
 
-    @Operation(summary="프로필 정보 API",description="사용자가 프로필 정보를 요청했을 때 보여준다")
+    @Operation(summary="프로필 정보 API",description="사용자가 프로필 정보를 요청했을 때 보여준다.")
     @Parameters({
     })
     @GetMapping("/info")
