@@ -23,12 +23,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/article", produces = "application/json;charset=UTF-8")
-@Tag(name = "Article", description = "지문 조회 관련 API")
+@Tag(name = "Article", description = "지문 조회 관련 API Controller")
 public class ArticleController {
 
     private final ArticleService articleService;
 
-    @Operation(summary = "카테고리 별 지문 목록 조회", description = "카테고리 별로 지문 목록을 조회한다. page 번호와 Category를 PathVariable로 받는다.")
+    @Operation(summary = "카테고리 별 지문 목록 조회 API", description = "카테고리 별로 지문 목록을 조회한다. page 번호와 Category를 PathVariable로 받는다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "지문 목록 조회 성공"),
             @ApiResponse(responseCode = "404", description = "지문 목록 조회 실패")
@@ -44,7 +44,7 @@ public class ArticleController {
     /** loadArticleById: frontend 구현에서는 목록에서 클릭 시 기사 정보를 api 호출 없이 페이지로 넘기도록 해서 필요없는 기능이 될 수도 있음.**/
 
     @GetMapping("/{articleId}")
-    @Operation(summary = "지문 개별 조회", description = "문해력 진단을 할 지문 1개를 id로 조회한다.")
+    @Operation(summary = "지문 개별 조회 API", description = "문해력 진단을 할 지문 1개를 id로 조회한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "지문 조회 성공"),
             @ApiResponse(responseCode = "400", description = "지문 조회 실패")

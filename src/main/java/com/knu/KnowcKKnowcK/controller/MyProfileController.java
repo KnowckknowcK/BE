@@ -1,4 +1,4 @@
-package com.knu.KnowcKKnowcK.controller.myInfo;
+package com.knu.KnowcKKnowcK.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.knu.KnowcKKnowcK.apiResponse.ApiResponseDto;
@@ -18,12 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/profile")
 @RequiredArgsConstructor
-@Tag(name = "Profile",description = "사용자 프로필에 관한 요청을 처리.")
+@Tag(name = "Profile",description = "사용자 프로필에 관한 기능을 제공하는 API Controller.")
 public class MyProfileController {
 
     private final MyPageService myPageService;
 
-    @Operation(summary="프로필 정보 API",description="사용자가 프로필 정보를 요청했을 때 보여준다.")
+    @Operation(summary="프로필 정보 조회 API",description="사용자가 프로필 정보를 요청했을 때 보여준다.")
     @Parameters({
     })
     @GetMapping("/info")
@@ -50,7 +50,7 @@ public class MyProfileController {
     }
 
     @GetMapping("/dashboard")
-    @Operation(summary = "대시보드 조회",description = "총 요약,견해 작성 횟수, 연속 참여 횟수, 오늘 도전 횟수 등을 조회할 수 있다.")
+    @Operation(summary = "대시보드 조회 API",description = "총 요약,견해 작성 횟수, 연속 참여 횟수, 오늘 도전 횟수 등을 조회할 수 있다.")
     @Parameters({
     })
     public ApiResponseDto<DashboardResponseDto> getDashboardInfo(Authentication authentication){
