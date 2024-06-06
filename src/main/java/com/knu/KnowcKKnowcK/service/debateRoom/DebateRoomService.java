@@ -84,7 +84,7 @@ public class DebateRoomService {
         MemberDebate memberDebate = memberDebateRepository
                 .findByMemberAndDebateRoom(member, debateRoom)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT));
-        memberDebateRepository.delete(memberDebate);
+
 
         // debateRoom에 있는 num 업데이트
         if(memberDebate.getPosition().equals(Position.AGREE)) // 찬성 수 감소
@@ -92,7 +92,7 @@ public class DebateRoomService {
         else // 반대 수 감소
             debateRoom.setDisagreeNum(debateRoom.getDisagreeNum() - 1);
         debateRoomRepository.save(debateRoom);
-
+        memberDebateRepository.delete(memberDebate);
         return "나가기 성공";
     }
 
