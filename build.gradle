@@ -22,20 +22,67 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-graphql'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
+
+	//database
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'com.mysql:mysql-connector-j'
+	implementation 'com.h2database:h2'
+
+	//thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	//graphQL
+	implementation 'org.springframework.boot:spring-boot-starter-graphql'
 	testImplementation 'org.springframework:spring-webflux'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'
-}
 
+	//swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+  
+  	//websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	//webflux(chatgpt 비동기 호출)
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	//oauth
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	//smtp
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//retry
+	implementation 'org.springframework.retry:spring-retry'
+
+	//aws s3
+	implementation 'io.awspring.cloud:spring-cloud-aws-s3:3.0.2'
+
+	//jwt
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
+	//monitoring
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
+	//serialization
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
+
+}
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
 }

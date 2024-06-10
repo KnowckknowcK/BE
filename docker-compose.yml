@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+    networks:
+      - knowck_net
+
+  knowckknowck-backend:
+    image: ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}
+    container_name: ${DOCKER_IMAGE}
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      PROFILE: prod
+    depends_on:
+      - redis
+    networks:
+      - knowck_net
+
+networks:
+  knowck_net:
+    driver: bridge
