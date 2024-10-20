@@ -2,7 +2,7 @@
 ![똑똑 (1)](https://github.com/KnowckknowcK/BE/assets/104684033/a884bf47-7dc0-4738-9a96-5e068373e55a)
 
 ## 🔎 시스템 아키텍쳐
-![똑똑-백엔드 (4)](https://github.com/KnowckknowcK/BE/assets/104684033/4d0267c8-bd9a-4a0a-bf79-33e591959f0b)
+![똑똑-백엔드 (5)](https://github.com/user-attachments/assets/8413536c-4111-4b6c-9052-86ff18fca20f)
 
 
 ## 💡 기술스택
